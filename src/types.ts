@@ -1,4 +1,5 @@
 export interface BookingData {
+  id?: string;
   pickup: string;
   dropoff: string;
   date: string;
@@ -7,4 +8,6 @@ export interface BookingData {
   name: string;
   phone: string;
   notes: string;
+  status?: 'pending' | 'approved' | 'cancelled';
+  createdAt?: number;
 }

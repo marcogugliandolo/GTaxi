@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, 
@@ -10,13 +10,7 @@ import {
 } from 'lucide-react';
 import { BookingData } from '../types';
 import AddressInput from './AddressInput';
-
-// ==========================================
-// CONFIGURACIÓN DE CONTACTO
-// ==========================================
-const WHATSAPP_NUMBER = "34600000000";
-const TELEGRAM_USERNAME = "tu_usuario_taxi";
-// ==========================================
+import AdminPanel from './AdminPanel';
 
 const INITIAL_DATA: BookingData = {
   pickup: '',
@@ -33,7 +27,18 @@ export default function BookingWizard() {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [formData, setFormData] = useState<BookingData>(INITIAL_DATA);
-  const [isSending, setIsSending] = useState<'whatsapp' | 'telegram' | null>(null);
+  const [isSending, setIsSending] = useState<boolean>(false);
+  
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('gtaxi_wa') || "34600000000");
+  const [telegramUsername, setTelegramUsername] = useState(localStorage.getItem('gtaxi_tg') || "tu_usuario_taxi");
+
+  const handleUpdateSettings = (wa: string, tg: string) => {
+    setWhatsappNumber(wa);
+    setTelegramUsername(tg);
+    localStorage.setItem('gtaxi_wa', wa);
+    localStorage.setItem('gtaxi_tg', tg);
+  };
 
   const updateForm = (fields: Partial<BookingData>) => {
     setFormData((prev) => ({ ...prev, ...fields }));
@@ -65,22 +70,25 @@ export default function BookingWizard() {
 Por favor, confirmar disponibilidad. ¡Gracias!`;
   };
 
-  const sendWhatsApp = () => {
-    setIsSending('whatsapp');
-    setTimeout(() => {
-      setIsSending(null);
-      const text = encodeURIComponent(generateMessage());
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
-    }, 800);
+  const saveReservation = () => {
+    const reservations: BookingData[] = JSON.parse(localStorage.getItem('gtaxi_reservations') || '[]');
+    const newReservation: BookingData = {
+      ...formData,
+      id: Math.random().toString(36).substr(2, 9),
+      status: 'pending',
+      createdAt: Date.now()
+    };
+    reservations.unshift(newReservation);
+    localStorage.setItem('gtaxi_reservations', JSON.stringify(reservations));
   };
 
-  const sendTelegram = () => {
-    setIsSending('telegram');
+  const submitReservation = () => {
+    setIsSending(true);
     setTimeout(() => {
-      setIsSending(null);
-      const text = encodeURIComponent(generateMessage());
-      window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${text}`, '_blank');
-    }, 800);
+      saveReservation();
+      setIsSending(false);
+      setStep(5);
+    }, 1500);
   };
 
   const slideVariants = {
@@ -115,7 +123,7 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-10 pointer-events-none"></div>
 
         {/* Brand Logo */}
-        <div className="relative z-10 flex items-center gap-4">
+        <div className="relative z-10 flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setShowAdmin(true)}>
           <div className="relative w-14 h-14 bg-[#FFD700] rounded-2xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,215,0,0.3)]">
             <CarFront className="w-8 h-8 text-slate-900" strokeWidth={2.5} />
           </div>
@@ -180,7 +188,7 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
               <button onClick={prevStep} className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setShowAdmin(true)}>
                 <div className="relative w-8 h-8 bg-[#FFD700] rounded-lg flex items-center justify-center shadow-sm">
                   <CarFront className="w-5 h-5 text-slate-900" strokeWidth={2.5} />
                 </div>
@@ -214,7 +222,10 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                 <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
                   
                   {/* Mobile Logo */}
-                  <div className="md:hidden relative w-24 h-24 bg-[#FFD700] rounded-[2rem] flex items-center justify-center shadow-[0_12px_32px_rgba(255,215,0,0.3)] mb-10">
+                  <div 
+                    className="md:hidden relative w-24 h-24 bg-[#FFD700] rounded-[2rem] flex items-center justify-center shadow-[0_12px_32px_rgba(255,215,0,0.3)] mb-10 cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => setShowAdmin(true)}
+                  >
                     <CarFront className="w-12 h-12 text-slate-900" strokeWidth={2.5} />
                   </div>
                   
@@ -463,27 +474,16 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                       <p className="text-slate-400 text-sm mt-1">El conductor te confirmará al instante.</p>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row gap-3 w-full z-10">
+                    <div className="flex flex-col gap-3 w-full z-10">
                       <button
-                        onClick={sendWhatsApp}
-                        disabled={isSending !== null}
-                        className="flex-1 bg-[#25D366] text-white font-bold py-4 px-6 rounded-2xl hover:bg-[#20bd5a] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20 disabled:opacity-70 disabled:scale-100 text-lg"
+                        onClick={submitReservation}
+                        disabled={isSending}
+                        className="w-full bg-[#FFD700] text-[#0F172A] font-bold py-4 px-6 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FFD700]/20 disabled:opacity-70 disabled:scale-100 text-lg"
                       >
-                        {isSending === 'whatsapp' ? (
-                          <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        {isSending ? (
+                          <div className="w-6 h-6 border-2 border-[#0F172A]/30 border-t-[#0F172A] rounded-full animate-spin"></div>
                         ) : (
-                          <><Send className="w-5 h-5" /> WhatsApp</>
-                        )}
-                      </button>
-                      <button
-                        onClick={sendTelegram}
-                        disabled={isSending !== null}
-                        className="flex-1 bg-[#0088cc] text-white font-bold py-4 px-6 rounded-2xl hover:bg-[#007ab8] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#0088cc]/20 disabled:opacity-70 disabled:scale-100 text-lg"
-                      >
-                        {isSending === 'telegram' ? (
-                          <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        ) : (
-                          <><Send className="w-5 h-5" /> Telegram</>
+                          <><Send className="w-5 h-5" /> Enviar Solicitud</>
                         )}
                       </button>
                     </div>
@@ -497,9 +497,45 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                 </div>
               </motion.div>
             )}
+
+            {/* STEP 5: SUCCESS */}
+            {step === 5 && (
+              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
+                <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6">
+                  <div className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-green-100">
+                    <CheckCircle2 className="w-12 h-12" />
+                  </div>
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">¡Solicitud Enviada!</h1>
+                  <p className="text-slate-500 text-lg md:text-xl font-medium max-w-md mx-auto">
+                    Hemos recibido tu solicitud de viaje. En breve recibirás una confirmación por WhatsApp o Telegram.
+                  </p>
+                  
+                  <div className="pt-8 w-full">
+                    <button
+                      onClick={() => {
+                        setStep(0);
+                        setFormData(INITIAL_DATA);
+                      }}
+                      className="w-full max-w-xs mx-auto bg-[#0F172A] text-white font-bold py-4 px-8 rounded-2xl hover:bg-slate-800 active:scale-95 transition-all shadow-lg block"
+                    >
+                      Volver al inicio
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
+
+      {showAdmin && (
+        <AdminPanel
+          onClose={() => setShowAdmin(false)}
+          onUpdateSettings={handleUpdateSettings}
+          currentWhatsapp={whatsappNumber}
+          currentTelegram={telegramUsername}
+        />
+      )}
     </div>
   );
 }
