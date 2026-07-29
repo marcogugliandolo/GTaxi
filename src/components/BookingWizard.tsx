@@ -6,7 +6,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   Send,
-  Car
+  CarFront
 } from 'lucide-react';
 import { BookingData } from '../types';
 import AddressInput from './AddressInput';
@@ -116,12 +116,8 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
 
         {/* Brand Logo */}
         <div className="relative z-10 flex items-center gap-4">
-          <div className="relative w-14 h-14 bg-gradient-to-tr from-[#FFD700] to-[#FFED4A] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FFD700]/30 transform -rotate-3">
-            <div className="absolute inset-0 bg-white/20 rounded-2xl transform rotate-6 border border-white/40"></div>
-            <Car className="w-7 h-7 text-slate-900 relative z-10 transform rotate-3" strokeWidth={2.5} />
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-slate-900 rounded-full flex items-center justify-center border-2 border-white">
-               <div className="w-1.5 h-1.5 bg-[#FFD700] rounded-full"></div>
-            </div>
+          <div className="relative w-14 h-14 bg-[#FFD700] rounded-2xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,215,0,0.3)]">
+            <CarFront className="w-8 h-8 text-slate-900" strokeWidth={2.5} />
           </div>
           <span className="text-4xl font-extrabold tracking-tight text-white">GTaxi</span>
         </div>
@@ -185,9 +181,8 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="flex items-center gap-2">
-                <div className="relative w-8 h-8 bg-gradient-to-tr from-[#FFD700] to-[#FFED4A] rounded-lg flex items-center justify-center shadow-sm transform -rotate-3">
-                  <div className="absolute inset-0 bg-white/20 rounded-lg transform rotate-6 border border-white/40"></div>
-                  <Car className="w-4 h-4 text-slate-900 relative z-10 transform rotate-3" strokeWidth={2.5} />
+                <div className="relative w-8 h-8 bg-[#FFD700] rounded-lg flex items-center justify-center shadow-sm">
+                  <CarFront className="w-5 h-5 text-slate-900" strokeWidth={2.5} />
                 </div>
                 <span className="font-bold text-slate-900 tracking-tight text-lg">GTaxi</span>
               </div>
@@ -219,12 +214,8 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                 <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
                   
                   {/* Mobile Logo */}
-                  <div className="md:hidden relative w-24 h-24 bg-gradient-to-tr from-[#FFD700] to-[#FFED4A] rounded-3xl flex items-center justify-center shadow-[0_0_40px_rgba(255,215,0,0.3)] mb-10 transform -rotate-3">
-                    <div className="absolute inset-0 bg-white/20 rounded-3xl transform rotate-6 border border-white/40"></div>
-                    <Car className="w-12 h-12 text-slate-900 relative z-10 transform rotate-3" strokeWidth={2.5} />
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center border-[3px] border-white">
-                       <div className="w-2.5 h-2.5 bg-[#FFD700] rounded-full"></div>
-                    </div>
+                  <div className="md:hidden relative w-24 h-24 bg-[#FFD700] rounded-[2rem] flex items-center justify-center shadow-[0_12px_32px_rgba(255,215,0,0.3)] mb-10">
+                    <CarFront className="w-12 h-12 text-slate-900" strokeWidth={2.5} />
                   </div>
                   
                   <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white md:text-slate-900 mb-6 tracking-tight leading-tight">
