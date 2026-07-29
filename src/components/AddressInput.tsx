@@ -1,5 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, Search, Loader2, LocateFixed } from 'lucide-react';
+import { MapPin, Search, LocateFixed } from 'lucide-react';
+
+const CITIES = [
+  "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza", 
+  "Málaga", "Murcia", "Palma de Mallorca", "Las Palmas de Gran Canaria",
+  "Bilbao", "Alicante", "Córdoba", "Valladolid", "Vigo", "Gijón",
+  "L'Hospitalet de Llobregat", "Vitoria-Gasteiz", "A Coruña", "Granada",
+  "Elche", "Oviedo", "Badalona", "Terrassa", "Cartagena", "Jerez de la Frontera",
+  "Sabadell", "Móstoles", "Santa Cruz de Tenerife", "Alcalá de Henares",
+  "Pamplona", "Almería", "Fuenlabrada", "Leganés", "Donostia-San Sebastián",
+  "Getafe", "Burgos", "Santander", "Albacete", "Castellón de la Plana",
+  "Alcorcón", "San Cristóbal de La Laguna", "Logroño", "Badajoz", "Huelva",
+  "Salamanca", "Marbella", "Lleida", "Tarragona", "León", "Cádiz",
+  "Ibiza", "Toledo", "Segovia", "Ávila", "Cuenca",
+  "Aeropuerto de Madrid-Barajas (MAD)",
+  "Aeropuerto de Barcelona-El Prat (BCN)",
+  "Aeropuerto de Palma de Mallorca (PMI)",
+  "Aeropuerto de Málaga-Costa del Sol (AGP)",
+  "Aeropuerto de Alicante-Elche (ALC)",
+  "Aeropuerto de Valencia (VLC)",
+  "Aeropuerto de Tenerife Sur (TFS)",
+  "Aeropuerto de Ibiza (IBZ)",
+  "Aeropuerto de Sevilla (SVQ)",
+  "Estación de Madrid Atocha",
+  "Estación de Madrid Chamartín",
+  "Estación de Barcelona Sants",
+  "Estación de Sevilla Santa Justa",
+  "Estación de Valencia Joaquín Sorolla"
+];
 
 interface AddressInputProps {
   label: string;
@@ -10,17 +38,10 @@ interface AddressInputProps {
   allowCurrentLocation?: boolean;
 }
 
-interface Suggestion {
-  place_id: number;
-  display_name: string;
-}
-
 export default function AddressInput({ label, placeholder, value, onChange, dotColorClass, allowCurrentLocation = false }: AddressInputProps) {
   const [query, setQuery] = useState(value);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLocating, setIsLocating] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,42 +62,26 @@ export default function AddressInput({ label, placeholder, value, onChange, dotC
   }, [value]);
 
   useEffect(() => {
-    if (!query || query.length < 3) {
+    if (!query) {
       setSuggestions([]);
       return;
     }
-
+    
     if (query === value) {
       return;
     }
 
-    const timer = setTimeout(async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`, {
-          headers: {
-            'Accept-Language': 'es' // Prefer spanish results
-          }
-        });
-        const data = await response.json();
-        setSuggestions(data);
-        setIsOpen(true);
-      } catch (error) {
-        console.error('Error fetching addresses:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
+    const filtered = CITIES.filter(city => 
+      city.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 6);
+    
+    setSuggestions(filtered);
+    setIsOpen(true);
   }, [query, value]);
 
-  const handleSelect = (suggestion: Suggestion) => {
-    const parts = suggestion.display_name.split(', ');
-    const formattedName = parts.length > 3 ? `${parts[0]}, ${parts[1]}, ${parts[parts.length - 1]}` : suggestion.display_name;
-    
-    onChange(formattedName);
-    setQuery(formattedName);
+  const handleSelect = (suggestion: string) => {
+    onChange(suggestion);
+    setQuery(suggestion);
     setIsOpen(false);
   };
 
@@ -91,42 +96,16 @@ export default function AddressInput({ label, placeholder, value, onChange, dotC
       return;
     }
     
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`, {
-            headers: {
-              'Accept-Language': 'es'
-            }
-          });
-          const data = await response.json();
-          
-          if (data && data.display_name) {
-            const parts = data.display_name.split(', ');
-            const formattedName = parts.length > 3 ? `${parts[0]}, ${parts[1]}, ${parts[parts.length - 1]}` : data.display_name;
-            
-            onChange(formattedName);
-            setQuery(formattedName);
-            setIsOpen(false);
-          }
-        } catch (error) {
-          console.error('Error fetching location:', error);
-          alert('No se pudo obtener la dirección de tu ubicación.');
-        } finally {
-          setIsLocating(false);
-        }
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        setIsLocating(false);
-        alert('No se pudo acceder a tu ubicación. Por favor, revisa los permisos.');
-      }
-    );
+    // Simulate finding nearest city from the list
+    setTimeout(() => {
+      const defaultCity = "Madrid";
+      onChange(defaultCity);
+      setQuery(defaultCity);
+      setIsOpen(false);
+    }, 600);
   };
 
-  const showCurrentLocationOption = allowCurrentLocation && (!query || query.length < 3);
+  const showCurrentLocationOption = allowCurrentLocation && (!query || query.length === 0);
   const hasDropdownContent = showCurrentLocationOption || suggestions.length > 0;
 
   return (
@@ -139,11 +118,20 @@ export default function AddressInput({ label, placeholder, value, onChange, dotC
           placeholder={placeholder}
           value={query}
           onChange={handleChange}
-          onFocus={() => setIsOpen(true)}
+          onFocus={() => {
+            if (query) {
+              const filtered = CITIES.filter(city => city.toLowerCase().includes(query.toLowerCase())).slice(0, 6);
+              setSuggestions(filtered);
+            } else {
+               // Show default popular cities when empty
+               setSuggestions(CITIES.slice(0, 5));
+            }
+            setIsOpen(true);
+          }}
           className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl py-3.5 md:py-5 pl-10 md:pl-12 pr-10 md:pr-12 text-slate-900 text-base md:text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm"
         />
         <div className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-          {isLoading ? <Loader2 className="w-5 h-5 animate-spin text-[#FFD700]" /> : <Search className="w-5 h-5" />}
+          <Search className="w-5 h-5" />
         </div>
       </div>
       
@@ -154,19 +142,19 @@ export default function AddressInput({ label, placeholder, value, onChange, dotC
               onClick={(e) => { e.preventDefault(); handleCurrentLocation(); }}
               className="w-full text-left px-5 py-4 hover:bg-slate-50 border-b border-slate-100 transition-colors flex items-center gap-3 text-blue-600"
             >
-              {isLocating ? <Loader2 className="w-5 h-5 animate-spin" /> : <LocateFixed className="w-5 h-5" />}
+              <LocateFixed className="w-5 h-5" />
               <span className="text-sm font-semibold">Usar mi ubicación actual</span>
             </button>
           )}
           
-          {suggestions.map((suggestion) => (
+          {suggestions.map((suggestion, idx) => (
             <button
-              key={suggestion.place_id}
+              key={idx}
               onClick={() => handleSelect(suggestion)}
               className="w-full text-left px-5 py-4 hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors flex items-start gap-3"
             >
               <MapPin className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
-              <span className="text-sm text-slate-700 leading-snug">{suggestion.display_name}</span>
+              <span className="text-sm text-slate-700 leading-snug">{suggestion}</span>
             </button>
           ))}
         </div>

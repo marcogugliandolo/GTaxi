@@ -6,7 +6,9 @@ import {
   ArrowLeft,
   CheckCircle2,
   Send,
-  CarFront
+  CarFront,
+  Calendar,
+  Clock
 } from 'lucide-react';
 import { BookingData } from '../types';
 import AddressInput from './AddressInput';
@@ -299,21 +301,27 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                     <div className="space-y-2 md:space-y-3">
                       <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Fecha</label>
-                      <input
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) => updateForm({ date: e.target.value })}
-                        className="w-full px-4 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
-                      />
+                      <div className="relative">
+                        <Calendar className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10 pointer-events-none" />
+                        <input
+                          type="date"
+                          value={formData.date}
+                          onChange={(e) => updateForm({ date: e.target.value })}
+                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2 md:space-y-3">
                       <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Hora</label>
-                      <input
-                        type="time"
-                        value={formData.time}
-                        onChange={(e) => updateForm({ time: e.target.value })}
-                        className="w-full px-4 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
-                      />
+                      <div className="relative">
+                        <Clock className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10 pointer-events-none" />
+                        <input
+                          type="time"
+                          value={formData.time}
+                          onChange={(e) => updateForm({ time: e.target.value })}
+                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
+                        />
+                      </div>
                     </div>
                   </div>
 
