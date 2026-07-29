@@ -22,7 +22,8 @@ import {
 import { BookingData, LocationData } from '../types';
 import { getSettings, saveBooking, saveSettings } from '../api';
 import AddressInput from './AddressInput';
-import AdminPanel from './AdminPanel';
+
+const AdminPanel = React.lazy(() => import('./AdminPanel'));
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -386,7 +387,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 
                 <div className="flex-1 flex flex-col gap-5 md:gap-6 relative">
                   
-                  <div className="relative z-10 bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100">
+                  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 relative z-20">
                     <AddressInput
                       label="Punto de recogida"
                       placeholder="Ej. Calle Gran Vía, Madrid"
@@ -398,7 +399,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     />
                   </div>
                   
-                  <div className="relative z-10 bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100">
+                  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 relative z-10">
                     <AddressInput
                       label="Destino"
                       placeholder="Ej. Aeropuerto Adolfo Suárez"
@@ -734,11 +735,14 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
       </div>
 
       {showAdmin && (
-        <AdminPanel
-          onClose={() => setShowAdmin(false)}
-          onUpdateSettings={handleUpdateSettings}
-          currentWhatsapp={whatsappNumber}          currentTelegram={telegramUsername}
-        />
+        <React.Suspense fallback={<div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div></div>}>
+          <AdminPanel
+            onClose={() => setShowAdmin(false)}
+            onUpdateSettings={handleUpdateSettings}
+            currentWhatsapp={whatsappNumber}
+            currentTelegram={telegramUsername}
+          />
+        </React.Suspense>
       )}
     </div>
   );
