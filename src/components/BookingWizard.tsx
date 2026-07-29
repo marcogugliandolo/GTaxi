@@ -30,14 +30,27 @@ export default function BookingWizard() {
   const [isSending, setIsSending] = useState<boolean>(false);
   
   const [showAdmin, setShowAdmin] = useState(false);
-  const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('gtaxi_wa') || "34600000000");
-  const [telegramUsername, setTelegramUsername] = useState(localStorage.getItem('gtaxi_tg') || "tu_usuario_taxi");
+  const [whatsappNumber, setWhatsappNumber] = useState("34600000000");
+  const [telegramUsername, setTelegramUsername] = useState("tu_usuario_taxi");
 
-  const handleUpdateSettings = (wa: string, tg: string) => {
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.gtaxi_wa) setWhatsappNumber(data.gtaxi_wa);
+        if (data.gtaxi_tg) setTelegramUsername(data.gtaxi_tg);
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+  const handleUpdateSettings = async (wa: string, tg: string) => {
     setWhatsappNumber(wa);
     setTelegramUsername(tg);
-    localStorage.setItem('gtaxi_wa', wa);
-    localStorage.setItem('gtaxi_tg', tg);
+    await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ whatsapp: wa, telegram: tg })
+    });
   };
 
   const updateForm = (fields: Partial<BookingData>) => {
@@ -70,25 +83,29 @@ export default function BookingWizard() {
 Por favor, confirmar disponibilidad. ¡Gracias!`;
   };
 
-  const saveReservation = () => {
-    const reservations: BookingData[] = JSON.parse(localStorage.getItem('gtaxi_reservations') || '[]');
+  const saveReservation = async () => {
     const newReservation: BookingData = {
       ...formData,
       id: Math.random().toString(36).substr(2, 9),
       status: 'pending',
       createdAt: Date.now()
     };
-    reservations.unshift(newReservation);
-    localStorage.setItem('gtaxi_reservations', JSON.stringify(reservations));
+    try {
+      await fetch('/api/reservations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newReservation)
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const submitReservation = () => {
+  const submitReservation = async () => {
     setIsSending(true);
-    setTimeout(() => {
-      saveReservation();
-      setIsSending(false);
-      setStep(5);
-    }, 400);
+    await saveReservation();
+    setIsSending(false);
+    setStep(5);
   };
 
   const slideVariants = {
@@ -297,22 +314,22 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                 
                 <div className="space-y-6 md:space-y-8 flex-1">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                    <div className="space-y-2 md:space-y-3">
+                    <div className="space-y-2 md:space-y-3 w-full">
                       <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Fecha</label>
                       <input
                         type="date"
                         value={formData.date}
                         onChange={(e) => updateForm({ date: e.target.value })}
-                        className="w-full px-4 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
+                        className="w-full px-3 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-sm md:text-lg transition-all shadow-sm min-w-0"
                       />
                     </div>
-                    <div className="space-y-2 md:space-y-3">
+                    <div className="space-y-2 md:space-y-3 w-full">
                       <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Hora</label>
                       <input
                         type="time"
                         value={formData.time}
                         onChange={(e) => updateForm({ time: e.target.value })}
-                        className="w-full px-4 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
+                        className="w-full px-3 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-sm md:text-lg transition-all shadow-sm min-w-0"
                       />
                     </div>
                   </div>

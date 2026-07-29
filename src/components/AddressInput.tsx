@@ -40,6 +40,17 @@ export default function AddressInput({ label, placeholder, value, onChange, dotC
     }
   }, [value]);
 
+  const [userLoc, setUserLoc] = useState<{lat: number, lon: number} | null>(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLoc({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => {} // ignore errors
+      );
+    }
+  }, []);
+
   useEffect(() => {
     if (!query || query.length < 3) {
       setSuggestions([]);
@@ -53,7 +64,12 @@ export default function AddressInput({ label, placeholder, value, onChange, dotC
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`, {
+        let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
+        if (userLoc) {
+          url += `&lat=${userLoc.lat}&lon=${userLoc.lon}`;
+        }
+        
+        const response = await fetch(url, {
           headers: {
             'Accept-Language': 'es' // Prefer spanish results
           }
