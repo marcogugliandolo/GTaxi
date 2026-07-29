@@ -1,7 +1,15 @@
+export interface LocationData {
+  address: string;
+  lat?: number;
+  lon?: number;
+}
+
 export interface BookingData {
   id?: string;
   pickup: string;
+  pickupLoc?: LocationData | null;
   dropoff: string;
+  dropoffLoc?: LocationData | null;
   date: string;
   time: string;
   passengers: number;
@@ -10,4 +18,6 @@ export interface BookingData {
   notes: string;
   status?: 'pending' | 'approved' | 'cancelled';
   createdAt?: number;
+  price?: number;
+  paymentMethod?: string | null;
 }
