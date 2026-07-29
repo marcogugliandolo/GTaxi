@@ -88,23 +88,23 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
       saveReservation();
       setIsSending(false);
       setStep(5);
-    }, 1500);
+    }, 400);
   };
 
   const slideVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? '20%' : '-20%',
+      x: direction > 0 ? '10%' : '-10%',
       opacity: 0,
     }),
     center: {
       x: 0,
       opacity: 1,
-      transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] },
+      transition: { duration: 0.25, ease: 'easeOut' },
     },
     exit: (direction: number) => ({
-      x: direction < 0 ? '20%' : '-20%',
+      x: direction < 0 ? '10%' : '-10%',
       opacity: 0,
-      transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] },
+      transition: { duration: 0.2, ease: 'easeIn' },
     }),
   };
 

@@ -66,7 +66,7 @@ export default function AddressInput({ label, placeholder, value, onChange, dotC
       } finally {
         setIsLoading(false);
       }
-    }, 600);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [query, value]);
