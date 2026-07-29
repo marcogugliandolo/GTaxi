@@ -191,7 +191,7 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
           </div>
         )}
 
-        <div className="flex-1 w-full flex flex-col relative overflow-hidden">
+        <div className="flex-1 w-full relative">
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
             
             {/* STEP 0: INTRO */}
@@ -203,7 +203,7 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 h-[100dvh] md:h-full w-full"
+                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 min-h-[100dvh] md:min-h-full w-full"
               >
                 {/* Mobile Background Elements */}
                 <div className="absolute inset-0 overflow-hidden md:hidden pointer-events-none">
@@ -236,19 +236,20 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
 
             {/* STEP 1: ROUTE */}
             {step === 1 && (
-              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col h-[100dvh] md:h-full w-full max-w-2xl mx-auto p-6 md:p-12 lg:p-16">
-                <div className="pt-4 md:pt-0 pb-8 md:pb-12">
-                   <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">¿De dónde a dónde?</h2>
-                   <p className="text-slate-500 mt-2 font-medium">Indícanos tu punto de partida y destino.</p>
+              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
+                <div className="pt-4 md:pt-0 pb-6 md:pb-12">
+                   <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">¿De dónde a dónde?</h2>
+                   <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-base font-medium">Indícanos tu punto de partida y destino.</p>
                 </div>
                 
-                <div className="space-y-8 flex-1">
+                <div className="space-y-6 md:space-y-8 flex-1">
                   <AddressInput
                     label="Punto de Partida"
                     placeholder="Ej: Aeropuerto Internacional"
                     value={formData.pickup}
                     onChange={(val) => updateForm({ pickup: val })}
                     dotColorClass="bg-green-500 ring-4 ring-green-100"
+                    allowCurrentLocation={true}
                   />
 
                   <AddressInput
@@ -277,50 +278,50 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
 
             {/* STEP 2: DATE & TIME */}
             {step === 2 && (
-              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col h-[100dvh] md:h-full w-full max-w-2xl mx-auto p-6 md:p-12 lg:p-16">
-                <div className="pt-4 md:pt-0 pb-8 md:pb-12">
-                   <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">¿Cuándo viajamos?</h2>
-                   <p className="text-slate-500 mt-2 font-medium">Programa tu viaje para cuando lo necesites.</p>
+              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
+                <div className="pt-4 md:pt-0 pb-6 md:pb-12">
+                   <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">¿Cuándo viajamos?</h2>
+                   <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-base font-medium">Programa tu viaje para cuando lo necesites.</p>
                 </div>
                 
-                <div className="space-y-8 flex-1">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Fecha</label>
+                <div className="space-y-6 md:space-y-8 flex-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    <div className="space-y-2 md:space-y-3">
+                      <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Fecha</label>
                       <input
                         type="date"
                         value={formData.date}
                         onChange={(e) => updateForm({ date: e.target.value })}
-                        className="w-full px-6 py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-2xl outline-none text-slate-900 text-lg transition-all shadow-sm"
+                        className="w-full px-4 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
                       />
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Hora</label>
+                    <div className="space-y-2 md:space-y-3">
+                      <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Hora</label>
                       <input
                         type="time"
                         value={formData.time}
                         onChange={(e) => updateForm({ time: e.target.value })}
-                        className="w-full px-6 py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-2xl outline-none text-slate-900 text-lg transition-all shadow-sm"
+                        className="w-full px-4 md:px-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Pasajeros</label>
-                    <div className="flex items-center justify-between bg-white border-2 border-slate-100 rounded-2xl p-3 shadow-sm">
+                  <div className="space-y-2 md:space-y-3">
+                    <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Pasajeros</label>
+                    <div className="flex items-center justify-between bg-white border-2 border-slate-100 rounded-xl md:rounded-2xl p-2 md:p-3 shadow-sm">
                       <button
                         onClick={() => updateForm({ passengers: Math.max(1, formData.passengers - 1) })}
-                        className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center text-2xl font-bold text-slate-700 hover:bg-slate-100 transition-colors border border-slate-200"
+                        className="w-12 h-12 md:w-14 md:h-14 bg-slate-50 rounded-lg md:rounded-xl flex items-center justify-center text-xl md:text-2xl font-bold text-slate-700 hover:bg-slate-100 transition-colors border border-slate-200"
                       >
                         -
                       </button>
-                      <div className="flex items-center gap-3">
-                        <Users className="w-6 h-6 text-slate-400" />
-                        <span className="text-3xl font-black text-slate-900">{formData.passengers}</span>
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <Users className="w-5 h-5 md:w-6 md:h-6 text-slate-400" />
+                        <span className="text-2xl md:text-3xl font-black text-slate-900">{formData.passengers}</span>
                       </div>
                       <button
                         onClick={() => updateForm({ passengers: Math.min(8, formData.passengers + 1) })}
-                        className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center text-2xl font-bold text-slate-700 hover:bg-slate-100 transition-colors border border-slate-200"
+                        className="w-12 h-12 md:w-14 md:h-14 bg-slate-50 rounded-lg md:rounded-xl flex items-center justify-center text-xl md:text-2xl font-bold text-slate-700 hover:bg-slate-100 transition-colors border border-slate-200"
                       >
                         +
                       </button>
@@ -345,43 +346,43 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
 
             {/* STEP 3: CONTACT DETAILS */}
             {step === 3 && (
-              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col h-[100dvh] md:h-full w-full max-w-2xl mx-auto p-6 md:p-12 lg:p-16">
-                <div className="pt-4 md:pt-0 pb-8 md:pb-12">
-                   <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Tus datos</h2>
-                   <p className="text-slate-500 mt-2 font-medium">¿Cómo nos pondremos en contacto contigo?</p>
+              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
+                <div className="pt-4 md:pt-0 pb-6 md:pb-12">
+                   <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Tus datos</h2>
+                   <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-base font-medium">¿Cómo nos pondremos en contacto contigo?</p>
                 </div>
                 
-                <div className="space-y-6 flex-1">
-                  <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Nombre y apellidos</label>
+                <div className="space-y-4 md:space-y-6 flex-1">
+                  <div className="space-y-2 md:space-y-3">
+                    <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Nombre y apellidos</label>
                     <input
                       type="text"
                       placeholder="Ej. Juan Pérez"
                       value={formData.name}
                       onChange={(e) => updateForm({ name: e.target.value })}
-                      className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-2xl py-5 px-6 text-slate-900 text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm"
+                      className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl py-3.5 md:py-5 px-4 md:px-6 text-slate-900 text-base md:text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm"
                     />
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Teléfono</label>
+                  <div className="space-y-2 md:space-y-3">
+                    <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Teléfono</label>
                     <input
                       type="tel"
                       placeholder="Ej. 600 000 000"
                       value={formData.phone}
                       onChange={(e) => updateForm({ phone: e.target.value })}
-                      className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-2xl py-5 px-6 text-slate-900 text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm"
+                      className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl py-3.5 md:py-5 px-4 md:px-6 text-slate-900 text-base md:text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm"
                     />
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Notas especiales (Opcional)</label>
+                  <div className="space-y-2 md:space-y-3">
+                    <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Notas especiales (Opcional)</label>
                     <textarea
                       placeholder="¿Equipaje extra? ¿Mascotas?..."
                       value={formData.notes}
                       onChange={(e) => updateForm({ notes: e.target.value })}
                       rows={3}
-                      className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-2xl py-5 px-6 text-slate-900 text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm resize-none"
+                      className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl py-3.5 md:py-5 px-4 md:px-6 text-slate-900 text-base md:text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm resize-none"
                     />
                   </div>
                 </div>
@@ -403,50 +404,50 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
 
             {/* STEP 4: SUMMARY */}
             {step === 4 && (
-              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col h-[100dvh] md:h-full w-full max-w-2xl mx-auto p-6 md:p-12 lg:p-16">
+              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
                 
-                <div className="text-center mb-8 pt-4 md:pt-0">
-                  <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-100">
-                    <CheckCircle2 className="w-10 h-10" />
+                <div className="text-center mb-6 md:mb-8 pt-4 md:pt-0">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 border-4 border-green-100">
+                    <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10" />
                   </div>
-                  <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Resumen de Viaje</h1>
-                  <p className="text-slate-500 mt-2 text-lg font-medium">Confirma tus datos antes de enviar la solicitud</p>
+                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Resumen de Viaje</h1>
+                  <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-lg font-medium">Confirma tus datos antes de enviar la solicitud</p>
                 </div>
                 
-                <div className="bg-white rounded-3xl p-6 md:p-8 space-y-6 flex-shrink-0 mb-8 border border-slate-200 shadow-lg shadow-slate-200/40">
-                  <div className="flex flex-col gap-3">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ruta</span>
-                    <div className="flex items-start gap-4">
-                       <div className="mt-1.5 w-3 h-3 rounded-full bg-green-500 ring-4 ring-green-100 flex-shrink-0"></div>
-                       <p className="text-slate-900 font-semibold text-lg leading-tight">{formData.pickup}</p>
+                <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 space-y-5 md:space-y-6 flex-shrink-0 mb-6 md:mb-8 border border-slate-200 shadow-lg shadow-slate-200/40">
+                  <div className="flex flex-col gap-2 md:gap-3">
+                    <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">Ruta</span>
+                    <div className="flex items-start gap-3 md:gap-4">
+                       <div className="mt-1.5 w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500 ring-4 ring-green-100 flex-shrink-0"></div>
+                       <p className="text-slate-900 font-semibold text-base md:text-lg leading-tight">{formData.pickup}</p>
                     </div>
-                    <div className="w-0.5 h-6 bg-slate-200 ml-1.5 rounded-full"></div>
-                    <div className="flex items-start gap-4">
-                       <div className="mt-1.5 w-3 h-3 rounded-full bg-red-500 ring-4 ring-red-100 flex-shrink-0"></div>
-                       <p className="text-slate-900 font-semibold text-lg leading-tight">{formData.dropoff}</p>
+                    <div className="w-0.5 h-4 md:h-6 bg-slate-200 ml-1 md:ml-1.5 rounded-full"></div>
+                    <div className="flex items-start gap-3 md:gap-4">
+                       <div className="mt-1.5 w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500 ring-4 ring-red-100 flex-shrink-0"></div>
+                       <p className="text-slate-900 font-semibold text-base md:text-lg leading-tight">{formData.dropoff}</p>
                     </div>
                   </div>
                   
                   <div className="h-px bg-slate-100 w-full" />
                   
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Horario y Pasajeros</span>
-                    <div className="flex items-center gap-4 mt-1">
-                      <p className="text-slate-900 font-bold text-xl">{formData.date} <span className="text-slate-400 font-medium px-2">•</span> {formData.time}</p>
+                  <div className="flex flex-col gap-1 md:gap-2">
+                    <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">Horario y Pasajeros</span>
+                    <div className="flex items-center gap-2 md:gap-4 mt-1">
+                      <p className="text-slate-900 font-bold text-lg md:text-xl">{formData.date} <span className="text-slate-400 font-medium px-2">•</span> {formData.time}</p>
                     </div>
-                    <p className="text-slate-600 flex items-center gap-2 mt-1">
+                    <p className="text-slate-600 flex items-center gap-2 mt-1 text-sm md:text-base">
                        <Users className="w-4 h-4"/> {formData.passengers} Pasajero{formData.passengers > 1 ? 's' : ''}
                     </p>
                   </div>
                   
                   <div className="h-px bg-slate-100 w-full" />
                   
-                  <div className="flex flex-col gap-2">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Contacto</span>
-                    <p className="text-slate-900 font-bold text-lg mt-1">{formData.name}</p>
-                    <p className="text-slate-600">{formData.phone}</p>
+                  <div className="flex flex-col gap-1 md:gap-2">
+                    <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">Contacto</span>
+                    <p className="text-slate-900 font-bold text-base md:text-lg mt-1">{formData.name}</p>
+                    <p className="text-slate-600 text-sm md:text-base">{formData.phone}</p>
                     {formData.notes && (
-                      <div className="mt-3 p-4 bg-yellow-50 text-slate-700 rounded-xl text-sm italic border border-yellow-100">
+                      <div className="mt-2 md:mt-3 p-3 md:p-4 bg-yellow-50 text-slate-700 rounded-lg md:rounded-xl text-xs md:text-sm italic border border-yellow-100">
                         "{formData.notes}"
                       </div>
                     )}
@@ -454,7 +455,7 @@ Por favor, confirmar disponibilidad. ¡Gracias!`;
                 </div>
 
                 <div className="mt-auto pb-6">
-                  <div className="bg-[#0F172A] rounded-3xl p-6 md:p-8 flex flex-col items-center justify-between gap-6 relative overflow-hidden">
+                  <div className="bg-[#0F172A] rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col items-center justify-between gap-5 md:gap-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
                     
                     <div className="text-center w-full z-10">
