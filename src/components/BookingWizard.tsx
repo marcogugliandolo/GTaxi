@@ -78,6 +78,7 @@ export default function BookingWizard() {
   
   // Payment states
   const [paymentMethod, setPaymentMethod] = useState<'tarjeta' | 'bizum' | 'efectivo' | null>(null);
+  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -91,6 +92,31 @@ export default function BookingWizard() {
     };
     loadConfig();
   }, []);
+
+  useEffect(() => {
+    const fetchRoutePrice = async () => {
+      if (formData.pickupLoc?.lat && formData.pickupLoc?.lon && formData.dropoffLoc?.lat && formData.dropoffLoc?.lon) {
+        try {
+          const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${formData.pickupLoc.lon},${formData.pickupLoc.lat};${formData.dropoffLoc.lon},${formData.dropoffLoc.lat}?overview=false`);
+          const data = await res.json();
+          if (data.routes && data.routes.length > 0) {
+            const distanceKm = data.routes[0].distance / 1000;
+            const base = 15;
+            // Assuming 1.5 euros per km
+            const price = Math.max(base, Math.floor(base + (distanceKm * 1.5)));
+            setEstimatedPrice(price);
+            return;
+          }
+        } catch (e) {
+          console.error('Error calculating route:', e);
+        }
+      }
+      setEstimatedPrice(null);
+    };
+
+    const timer = setTimeout(fetchRoutePrice, 500);
+    return () => clearTimeout(timer);
+  }, [formData.pickupLoc, formData.dropoffLoc]);
 
   const handleUpdateSettings = async (whatsapp: string, telegram: string) => {
     try {
@@ -146,6 +172,8 @@ export default function BookingWizard() {
   }
 
   const calculatePrice = () => {
+    if (estimatedPrice !== null) return estimatedPrice;
+    
     const base = 15; // Base minimum price
     
     // If we have actual coordinates, use them for real distance
@@ -157,8 +185,8 @@ export default function BookingWizard() {
         formData.dropoffLoc.lon
       );
       
-      // Example pricing: 15 base + 1.2 per km
-      const price = base + (distanceKm * 1.2);
+      // Fallback pricing: 15 base + 1.5 per km (multiplied by 1.4 to simulate routing detour)
+      const price = base + (distanceKm * 1.4 * 1.5);
       return Math.max(base, Math.floor(price)); // Minimum price is base
     }
 

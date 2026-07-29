@@ -49,7 +49,7 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1&countrycodes=es`, {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`, {
           headers: {
             'Accept-Language': 'es'
           }
@@ -143,7 +143,7 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
   const hasDropdownContent = showCurrentLocationOption || suggestions.length > 0;
 
   return (
-    <div className="relative w-full" ref={wrapperRef}>
+    <div className={`relative w-full ${isOpen ? 'z-50' : 'z-10'}`} ref={wrapperRef}>
       <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide flex items-center gap-2 mb-2 md:mb-3 ml-1">
         <div className={`w-2 h-2 rounded-full ${dotColorClass}`}></div>
         {label}
@@ -172,7 +172,8 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
         <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 overflow-hidden max-h-60 overflow-y-auto">
           {showCurrentLocationOption && (
             <button
-              onClick={(e) => { e.preventDefault(); handleCurrentLocation(); }}
+              onMouseDown={(e) => { e.preventDefault(); handleCurrentLocation(); }}
+              onTouchStart={(e) => { e.preventDefault(); handleCurrentLocation(); }}
               className="w-full text-left px-5 py-4 hover:bg-slate-50 border-b border-slate-100 transition-colors flex items-center gap-3 text-blue-600"
             >
               {isLocating ? <Loader2 className="w-5 h-5 animate-spin" /> : <LocateFixed className="w-5 h-5" />}
@@ -183,7 +184,8 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
           {suggestions.map((suggestion, idx) => (
             <button
               key={idx}
-              onClick={() => handleSelect(suggestion)}
+              onMouseDown={(e) => { e.preventDefault(); handleSelect(suggestion); }}
+              onTouchStart={(e) => { e.preventDefault(); handleSelect(suggestion); }}
               className="w-full text-left px-5 py-4 hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors flex items-start gap-3"
             >
               <MapPin className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
