@@ -20,6 +20,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { BookingData, LocationData } from '../types';
+import { getSettings, saveBooking, saveSettings } from '../api';
 import AddressInput from './AddressInput';
 import AdminPanel from './AdminPanel';
 
@@ -79,15 +80,26 @@ export default function BookingWizard() {
   const [paymentMethod, setPaymentMethod] = useState<'tarjeta' | 'bizum' | 'efectivo' | null>(null);
 
   useEffect(() => {
-    const savedWhatsapp = localStorage.getItem('gtaxi_whatsapp');
-    const savedTelegram = localStorage.getItem('gtaxi_telegram');
-    if (savedWhatsapp) setWhatsappNumber(savedWhatsapp);
-    if (savedTelegram) setTelegramUsername(savedTelegram);
+    const loadConfig = async () => {
+      try {
+        const config = await getSettings();
+        if (config.whatsapp) setWhatsappNumber(config.whatsapp);
+        if (config.telegram) setTelegramUsername(config.telegram);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadConfig();
   }, []);
 
-  const handleUpdateSettings = (whatsapp: string, telegram: string) => {
-    setWhatsappNumber(whatsapp);
-    setTelegramUsername(telegram);
+  const handleUpdateSettings = async (whatsapp: string, telegram: string) => {
+    try {
+      await saveSettings({ whatsapp, telegram });
+      setWhatsappNumber(whatsapp);
+      setTelegramUsername(telegram);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const updateForm = (data: Partial<typeof formData>) => {
@@ -160,8 +172,15 @@ export default function BookingWizard() {
     setIsSending(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const price = calculatePrice();
+      const newBooking = {
+        ...formData,
+        status: 'pending' as const,
+        price,
+        paymentMethod
+      };
+      
+      await saveBooking(newBooking);
       
       const text = `🚕 *NUEVA RESERVA GTAXI* 🚕
       
@@ -170,7 +189,7 @@ export default function BookingWizard() {
 📅 *Fecha:* ${formData.date}
 ⏰ *Hora:* ${formData.time}
 👥 *Pasajeros:* ${formData.passengers}
-💰 *Pago:* ${paymentMethod?.toUpperCase()} (${calculatePrice()}€)
+💰 *Pago:* ${paymentMethod?.toUpperCase()} (${price}€)
 
 👤 *Cliente:* ${formData.name}
 📱 *Teléfono:* ${formData.phone}
@@ -179,18 +198,6 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 *Por favor, confirma esta solicitud en tu panel de administración.*`;
 
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
-      
-      const newBooking = {
-        ...formData,
-        id: Math.random().toString(36).substr(2, 9),
-        status: 'pending',
-        createdAt: Date.now(),
-        price: calculatePrice(),
-        paymentMethod
-      };
-      
-      const existingBookings = JSON.parse(localStorage.getItem('gtaxi_bookings') || '[]');
-      localStorage.setItem('gtaxi_bookings', JSON.stringify([newBooking, ...existingBookings]));
       
       window.open(whatsappUrl, '_blank');
       nextStep();

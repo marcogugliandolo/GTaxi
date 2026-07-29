@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Lock, Settings, Save, LogOut, List, Check, Ban } from 'lucide-react';
 import { BookingData } from '../types';
+import { getBookings, updateBookingStatus } from '../api';
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -27,9 +28,13 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
     }
   }, [isAuthenticated]);
 
-  const loadReservations = () => {
-    const data = JSON.parse(localStorage.getItem('gtaxi_reservations') || '[]');
-    setReservations(data);
+  const loadReservations = async () => {
+    try {
+      const data = await getBookings();
+      setReservations(data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -47,31 +52,29 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
     alert('Configuración guardada exitosamente');
   };
 
-  const updateReservationStatus = (id: string, newStatus: 'approved' | 'cancelled') => {
-    const updated = reservations.map(r => r.id === id ? { ...r, status: newStatus } : r);
-    setReservations(updated);
-    localStorage.setItem('gtaxi_reservations', JSON.stringify(updated));
-    return updated.find(r => r.id === id);
-  };
+  const handleAction = async (id: string, action: 'approved' | 'cancelled') => {
+    try {
+      const res = await updateBookingStatus(id, action);
+      if (!res) return;
+      
+      const updated = reservations.map(r => r.id === id ? { ...r, status: action } : r);
+      setReservations(updated);
 
-  const handleAction = (id: string, action: 'approved' | 'cancelled') => {
-    const res = updateReservationStatus(id, action);
-    if (!res) return;
+      let message = '';
+      if (action === 'approved') {
+        message = `✅ *RESERVA CONFIRMADA - GTaxi*\n\nHola ${res.name}, tu reserva ha sido aprobada.\n📍 De: ${res.pickup}\n🏁 A: ${res.dropoff}\n📅 El ${res.date} a las ${res.time}\n\nEl conductor estará allí puntualmente. ¡Gracias por elegir GTaxi!`;
+      } else {
+        message = `❌ *RESERVA CANCELADA - GTaxi*\n\nHola ${res.name}, lamentablemente no podemos confirmar tu reserva para el ${res.date} a las ${res.time}.\n\nPor favor, disculpa las molestias o contáctanos para buscar otra alternativa.`;
+      }
 
-    let message = '';
-    if (action === 'approved') {
-      message = `✅ *RESERVA CONFIRMADA - GTaxi*\n\nHola ${res.name}, tu reserva ha sido aprobada.\n📍 De: ${res.pickup}\n🏁 A: ${res.dropoff}\n📅 El ${res.date} a las ${res.time}\n\nEl conductor estará allí puntualmente. ¡Gracias por elegir GTaxi!`;
-    } else {
-      message = `❌ *RESERVA CANCELADA - GTaxi*\n\nHola ${res.name}, lamentablemente no podemos confirmar tu reserva para el ${res.date} a las ${res.time}.\n\nPor favor, disculpa las molestias o contáctanos para buscar otra alternativa.`;
+      const text = encodeURIComponent(message);
+      
+      const formattedPhone = res.phone.replace(/\D/g, '');
+      window.open(`https://wa.me/${formattedPhone}?text=${text}`, '_blank');
+    } catch (e) {
+      console.error(e);
+      alert('Error al actualizar la reserva');
     }
-
-    const text = encodeURIComponent(message);
-    
-    // As we don't know if the user preferred WA or TG (we could save it when they clicked, but for now we'll offer a choice or just send via WhatsApp if we have their phone)
-    // The user's phone is in res.phone
-    // Let's assume WhatsApp by default for the client communication since we have their phone number
-    const formattedPhone = res.phone.replace(/\D/g, '');
-    window.open(`https://wa.me/${formattedPhone}?text=${text}`, '_blank');
   };
 
   return (
