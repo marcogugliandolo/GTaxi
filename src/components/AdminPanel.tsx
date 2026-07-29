@@ -27,14 +27,9 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
     }
   }, [isAuthenticated]);
 
-  const loadReservations = async () => {
-    try {
-      const res = await fetch('/api/reservations');
-      const data = await res.json();
-      setReservations(data);
-    } catch (e) {
-      console.error(e);
-    }
+  const loadReservations = () => {
+    const data = JSON.parse(localStorage.getItem('gtaxi_reservations') || '[]');
+    setReservations(data);
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -52,24 +47,15 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
     alert('Configuración guardada exitosamente');
   };
 
-  const updateReservationStatus = async (id: string, newStatus: 'approved' | 'cancelled') => {
-    try {
-      await fetch(`/api/reservations/${id}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
-      });
-      const updated = reservations.map(r => r.id === id ? { ...r, status: newStatus } : r);
-      setReservations(updated);
-      return updated.find(r => r.id === id);
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
+  const updateReservationStatus = (id: string, newStatus: 'approved' | 'cancelled') => {
+    const updated = reservations.map(r => r.id === id ? { ...r, status: newStatus } : r);
+    setReservations(updated);
+    localStorage.setItem('gtaxi_reservations', JSON.stringify(updated));
+    return updated.find(r => r.id === id);
   };
 
-  const handleAction = async (id: string, action: 'approved' | 'cancelled') => {
-    const res = await updateReservationStatus(id, action);
+  const handleAction = (id: string, action: 'approved' | 'cancelled') => {
+    const res = updateReservationStatus(id, action);
     if (!res) return;
 
     let message = '';
