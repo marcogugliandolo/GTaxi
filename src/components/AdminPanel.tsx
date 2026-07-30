@@ -12,6 +12,7 @@ interface AdminPanelProps {
 }
 
 export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp, currentTelegram }: AdminPanelProps) {
+  const { t } = useLanguage();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -197,7 +198,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                         <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-1">Precio Total</span>
-                        <p className="text-slate-900 dark:text-white font-bold text-lg">{selectedReservation.price ? `€${selectedReservation.price.toFixed(2)}` : 'Pendiente'}</p>
+                        <p className="text-slate-900 dark:text-white font-bold text-lg">{selectedReservation.price ? `€${Number(selectedReservation.price).toFixed(2)}` : 'Pendiente'}</p>
                       </div>
                       <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                         <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-1">Método de Pago</span>
@@ -234,7 +235,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                   <div className="space-y-3 mb-6 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl text-sm">
                     <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
                       <span className="font-bold text-slate-700 dark:text-slate-200">{t("price")}:</span> 
-                      <span className="font-bold text-slate-900 dark:text-white">{actionConfirm.res.price ? `€${actionConfirm.res.price.toFixed(2)}` : 'Pendiente'}</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{actionConfirm.res.price ? `€${Number(actionConfirm.res.price).toFixed(2)}` : 'Pendiente'}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
                       <span className="font-bold text-slate-700 dark:text-slate-200">{t("payment")}:</span> 
