@@ -74,7 +74,7 @@ export default function BookingWizard() {
   const [formData, setFormData] = useState(INITIAL_DATA);
   const [isSending, setIsSending] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
-  const [whatsappNumber, setWhatsappNumber] = useState('34600000000');
+  const [whatsappNumber, setWhatsappNumber] = useState('34664287876');
   const [telegramUsername, setTelegramUsername] = useState('gtaxi_admin');
   
   // Payment states
@@ -226,9 +226,21 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
 *Por favor, confirma esta solicitud en tu panel de administración.*`;
 
-      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+      let contactUrl = '';
+      if (whatsappNumber) {
+        let cleanNumber = whatsappNumber.replace(/[^0-9]/g, '');
+        if (cleanNumber.length === 9) {
+          cleanNumber = '34' + cleanNumber;
+        }
+        contactUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(text)}`;
+      } else if (telegramUsername) {
+        contactUrl = `https://t.me/${telegramUsername}?text=${encodeURIComponent(text)}`;
+      }
       
-      window.open(whatsappUrl, '_blank');
+      if (contactUrl) {
+        window.location.href = contactUrl;
+      }
+      
       nextStep();
     } catch (error) {
       console.error('Error submitting:', error);

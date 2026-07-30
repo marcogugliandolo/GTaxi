@@ -69,7 +69,11 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
 
       const text = encodeURIComponent(message);
       
-      const formattedPhone = res.phone.replace(/\D/g, '');
+      let formattedPhone = res.phone.replace(/\D/g, '');
+      if (formattedPhone.length === 9) {
+        formattedPhone = '34' + formattedPhone;
+      }
+      
       window.open(`https://wa.me/${formattedPhone}?text=${text}`, '_blank');
     } catch (e) {
       console.error(e);

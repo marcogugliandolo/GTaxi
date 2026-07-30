@@ -43,7 +43,7 @@ async function initDb() {
 
   const settings = await db.get('SELECT data FROM settings WHERE id = 1');
   if (!settings) {
-    await db.run('INSERT INTO settings (id, data) VALUES (1, ?)', JSON.stringify({ whatsapp: '', telegram: '' }));
+    await db.run('INSERT INTO settings (id, data) VALUES (1, ?)', JSON.stringify({ whatsapp: '34664287876', telegram: '' }));
   }
   
   // Try to migrate from JSON if exists (for backwards compatibility if they have existing data in JSON)
