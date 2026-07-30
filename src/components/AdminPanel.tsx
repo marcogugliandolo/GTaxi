@@ -21,6 +21,8 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
   
   const [activeTab, setActiveTab] = useState<'reservations' | 'settings'>('reservations');
   const [reservations, setReservations] = useState<BookingData[]>([]);
+  const [actionConfirm, setActionConfirm] = useState<{ id: string, action: 'approved' | 'cancelled', res: BookingData } | null>(null);
+  const [selectedReservation, setSelectedReservation] = useState<BookingData | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -54,8 +56,11 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
 
   const handleAction = async (id: string, action: 'approved' | 'cancelled') => {
     try {
-      const res = await updateBookingStatus(id, action);
+      const res = reservations.find(r => r.id === id);
       if (!res) return;
+
+      const updatedRes = await updateBookingStatus(id, action);
+      if (!updatedRes) return;
       
       const updated = reservations.map(r => r.id === id ? { ...r, status: action } : r);
       setReservations(updated);
@@ -128,7 +133,121 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
             </form>
           </div>
         ) : (
-          <div className="flex flex-col h-full overflow-hidden">
+          <div className="flex flex-col h-full overflow-hidden relative">
+            {selectedReservation && (
+              <div className="fixed inset-0 z-[110] bg-slate-900/40 flex items-center justify-center p-4 backdrop-blur-sm">
+                <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+                  <h3 className="text-xl font-bold mb-4 text-slate-900 text-center">Detalles de la Reserva</h3>
+                  <div className="space-y-4 text-sm mb-6">
+                    <div>
+                      <span className="font-bold text-slate-700 block text-xs uppercase">Cliente</span>
+                      <p className="text-slate-900">{selectedReservation.name}</p>
+                      <p className="text-slate-600">{selectedReservation.phone}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="font-bold text-slate-700 block text-xs uppercase">Fecha / Hora</span>
+                        <p className="text-slate-900">{selectedReservation.date} {selectedReservation.time}</p>
+                      </div>
+                      <div>
+                        <span className="font-bold text-slate-700 block text-xs uppercase">Pasajeros</span>
+                        <p className="text-slate-900">{selectedReservation.passengers}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-700 block text-xs uppercase">Ruta</span>
+                      <p className="text-slate-900"><strong>De:</strong> {selectedReservation.pickup}</p>
+                      <p className="text-slate-900 mt-1"><strong>A:</strong> {selectedReservation.dropoff}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                      <div>
+                        <span className="font-bold text-slate-700 block text-xs uppercase">Precio</span>
+                        <p className="text-slate-900 font-bold">{selectedReservation.price ? `€${selectedReservation.price.toFixed(2)}` : 'Pendiente'}</p>
+                      </div>
+                      <div>
+                        <span className="font-bold text-slate-700 block text-xs uppercase">Método Pago</span>
+                        <p className="text-slate-900">{selectedReservation.paymentMethod === 'card' ? 'Tarjeta' : selectedReservation.paymentMethod === 'cash' ? 'Efectivo' : 'No especificado'}</p>
+                      </div>
+                    </div>
+                    {selectedReservation.notes && (
+                      <div>
+                        <span className="font-bold text-slate-700 block text-xs uppercase">Notas adicionales</span>
+                        <p className="text-slate-900 bg-slate-100 p-3 rounded-xl">{selectedReservation.notes}</p>
+                      </div>
+                    )}
+                    <div>
+                      <span className="font-bold text-slate-700 block text-xs uppercase mb-1">Estado</span>
+                      <span className={`px-3 py-1 inline-block rounded-full text-xs font-bold uppercase ${
+                        selectedReservation.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                        selectedReservation.status === 'cancelled' ? 'bg-red-100 text-red-700' : 
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {selectedReservation.status === 'approved' ? 'Aprobada' : selectedReservation.status === 'cancelled' ? 'Cancelada' : 'Pendiente'}
+                      </span>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setSelectedReservation(null)}
+                    className="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            )}
+            {actionConfirm && (
+              <div className="fixed inset-0 z-[110] bg-slate-900/40 flex items-center justify-center p-4 backdrop-blur-sm">
+                <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+                  <h3 className="text-xl font-bold mb-4 text-slate-900 text-center">
+                    {actionConfirm.action === 'approved' ? 'Aprobar Reserva' : 'Cancelar Reserva'}
+                  </h3>
+                  
+                  <div className="space-y-3 mb-6 bg-slate-50 p-4 rounded-xl text-sm">
+                    <div className="flex justify-between border-b border-slate-200 pb-2">
+                      <span className="font-bold text-slate-700">Precio:</span> 
+                      <span className="font-bold text-slate-900">{actionConfirm.res.price ? `€${actionConfirm.res.price.toFixed(2)}` : 'Pendiente'}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-2">
+                      <span className="font-bold text-slate-700">Pago:</span> 
+                      <span className="text-slate-900">{actionConfirm.res.paymentMethod === 'card' ? 'Tarjeta' : actionConfirm.res.paymentMethod === 'cash' ? 'Efectivo' : 'No especificado'}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200 pb-2">
+                      <span className="font-bold text-slate-700">Pasajeros:</span> 
+                      <span className="text-slate-900">{actionConfirm.res.passengers}</span>
+                    </div>
+                    <div className="pt-1">
+                      <span className="font-bold text-slate-700 block mb-1">Ruta:</span> 
+                      <span className="text-slate-600 block line-clamp-2">{actionConfirm.res.pickup} &rarr; {actionConfirm.res.dropoff}</span>
+                    </div>
+                    {actionConfirm.res.notes && (
+                      <div className="pt-1">
+                        <span className="font-bold text-slate-700 block mb-1">Notas:</span> 
+                        <span className="text-slate-600 block bg-slate-100 p-2 rounded-lg">{actionConfirm.res.notes}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => setActionConfirm(null)}
+                      className="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
+                    >
+                      Volver
+                    </button>
+                    <button 
+                      onClick={() => {
+                        handleAction(actionConfirm.id, actionConfirm.action);
+                        setActionConfirm(null);
+                      }}
+                      className={`flex-1 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 ${actionConfirm.action === 'approved' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`}
+                    >
+                      {actionConfirm.action === 'approved' ? <><Check className="w-4 h-4"/> Confirmar</> : <><Ban className="w-4 h-4"/> Confirmar</>}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="flex border-b border-slate-100 pt-6 px-6">
                <button
                  onClick={() => setActiveTab('reservations')}
@@ -151,7 +270,11 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                     <div className="text-center text-slate-500 py-10">No hay reservas registradas.</div>
                   ) : (
                     reservations.map((res) => (
-                      <div key={res.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                      <div 
+                        key={res.id} 
+                        className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                        onClick={() => setSelectedReservation(res)}
+                      >
                         <div className="flex justify-between items-start mb-4">
                           <div>
                             <h3 className="font-bold text-lg text-slate-900">{res.name}</h3>
@@ -180,13 +303,13 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                         {res.status === 'pending' && (
                           <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
                             <button
-                              onClick={() => handleAction(res.id!, 'approved')}
+                              onClick={(e) => { e.stopPropagation(); setActionConfirm({ id: res.id!, action: 'approved', res }); }}
                               className="flex-1 bg-green-50 text-green-600 hover:bg-green-100 font-bold py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
                             >
                               <Check className="w-4 h-4" /> Aprobar y Avisar
                             </button>
                             <button
-                              onClick={() => handleAction(res.id!, 'cancelled')}
+                              onClick={(e) => { e.stopPropagation(); setActionConfirm({ id: res.id!, action: 'cancelled', res }); }}
                               className="flex-1 bg-red-50 text-red-600 hover:bg-red-100 font-bold py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
                             >
                               <Ban className="w-4 h-4" /> Cancelar y Avisar
@@ -235,9 +358,16 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
               )}
             </div>
 
-            <div className="p-4 bg-white border-t border-slate-100">
+            <div className="p-4 bg-white border-t border-slate-100 space-y-3">
+              <div className="text-center text-sm font-medium text-slate-500">
+                Conectado como: <span className="text-slate-900 font-bold">{username}</span>
+              </div>
               <button
-                onClick={() => setIsAuthenticated(false)}
+                onClick={() => {
+                  setIsAuthenticated(false);
+                  setUsername('');
+                  setPassword('');
+                }}
                 className="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" /> Cerrar Sesión
@@ -249,3 +379,4 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
     </div>
   );
 }
+

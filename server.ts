@@ -23,23 +23,54 @@ if (!fs.existsSync(DATA_DIR)) {
 let db: any;
 
 async function initDb() {
-  db = await open({
-    filename: path.join(DATA_DIR, 'database.sqlite'),
-    driver: sqlite3.Database
-  });
+  const dbPath = path.join(DATA_DIR, 'database.sqlite');
+  
+  try {
+    db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    });
 
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS settings (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      data TEXT
-    );
-    CREATE TABLE IF NOT EXISTS bookings (
-      id TEXT PRIMARY KEY,
-      status TEXT,
-      createdAt INTEGER,
-      data TEXT
-    );
-  `);
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        data TEXT
+      );
+      CREATE TABLE IF NOT EXISTS bookings (
+        id TEXT PRIMARY KEY,
+        status TEXT,
+        createdAt INTEGER,
+        data TEXT
+      );
+    `);
+  } catch (error: any) {
+    if (error.code === 'SQLITE_CORRUPT') {
+      console.warn('Database is corrupt. Creating a backup and starting fresh...');
+      if (fs.existsSync(dbPath)) {
+        fs.renameSync(dbPath, dbPath + '.corrupt.' + Date.now());
+      }
+      
+      db = await open({
+        filename: dbPath,
+        driver: sqlite3.Database
+      });
+
+      await db.exec(`
+        CREATE TABLE IF NOT EXISTS settings (
+          id INTEGER PRIMARY KEY CHECK (id = 1),
+          data TEXT
+        );
+        CREATE TABLE IF NOT EXISTS bookings (
+          id TEXT PRIMARY KEY,
+          status TEXT,
+          createdAt INTEGER,
+          data TEXT
+        );
+      `);
+    } else {
+      throw error;
+    }
+  }
 
   const settings = await db.get('SELECT data FROM settings WHERE id = 1');
   if (!settings) {

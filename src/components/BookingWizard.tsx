@@ -238,7 +238,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
       }
       
       if (contactUrl) {
-        window.location.href = contactUrl;
+        window.open(contactUrl, '_blank');
       }
       
       nextStep();
