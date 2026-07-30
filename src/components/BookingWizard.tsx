@@ -243,8 +243,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
       {/* LEFT PANEL - DESKTOP ONLY */}
       <div className="hidden md:flex md:w-[35%] lg:w-[30%] bg-[#0F172A] relative flex-col justify-between p-8 overflow-hidden border-r border-slate-800">
         <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#FFD700] rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-10 pointer-events-none"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#FFD700] rounded-full  opacity-20 pointer-events-none"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full  opacity-10 pointer-events-none"></div>
 
         <div className="relative z-10 flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setShowAdmin(true)}>
           <div className="relative w-12 h-12 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,215,0,0.3)]">
@@ -301,7 +301,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
           </div>
         </div>
 
-        <div className="relative z-10 bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-md">
+        <div className="relative z-10 bg-white/5 border border-white/10 p-5 rounded-2xl ">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700">
               <ShieldCheck className="w-5 h-5 text-green-400" />
@@ -349,8 +349,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 min-h-[100dvh] md:min-h-full w-full"
               >
                 <div className="absolute inset-0 overflow-hidden md:hidden pointer-events-none">
-                  <div className="absolute -top-[10%] -right-[20%] w-[80%] h-[60%] rounded-full bg-[#FFD700] blur-[150px] opacity-20" />
-                  <div className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[50%] rounded-full bg-blue-500 blur-[150px] opacity-10" />
+                  <div className="absolute -top-[10%] -right-[20%] w-[80%] h-[60%] rounded-full bg-[#FFD700]  opacity-20" />
+                  <div className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[50%] rounded-full bg-blue-500  opacity-10" />
                 </div>
 
                 <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
@@ -669,7 +669,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
                 <div className="mt-auto pb-6">
                   <div className="bg-[#0F172A] rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col items-center justify-between gap-5 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full  opacity-20 pointer-events-none"></div>
                     
                     <div className="text-center w-full z-10">
                       <p className="text-white font-bold text-xl">Confirmar Reserva</p>

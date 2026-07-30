@@ -78,7 +78,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60  p-4">
       <div className={`bg-white rounded-3xl w-full ${isAuthenticated ? 'max-w-2xl' : 'max-w-md'} shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]`}>
         <button 
           onClick={onClose}
