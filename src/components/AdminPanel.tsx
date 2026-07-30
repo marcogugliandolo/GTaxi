@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User } from 'lucide-react';
 import { BookingData } from '../types';
 import { getBookings, updateBookingStatus } from '../api';
@@ -232,15 +233,15 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                   
                   <div className="space-y-3 mb-6 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl text-sm">
                     <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
-                      <span className="font-bold text-slate-700 dark:text-slate-200">Precio:</span> 
+                      <span className="font-bold text-slate-700 dark:text-slate-200">{t("price")}:</span> 
                       <span className="font-bold text-slate-900 dark:text-white">{actionConfirm.res.price ? `€${actionConfirm.res.price.toFixed(2)}` : 'Pendiente'}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
-                      <span className="font-bold text-slate-700 dark:text-slate-200">Pago:</span> 
+                      <span className="font-bold text-slate-700 dark:text-slate-200">{t("payment")}:</span> 
                       <span className="text-slate-900 dark:text-white">{actionConfirm.res.paymentMethod === 'card' ? 'Tarjeta' : actionConfirm.res.paymentMethod === 'cash' ? 'Efectivo' : 'No especificado'}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
-                      <span className="font-bold text-slate-700 dark:text-slate-200">Pasajeros:</span> 
+                      <span className="font-bold text-slate-700 dark:text-slate-200">{t("passengersTab")}:</span> 
                       <span className="text-slate-900 dark:text-white">{actionConfirm.res.passengers}</span>
                     </div>
                     <div className="pt-1">
@@ -259,9 +260,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                     <button 
                       onClick={() => setActionConfirm(null)}
                       className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold py-3 rounded-xl hover:bg-slate-200 dark:bg-slate-700 transition-colors"
-                    >
-                      Volver
-                    </button>
+                    >{t("goBack")}</button>
                     <button 
                       onClick={() => {
                         handleAction(actionConfirm.id, actionConfirm.action);
