@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
+  Moon, 
+  Sun,
   MapPin, 
   Calendar as CalendarIcon, 
   Clock, 
@@ -22,6 +24,8 @@ import {
 import { BookingData, LocationData } from '../types';
 import { getSettings, saveBooking, saveSettings } from '../api';
 import AddressInput from './AddressInput';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const AdminPanel = React.lazy(() => import('./AdminPanel'));
 
@@ -69,6 +73,9 @@ const INITIAL_DATA: Omit<BookingData, 'id' | 'status' | 'createdAt'> = {
 };
 
 export default function BookingWizard() {
+  const { t, language, setLanguage } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
+
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [formData, setFormData] = useState(INITIAL_DATA);
@@ -244,14 +251,26 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
       nextStep();
     } catch (error) {
       console.error('Error submitting:', error);
-      alert('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
+      alert(t('errorProcessing'));
     } finally {
       setIsSending(false);
     }
   };
 
   return (
-    <div className="flex h-[100dvh] w-full bg-slate-50 font-sans overflow-hidden">
+    <div className="flex h-[100dvh] w-full bg-slate-50 dark:bg-slate-800/50 font-sans overflow-hidden">
+
+<div className="absolute top-4 right-4 md:right-8 z-[60] flex items-center gap-3">
+        <button onClick={toggleTheme} className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-2 rounded-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white shadow-md hover:bg-white dark:hover:bg-slate-700 transition-colors flex items-center justify-center">
+          {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+        </button>
+        <button onClick={() => setLanguage(language === 'es' ? 'en' : 'es')} className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold text-sm shadow-md hover:bg-white dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
+          <span className={language === 'es' ? 'opacity-100' : 'opacity-50'}>ES</span>
+          <span className="w-px h-3 bg-slate-300 dark:bg-slate-600"></span>
+          <span className={language === 'en' ? 'opacity-100' : 'opacity-50'}>EN</span>
+        </button>
+      </div>
+
       {/* LEFT PANEL - DESKTOP ONLY */}
       <div className="hidden md:flex md:w-[35%] lg:w-[30%] bg-[#0F172A] relative flex-col justify-between p-8 overflow-hidden border-r border-slate-800">
         <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
@@ -260,7 +279,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
         <div className="relative z-10 flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setShowAdmin(true)}>
           <div className="relative w-12 h-12 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,215,0,0.3)]">
-            <CarFront className="w-7 h-7 text-slate-900" strokeWidth={2.5} />
+            <CarFront className="w-7 h-7 text-slate-900 dark:text-white" strokeWidth={2.5} />
           </div>
           <span className="text-3xl font-extrabold tracking-tight text-white">GTaxi</span>
         </div>
@@ -271,8 +290,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                {step > 1 ? <CheckCircle2 className="w-5 h-5"/> : '1'}
              </div>
              <div>
-                <p className="text-lg font-bold text-white mb-0.5">Ruta</p>
-                <p className="text-xs text-slate-400">Origen y destino</p>
+                <p className="text-lg font-bold text-white mb-0.5">{t("route")}</p>
+                <p className="text-xs text-slate-400">{t("whereTo")}</p>
              </div>
           </div>
           <div className={`flex items-center gap-4 transition-all duration-500 ${step >= 2 ? (step === 2 ? 'opacity-100 translate-x-2' : 'opacity-100') : 'opacity-30'}`}>
@@ -280,8 +299,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                {step > 2 ? <CheckCircle2 className="w-5 h-5"/> : '2'}
              </div>
              <div>
-                <p className="text-lg font-bold text-white mb-0.5">Horario</p>
-                <p className="text-xs text-slate-400">Fecha y hora</p>
+                <p className="text-lg font-bold text-white mb-0.5">{t("dateTime")}</p>
+                <p className="text-xs text-slate-400">{t("whenTravel")}</p>
              </div>
           </div>
           <div className={`flex items-center gap-4 transition-all duration-500 ${step >= 3 ? (step === 3 ? 'opacity-100 translate-x-2' : 'opacity-100') : 'opacity-30'}`}>
@@ -289,8 +308,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                {step > 3 ? <CheckCircle2 className="w-5 h-5"/> : '3'}
              </div>
              <div>
-                <p className="text-lg font-bold text-white mb-0.5">Detalles</p>
-                <p className="text-xs text-slate-400">Paradas y notas</p>
+                <p className="text-lg font-bold text-white mb-0.5">{t("tripDetails")}</p>
+                <p className="text-xs text-slate-400">{t("passengersNotes")}</p>
              </div>
           </div>
           <div className={`flex items-center gap-4 transition-all duration-500 ${step >= 4 ? (step === 4 ? 'opacity-100 translate-x-2' : 'opacity-100') : 'opacity-30'}`}>
@@ -298,8 +317,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                {step > 4 ? <CheckCircle2 className="w-5 h-5"/> : '4'}
              </div>
              <div>
-                <p className="text-lg font-bold text-white mb-0.5">Contacto</p>
-                <p className="text-xs text-slate-400">Tus datos</p>
+                <p className="text-lg font-bold text-white mb-0.5">{t("yourData")}</p>
+                <p className="text-xs text-slate-400">{t("yourDetails")}</p>
              </div>
           </div>
           <div className={`flex items-center gap-4 transition-all duration-500 ${step >= 5 ? (step === 5 || step === 6 ? 'opacity-100 translate-x-2' : 'opacity-100') : 'opacity-30'}`}>
@@ -307,7 +326,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                {step === 6 ? <CheckCircle2 className="w-5 h-5"/> : '5'}
              </div>
              <div>
-                <p className="text-lg font-bold text-white mb-0.5">Pago</p>
+                <p className="text-lg font-bold text-white mb-0.5">{t("paymentProcess")}</p>
                 <p className="text-xs text-slate-400">Resumen y confirmación</p>
              </div>
           </div>
@@ -327,22 +346,22 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
       </div>
 
       {/* RIGHT PANEL - MAIN CONTENT */}
-      <div className="flex-1 relative flex flex-col min-w-0 bg-slate-50 md:bg-white h-[100dvh] overflow-y-auto overflow-x-hidden">
+      <div className="flex-1 relative flex flex-col min-w-0 bg-slate-50 dark:bg-slate-800/50 md:bg-white dark:bg-slate-900 h-[100dvh] overflow-y-auto overflow-x-hidden">
         
         {step > 0 && (
-          <div className="md:hidden bg-white px-5 py-3 border-b border-slate-100 sticky top-0 z-20 flex items-center justify-between shadow-sm">
+          <div className="md:hidden bg-white dark:bg-slate-900 px-5 py-3 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-20 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2">
-              <button onClick={prevStep} className="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 transition-colors">
+              <button onClick={prevStep} className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowAdmin(true)}>
                 <div className="relative w-7 h-7 bg-[#FFD700] rounded-md flex items-center justify-center">
-                  <CarFront className="w-4 h-4 text-slate-900" strokeWidth={2.5} />
+                  <CarFront className="w-4 h-4 text-slate-900 dark:text-white" strokeWidth={2.5} />
                 </div>
-                <span className="font-bold text-slate-900 tracking-tight">GTaxi</span>
+                <span className="font-bold text-slate-900 dark:text-white tracking-tight">GTaxi</span>
               </div>
             </div>
-            <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Paso {step}/5</span>
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Paso {step}/5</span>
           </div>
         )}
 
@@ -370,20 +389,20 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     className="md:hidden relative w-20 h-20 bg-[#FFD700] rounded-[1.5rem] flex items-center justify-center shadow-[0_12px_32px_rgba(255,215,0,0.3)] mb-8 cursor-pointer hover:scale-105 transition-transform"
                     onClick={() => setShowAdmin(true)}
                   >
-                    <CarFront className="w-10 h-10 text-slate-900" strokeWidth={2.5} />
+                    <CarFront className="w-10 h-10 text-slate-900 dark:text-white" strokeWidth={2.5} />
                   </div>
                   
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 mb-5 tracking-tight leading-tight">
-                    Tu viaje premium, <br /> a un solo toque.
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">
+                    {t("slogan1")} <br /> {t("slogan2")}
                   </h1>
-                  <p className="text-slate-400 md:text-slate-500 mb-10 text-lg max-w-md leading-relaxed font-medium">
-                    Reserva tu GTaxi al instante. Indica tus paradas, paga cómodamente y espera la confirmación de nuestro equipo.
+                  <p className="text-slate-400 md:text-slate-500 dark:text-slate-400 mb-10 text-lg max-w-md leading-relaxed font-medium">
+                    {t("heroFeatures")}
                   </p>
                   <button
                     onClick={nextStep}
                     className="w-full sm:w-auto sm:px-12 bg-[#FFD700] text-black font-bold text-lg py-4 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#FFD700]/20"
                   >
-                    Comenzar Reserva <ArrowRight className="w-6 h-6" />
+                    {t("bookNow")} <ArrowRight className="w-6 h-6" />
                   </button>
                 </div>
               </motion.div>
@@ -393,16 +412,16 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
             {step === 1 && (
               <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
                 <div className="mb-6 md:mb-10">
-                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">¿A dónde vamos?</h1>
-                  <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-lg font-medium">Busca la ciudad, calle o estación.</p>
+                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whereTo")}</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-sm md:text-lg font-medium">Busca la ciudad, calle o estación. (Origen/Destino)</p>
                 </div>
                 
                 <div className="flex-1 flex flex-col gap-5 md:gap-6 relative">
                   
-                  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 relative z-20">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 dark:border-slate-700 relative z-20">
                     <AddressInput
-                      label="Punto de recogida"
-                      placeholder="Ej. Calle Gran Vía, Madrid"
+                      label={t("fromLabel")}
+                      placeholder={t("fromPlaceholder")}
                       value={formData.pickup}
                       onChange={(val) => updateForm({ pickup: val })}
                       onLocationSelect={(loc) => updateForm({ pickupLoc: loc })}
@@ -411,7 +430,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     />
                   </div>
                   
-                  <div className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 relative z-10">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 dark:border-slate-700 relative z-10">
                     <AddressInput
                       label="Destino"
                       placeholder="Ej. Aeropuerto Adolfo Suárez"
@@ -423,8 +442,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 flex justify-between items-center bg-white md:bg-transparent p-4 md:p-0 border-t border-slate-100 md:border-t-0 -mx-4 md:mx-0">
-                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 font-bold items-center gap-2 transition-colors py-4 px-2">
+                <div className="mt-8 flex justify-between items-center bg-white dark:bg-slate-900 md:bg-transparent p-4 md:p-0 border-t border-slate-100 dark:border-slate-700 md:border-t-0 -mx-4 md:mx-0">
+                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-4 px-2">
                     <ArrowLeft className="w-5 h-5" /> Volver
                   </button>
                   <button
@@ -432,7 +451,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     disabled={!isStepValid()}
                     className="w-full md:w-auto bg-[#0F172A] text-white font-bold py-4 px-10 rounded-2xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:active:scale-100 shadow-lg md:ml-auto text-lg"
                   >
-                    Continuar <ArrowRight className="w-5 h-5" />
+                    {t("continue")} <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
               </motion.div>
@@ -442,34 +461,34 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
             {step === 2 && (
               <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
                 <div className="mb-6 md:mb-10">
-                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">¿Cuándo viajas?</h1>
-                  <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-lg font-medium">Selecciona la fecha y hora de recogida.</p>
+                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whenTravel")}</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-sm md:text-lg font-medium">Selecciona la fecha y hora de recogida.</p>
                 </div>
                 
                 <div className="flex-1 flex flex-col gap-4">
-                  <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-slate-700">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                       <div className="space-y-2 md:space-y-3">
-                        <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Fecha</label>
+                        <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">Fecha</label>
                         <div className="relative">
                           <CalendarIcon className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10 pointer-events-none" />
                           <input
                             type="date"
                             value={formData.date}
                             onChange={(e) => updateForm({ date: e.target.value })}
-                            className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
+                            className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 dark:text-white text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
                           />
                         </div>
                       </div>
                       <div className="space-y-2 md:space-y-3">
-                        <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Hora</label>
+                        <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">Hora</label>
                         <div className="relative">
                           <ClockIcon className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10 pointer-events-none" />
                           <input
                             type="time"
                             value={formData.time}
                             onChange={(e) => updateForm({ time: e.target.value })}
-                            className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
+                            className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 dark:text-white text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
                           />
                         </div>
                       </div>
@@ -477,8 +496,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 flex justify-between items-center bg-white md:bg-transparent p-4 md:p-0 border-t border-slate-100 md:border-t-0 -mx-4 md:mx-0">
-                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 font-bold items-center gap-2 transition-colors py-4 px-2">
+                <div className="mt-8 flex justify-between items-center bg-white dark:bg-slate-900 md:bg-transparent p-4 md:p-0 border-t border-slate-100 dark:border-slate-700 md:border-t-0 -mx-4 md:mx-0">
+                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-4 px-2">
                     <ArrowLeft className="w-5 h-5" /> Volver
                   </button>
                   <button
@@ -486,7 +505,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     disabled={!isStepValid()}
                     className="w-full md:w-auto bg-[#0F172A] text-white font-bold py-4 px-10 rounded-2xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:active:scale-100 shadow-lg md:ml-auto text-lg"
                   >
-                    Continuar <ArrowRight className="w-5 h-5" />
+                    {t("continue")} <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
               </motion.div>
@@ -496,40 +515,40 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
             {step === 3 && (
               <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
                 <div className="mb-6 md:mb-10">
-                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Detalles del Viaje</h1>
-                  <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-lg font-medium">Pasajeros y observaciones importantes.</p>
+                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("tripDetails")}</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-sm md:text-lg font-medium">{t("passengersNotes")}</p>
                 </div>
                 
                 <div className="flex-1 flex flex-col gap-4">
-                  <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 space-y-6">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-slate-700 space-y-6">
                     
                     <div className="space-y-2 md:space-y-3">
-                      <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Pasajeros</label>
-                      <div className="flex items-center gap-4 bg-slate-50 p-3 md:p-4 rounded-xl md:rounded-2xl border border-slate-100">
+                      <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">{t("passengersLabel")}</label>
+                      <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-3 md:p-4 rounded-xl md:rounded-2xl border border-slate-100 dark:border-slate-700">
                         <Users className="w-6 h-6 text-slate-400 ml-2" />
-                        <div className="flex-1 text-slate-900 font-semibold text-lg">{formData.passengers}</div>
+                        <div className="flex-1 text-slate-900 dark:text-white font-semibold text-lg">{formData.passengers}</div>
                         <div className="flex items-center gap-2">
                           <button 
                             onClick={() => formData.passengers > 1 && updateForm({ passengers: formData.passengers - 1 })}
-                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white border border-slate-200 hover:bg-slate-100 active:scale-95 transition-all text-xl md:text-2xl font-medium text-slate-600"
+                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:bg-slate-800 active:scale-95 transition-all text-xl md:text-2xl font-medium text-slate-600 dark:text-slate-300"
                           >-</button>
                           <button 
                             onClick={() => formData.passengers < 8 && updateForm({ passengers: formData.passengers + 1 })}
-                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white border border-slate-200 hover:bg-slate-100 active:scale-95 transition-all text-xl md:text-2xl font-medium text-slate-600"
+                            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:bg-slate-800 active:scale-95 transition-all text-xl md:text-2xl font-medium text-slate-600 dark:text-slate-300"
                           >+</button>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-2 md:space-y-3">
-                      <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Paradas / Notas para el conductor (Opcional)</label>
+                      <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">{t("stopsNotes")}</label>
                       <div className="relative">
                         <MessageSquare className="absolute left-4 md:left-5 top-5 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10" />
                         <textarea
                           placeholder="Ej. Parada en calle Alcalá, llevaré 2 maletas grandes..."
                           value={formData.notes}
                           onChange={(e) => updateForm({ notes: e.target.value })}
-                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-4 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm min-h-[120px] resize-y"
+                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-4 md:py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 dark:text-white text-base md:text-lg transition-all shadow-sm min-h-[120px] resize-y"
                         />
                       </div>
                     </div>
@@ -537,8 +556,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 flex justify-between items-center bg-white md:bg-transparent p-4 md:p-0 border-t border-slate-100 md:border-t-0 -mx-4 md:mx-0">
-                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 font-bold items-center gap-2 transition-colors py-4 px-2">
+                <div className="mt-8 flex justify-between items-center bg-white dark:bg-slate-900 md:bg-transparent p-4 md:p-0 border-t border-slate-100 dark:border-slate-700 md:border-t-0 -mx-4 md:mx-0">
+                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-4 px-2">
                     <ArrowLeft className="w-5 h-5" /> Volver
                   </button>
                   <button
@@ -546,7 +565,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     disabled={!isStepValid()}
                     className="w-full md:w-auto bg-[#0F172A] text-white font-bold py-4 px-10 rounded-2xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:active:scale-100 shadow-lg md:ml-auto text-lg"
                   >
-                    Continuar <ArrowRight className="w-5 h-5" />
+                    {t("continue")} <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
               </motion.div>
@@ -556,14 +575,14 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
             {step === 4 && (
               <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
                 <div className="mb-6 md:mb-10">
-                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Tus Datos</h1>
-                  <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-lg font-medium">Para contactarte y confirmar el viaje.</p>
+                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("yourData")}</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-sm md:text-lg font-medium">{t("contactConfirm")}</p>
                 </div>
                 
                 <div className="flex-1 flex flex-col gap-4">
-                  <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 space-y-5 md:space-y-6">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-slate-100 dark:border-slate-700 space-y-5 md:space-y-6">
                     <div className="space-y-2 md:space-y-3">
-                      <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Nombre y apellidos</label>
+                      <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">{t("nameLabel")}</label>
                       <div className="relative">
                         <User className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10" />
                         <input
@@ -571,12 +590,12 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                           placeholder="Tu nombre"
                           value={formData.name}
                           onChange={(e) => updateForm({ name: e.target.value })}
-                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
+                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 dark:text-white text-base md:text-lg transition-all shadow-sm"
                         />
                       </div>
                     </div>
                     <div className="space-y-2 md:space-y-3">
-                      <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide ml-1">Teléfono</label>
+                      <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">{t("phoneLabel")}</label>
                       <div className="relative">
                         <Phone className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10" />
                         <input
@@ -584,15 +603,15 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                           placeholder="+34 600 000 000"
                           value={formData.phone}
                           onChange={(e) => updateForm({ phone: e.target.value })}
-                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 text-base md:text-lg transition-all shadow-sm"
+                          className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 dark:text-white text-base md:text-lg transition-all shadow-sm"
                         />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-8 flex justify-between items-center bg-white md:bg-transparent p-4 md:p-0 border-t border-slate-100 md:border-t-0 -mx-4 md:mx-0">
-                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 font-bold items-center gap-2 transition-colors py-4 px-2">
+                <div className="mt-8 flex justify-between items-center bg-white dark:bg-slate-900 md:bg-transparent p-4 md:p-0 border-t border-slate-100 dark:border-slate-700 md:border-t-0 -mx-4 md:mx-0">
+                  <button onClick={prevStep} className="hidden md:flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-4 px-2">
                     <ArrowLeft className="w-5 h-5" /> Volver
                   </button>
                   <button
@@ -600,7 +619,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     disabled={!isStepValid()}
                     className="w-full md:w-auto bg-[#FFD700] text-black font-bold py-4 px-10 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:active:scale-100 shadow-lg shadow-[#FFD700]/20 md:ml-auto text-lg"
                   >
-                    Resumen y Pago <ArrowRight className="w-5 h-5" />
+                    {t("summary")} <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
               </motion.div>
@@ -611,68 +630,68 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
               <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
                 
                 <div className="text-center mb-6 pt-4 md:pt-0">
-                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Proceso de Pago</h1>
-                  <p className="text-slate-500 mt-1 md:mt-2 text-sm md:text-lg font-medium">Revisa tu importe y método de pago</p>
+                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("paymentProcess")}</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-sm md:text-lg font-medium">{t("reviewPayment")}</p>
                 </div>
                 
-                <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 space-y-6 flex-shrink-0 mb-6 md:mb-8 border border-slate-200 shadow-lg shadow-slate-200/40">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-5 md:p-8 space-y-6 flex-shrink-0 mb-6 md:mb-8 border border-slate-200 dark:border-slate-700 shadow-lg shadow-slate-200/40">
                   
                   {/* Summary Block */}
-                  <div className="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
                      <div className="space-y-1">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ruta Seleccionada</span>
-                        <p className="text-slate-900 font-semibold text-sm truncate max-w-[200px] md:max-w-xs">{formData.pickup}</p>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t("selectedRoute")}</span>
+                        <p className="text-slate-900 dark:text-white font-semibold text-sm truncate max-w-[200px] md:max-w-xs">{formData.pickup}</p>
                      </div>
                      <div className="text-right space-y-1">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Importe Total</span>
-                        <p className="text-3xl font-extrabold text-slate-900 leading-none">{calculatePrice()}€</p>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t("totalAmount")}</span>
+                        <p className="text-3xl font-extrabold text-slate-900 dark:text-white leading-none">{calculatePrice()}€</p>
                      </div>
                   </div>
                   
-                  <div className="h-px bg-slate-100 w-full" />
+                  <div className="h-px bg-slate-100 dark:bg-slate-800 w-full" />
                   
                   {/* Payment Options */}
                   <div className="flex flex-col gap-3">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Selecciona método de pago</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t("selectPayment")}</span>
                     
                     <button 
                       onClick={() => setPaymentMethod('tarjeta')}
-                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'tarjeta' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-100 hover:border-slate-300 bg-white'}`}
+                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'tarjeta' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-100 dark:border-slate-700 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'tarjeta' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'tarjeta' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                         <CreditCard className="w-5 h-5" />
                       </div>
                       <div className="text-left flex-1">
-                        <p className={`font-bold ${paymentMethod === 'tarjeta' ? 'text-blue-900' : 'text-slate-700'}`}>Tarjeta de Crédito / Débito</p>
-                        <p className="text-xs text-slate-500">Pago seguro procesado online</p>
+                        <p className={`font-bold ${paymentMethod === 'tarjeta' ? 'text-blue-900' : 'text-slate-700 dark:text-slate-200'}`}>{t("card")}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{t("cardDesc")}</p>
                       </div>
                       {paymentMethod === 'tarjeta' && <CheckCircle2 className="w-5 h-5 text-blue-500" />}
                     </button>
 
                     <button 
                       onClick={() => setPaymentMethod('bizum')}
-                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'bizum' ? 'border-[#00c4b3] bg-[#00c4b3]/10' : 'border-slate-100 hover:border-slate-300 bg-white'}`}
+                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'bizum' ? 'border-[#00c4b3] bg-[#00c4b3]/10' : 'border-slate-100 dark:border-slate-700 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'bizum' ? 'bg-[#00c4b3]/20 text-[#008f83]' : 'bg-slate-100 text-slate-500'}`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'bizum' ? 'bg-[#00c4b3]/20 text-[#008f83]' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                         <Smartphone className="w-5 h-5" />
                       </div>
                       <div className="text-left flex-1">
-                        <p className={`font-bold ${paymentMethod === 'bizum' ? 'text-[#008f83]' : 'text-slate-700'}`}>Bizum</p>
-                        <p className="text-xs text-slate-500">Recibirás el número al confirmar</p>
+                        <p className={`font-bold ${paymentMethod === 'bizum' ? 'text-[#008f83]' : 'text-slate-700 dark:text-slate-200'}`}>{t("bizum")}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{t("bizumDesc")}</p>
                       </div>
                       {paymentMethod === 'bizum' && <CheckCircle2 className="w-5 h-5 text-[#00c4b3]" />}
                     </button>
 
                     <button 
                       onClick={() => setPaymentMethod('efectivo')}
-                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'efectivo' ? 'border-green-500 bg-green-50/50' : 'border-slate-100 hover:border-slate-300 bg-white'}`}
+                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'efectivo' ? 'border-green-500 bg-green-50/50' : 'border-slate-100 dark:border-slate-700 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'efectivo' ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-500'}`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'efectivo' ? 'bg-green-100 text-green-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                         <Banknote className="w-5 h-5" />
                       </div>
                       <div className="text-left flex-1">
-                        <p className={`font-bold ${paymentMethod === 'efectivo' ? 'text-green-900' : 'text-slate-700'}`}>Efectivo al Conductor</p>
-                        <p className="text-xs text-slate-500">Pago directo en el vehículo</p>
+                        <p className={`font-bold ${paymentMethod === 'efectivo' ? 'text-green-900' : 'text-slate-700 dark:text-slate-200'}`}>{t("cash")}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{t("cashDesc")}</p>
                       </div>
                       {paymentMethod === 'efectivo' && <CheckCircle2 className="w-5 h-5 text-green-500" />}
                     </button>
@@ -684,8 +703,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full  opacity-20 pointer-events-none"></div>
                     
                     <div className="text-center w-full z-10">
-                      <p className="text-white font-bold text-xl">Confirmar Reserva</p>
-                      <p className="text-slate-400 text-xs md:text-sm mt-1">El importe será revisado por el administrador antes de ser definitivo.</p>
+                      <p className="text-white font-bold text-xl">{t("confirmBooking")}</p>
+                      <p className="text-slate-400 text-xs md:text-sm mt-1">{t("confirmDesc")}</p>
                     </div>
                     
                     <button
@@ -696,14 +715,14 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                       {isSending ? (
                         <div className="w-6 h-6 border-2 border-[#0F172A]/30 border-t-[#0F172A] rounded-full animate-spin"></div>
                       ) : (
-                        <>Enviar Solicitud <ArrowRight className="w-5 h-5" /></>
+                        <>{t("sendRequest")} <ArrowRight className="w-5 h-5" /></>
                       )}
                     </button>
                   </div>
 
                   <div className="flex justify-center mt-6">
-                     <button onClick={prevStep} disabled={isSending} className="flex text-slate-400 hover:text-slate-700 font-bold items-center gap-2 transition-colors py-2 px-4 disabled:opacity-50">
-                       <ArrowLeft className="w-5 h-5" /> Volver atrás
+                     <button onClick={prevStep} disabled={isSending} className="flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-2 px-4 disabled:opacity-50">
+                       <ArrowLeft className="w-5 h-5" /> {t("back")}
                      </button>
                   </div>
                 </div>
@@ -717,15 +736,15 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   <div className="w-24 h-24 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-2 border-4 border-yellow-100 shadow-inner">
                     <ClockIcon className="w-12 h-12 animate-pulse" />
                   </div>
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">Solicitud en Espera</h1>
-                  <p className="text-slate-600 text-lg md:text-xl font-medium max-w-md mx-auto leading-relaxed">
-                    Hemos recibido tu solicitud. <span className="font-bold text-slate-900">Un administrador debe aceptar el viaje</span> y confirmarlo a través de WhatsApp o llamada telefónica en los próximos minutos.
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">{t("requestWaiting")}</h1>
+                  <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl font-medium max-w-md mx-auto leading-relaxed">
+                    {t("requestReceived")} <span className="font-bold text-slate-900 dark:text-white">{t("adminMustAccept")}</span> {t("andConfirm")}
                   </p>
                   
                   <div className="pt-8 w-full flex flex-col items-center gap-4">
-                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl w-full max-w-xs flex flex-col items-center">
-                      <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Tu identificador</p>
-                      <p className="font-mono font-bold text-lg text-slate-900">#{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl w-full max-w-xs flex flex-col items-center">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">{t("yourId")}</p>
+                      <p className="font-mono font-bold text-lg text-slate-900 dark:text-white">#{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
                     </div>
 
                     <button

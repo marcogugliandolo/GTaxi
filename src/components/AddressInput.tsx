@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Search, Loader2, LocateFixed } from 'lucide-react';
 import { LocationData } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AddressInputProps {
   label: string;
@@ -13,6 +14,7 @@ interface AddressInputProps {
 }
 
 export default function AddressInput({ label, placeholder, value, onChange, onLocationSelect, dotColorClass, allowCurrentLocation = false }: AddressInputProps) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<LocationData[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -95,7 +97,7 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
 
   const handleCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert('Tu navegador no soporta geolocalización');
+      alert(t('noGeoSupport'));
       return;
     }
     
@@ -126,7 +128,7 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
           }
         } catch (error) {
           console.error('Error fetching location:', error);
-          alert('No se pudo obtener la dirección de tu ubicación.');
+          alert(t('noLocationFound'));
         } finally {
           setIsLocating(false);
         }
@@ -134,7 +136,7 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
       (error) => {
         console.error('Geolocation error:', error);
         setIsLocating(false);
-        alert('No se pudo acceder a tu ubicación. Por favor, revisa los permisos.');
+        alert(t('noLocationAccess'));
       }
     );
   };
@@ -144,7 +146,7 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
 
   return (
     <div className={`relative w-full ${isOpen ? 'z-50' : 'z-10'}`} ref={wrapperRef}>
-      <label className="text-xs md:text-sm font-bold text-slate-700 uppercase tracking-wide flex items-center gap-2 mb-2 md:mb-3 ml-1">
+      <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide flex items-center gap-2 mb-2 md:mb-3 ml-1">
         <div className={`w-2 h-2 rounded-full ${dotColorClass}`}></div>
         {label}
       </label>
@@ -161,7 +163,7 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
           onFocus={() => {
             if (query.length >= 3 || showCurrentLocationOption) setIsOpen(true);
           }}
-          className="w-full bg-white border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl py-3.5 md:py-5 pl-10 md:pl-12 pr-10 md:pr-12 text-slate-900 text-base md:text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm"
+          className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl py-3.5 md:py-5 pl-10 md:pl-12 pr-10 md:pr-12 text-slate-900 dark:text-white text-base md:text-lg outline-none transition-all placeholder:text-slate-400 shadow-sm"
         />
         <div className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10">
           {isLoading ? <Loader2 className="w-5 h-5 animate-spin text-[#FFD700]" /> : <Search className="w-5 h-5" />}
@@ -169,15 +171,15 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
       </div>
       
       {isOpen && hasDropdownContent && (
-        <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 overflow-hidden max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 dark:border-slate-700 overflow-hidden max-h-60 overflow-y-auto">
           {showCurrentLocationOption && (
             <button
               onMouseDown={(e) => { e.preventDefault(); handleCurrentLocation(); }}
               onTouchStart={(e) => { e.preventDefault(); handleCurrentLocation(); }}
-              className="w-full text-left px-5 py-4 hover:bg-slate-50 border-b border-slate-100 transition-colors flex items-center gap-3 text-blue-600"
+              className="w-full text-left px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 border-b border-slate-100 dark:border-slate-700 transition-colors flex items-center gap-3 text-blue-600"
             >
               {isLocating ? <Loader2 className="w-5 h-5 animate-spin" /> : <LocateFixed className="w-5 h-5" />}
-              <span className="text-sm font-semibold">Usar mi ubicación actual</span>
+              <span className="text-sm font-semibold">{t('useCurrentLocation')}</span>
             </button>
           )}
           
@@ -186,10 +188,10 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
               key={idx}
               onMouseDown={(e) => { e.preventDefault(); handleSelect(suggestion); }}
               onTouchStart={(e) => { e.preventDefault(); handleSelect(suggestion); }}
-              className="w-full text-left px-5 py-4 hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors flex items-start gap-3"
+              className="w-full text-left px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors flex items-start gap-3"
             >
               <MapPin className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
-              <span className="text-sm text-slate-700 leading-snug">{suggestion.address}</span>
+              <span className="text-sm text-slate-700 dark:text-slate-200 leading-snug">{suggestion.address}</span>
             </button>
           ))}
         </div>

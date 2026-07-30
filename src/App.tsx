@@ -6,9 +6,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import BookingWizard from './components/BookingWizard';
+import { useLanguage } from './contexts/LanguageContext';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,7 +20,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-[100dvh] w-full bg-white flex font-sans selection:bg-[#FFD700]/30 overflow-hidden relative">
+    <div className="h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 flex font-sans selection:bg-[#FFD700]/30 overflow-hidden relative">
       <BookingWizard />
       
       <AnimatePresence>
@@ -28,12 +30,12 @@ export default function App() {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white"
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950"
           >
             <motion.svg
               animate={{ y: [0, -4, 0] }}
               transition={{ repeat: Infinity, duration: 0.4, ease: "easeInOut" }}
-              width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-slate-900 dark:text-white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
             >
               <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
               <circle cx="7" cy="17" r="2" />
@@ -55,7 +57,7 @@ export default function App() {
               transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
               className="mt-6 font-sans text-sm text-slate-500 font-bold tracking-[2px] uppercase"
             >
-              Cargando...
+              {t("loading")}
             </motion.div>
           </motion.div>
         )}

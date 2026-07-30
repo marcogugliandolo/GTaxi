@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, Settings, Save, LogOut, List, Check, Ban } from 'lucide-react';
+import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User } from 'lucide-react';
 import { BookingData } from '../types';
 import { getBookings, updateBookingStatus } from '../api';
 
@@ -88,21 +88,21 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60  p-4">
-      <div className={`bg-white rounded-3xl w-full ${isAuthenticated ? 'max-w-2xl' : 'max-w-md'} shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]`}>
+      <div className={`bg-white dark:bg-slate-900 rounded-3xl w-full ${isAuthenticated ? 'max-w-2xl' : 'max-w-md'} shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]`}>
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full transition-colors z-10"
+          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 rounded-full transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
         {!isAuthenticated ? (
           <div className="p-8 overflow-y-auto">
-            <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-700">
+            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-700 dark:text-slate-200">
               <Lock className="w-8 h-8" />
             </div>
-            <h2 className="text-2xl font-bold text-center text-slate-900 mb-2">Acceso Administrativo</h2>
-            <p className="text-center text-slate-500 mb-8 text-sm">Ingresa tus credenciales para continuar.</p>
+            <h2 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-2">Acceso Administrativo</h2>
+            <p className="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">Ingresa tus credenciales para continuar.</p>
             
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
@@ -111,7 +111,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                   placeholder="Usuario"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-slate-50 border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 outline-none transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none transition-all"
                 />
               </div>
               <div>
@@ -120,7 +120,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                   placeholder="Contraseña"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-50 border-2 border-slate-100 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 outline-none transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none transition-all"
                 />
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </div>
@@ -135,94 +135,122 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
         ) : (
           <div className="flex flex-col h-full overflow-hidden relative">
             {selectedReservation && (
-              <div className="fixed inset-0 z-[110] bg-slate-900/40 flex items-center justify-center p-4 backdrop-blur-sm">
-                <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-                  <h3 className="text-xl font-bold mb-4 text-slate-900 text-center">Detalles de la Reserva</h3>
-                  <div className="space-y-4 text-sm mb-6">
+              <div className="fixed inset-0 z-[110] bg-slate-900/40 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto border border-slate-100 dark:border-slate-700 flex flex-col">
+                  
+                  <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 rounded-t-2xl">
                     <div>
-                      <span className="font-bold text-slate-700 block text-xs uppercase">Cliente</span>
-                      <p className="text-slate-900">{selectedReservation.name}</p>
-                      <p className="text-slate-600">{selectedReservation.phone}</p>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">Detalles de la Reserva</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">ID: #{selectedReservation.id}</p>
                     </div>
+                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                      selectedReservation.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                      selectedReservation.status === 'cancelled' ? 'bg-red-100 text-red-700' : 
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {selectedReservation.status === 'approved' ? 'Aprobada' : selectedReservation.status === 'cancelled' ? 'Cancelada' : 'Pendiente'}
+                    </span>
+                  </div>
+
+                  <div className="p-6 space-y-6 text-sm">
+                    {/* User info */}
+                    <div className="flex items-center gap-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                      <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-slate-900 dark:text-white font-bold text-base">{selectedReservation.name}</p>
+                        <p className="text-slate-600 dark:text-slate-300 font-medium">{selectedReservation.phone}</p>
+                      </div>
+                    </div>
+
+                    {/* Route */}
+                    <div>
+                      <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-3">Ruta del viaje</span>
+                      <div className="relative pl-6 space-y-4">
+                        <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+                        <div className="relative">
+                          <div className="absolute -left-[29px] top-1 w-4 h-4 rounded-full bg-green-500 border-4 border-white shadow-sm"></div>
+                          <p className="text-slate-900 dark:text-white font-medium">{selectedReservation.pickup}</p>
+                        </div>
+                        <div className="relative">
+                          <div className="absolute -left-[29px] top-1 w-4 h-4 rounded-full bg-red-500 border-4 border-white shadow-sm"></div>
+                          <p className="text-slate-900 dark:text-white font-medium">{selectedReservation.dropoff}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Details Grid */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="font-bold text-slate-700 block text-xs uppercase">Fecha / Hora</span>
-                        <p className="text-slate-900">{selectedReservation.date} {selectedReservation.time}</p>
+                      <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-1">Fecha y Hora</span>
+                        <p className="text-slate-900 dark:text-white font-bold">{selectedReservation.date}</p>
+                        <p className="text-slate-600 dark:text-slate-300">{selectedReservation.time}</p>
                       </div>
-                      <div>
-                        <span className="font-bold text-slate-700 block text-xs uppercase">Pasajeros</span>
-                        <p className="text-slate-900">{selectedReservation.passengers}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="font-bold text-slate-700 block text-xs uppercase">Ruta</span>
-                      <p className="text-slate-900"><strong>De:</strong> {selectedReservation.pickup}</p>
-                      <p className="text-slate-900 mt-1"><strong>A:</strong> {selectedReservation.dropoff}</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                      <div>
-                        <span className="font-bold text-slate-700 block text-xs uppercase">Precio</span>
-                        <p className="text-slate-900 font-bold">{selectedReservation.price ? `€${selectedReservation.price.toFixed(2)}` : 'Pendiente'}</p>
-                      </div>
-                      <div>
-                        <span className="font-bold text-slate-700 block text-xs uppercase">Método Pago</span>
-                        <p className="text-slate-900">{selectedReservation.paymentMethod === 'card' ? 'Tarjeta' : selectedReservation.paymentMethod === 'cash' ? 'Efectivo' : 'No especificado'}</p>
+                      <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-1">Pasajeros</span>
+                        <p className="text-slate-900 dark:text-white font-bold text-lg">{selectedReservation.passengers}</p>
                       </div>
                     </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-1">Precio Total</span>
+                        <p className="text-slate-900 dark:text-white font-bold text-lg">{selectedReservation.price ? `€${selectedReservation.price.toFixed(2)}` : 'Pendiente'}</p>
+                      </div>
+                      <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-1">Método de Pago</span>
+                        <p className="text-slate-900 dark:text-white font-bold">{selectedReservation.paymentMethod === 'tarjeta' ? 'Tarjeta' : selectedReservation.paymentMethod === 'efectivo' ? 'Efectivo' : selectedReservation.paymentMethod === 'bizum' ? 'Bizum' : 'No especificado'}</p>
+                      </div>
+                    </div>
+
                     {selectedReservation.notes && (
                       <div>
-                        <span className="font-bold text-slate-700 block text-xs uppercase">Notas adicionales</span>
-                        <p className="text-slate-900 bg-slate-100 p-3 rounded-xl">{selectedReservation.notes}</p>
+                        <span className="font-bold text-slate-400 block text-xs uppercase tracking-wider mb-2">Notas adicionales</span>
+                        <p className="text-slate-900 dark:text-white bg-yellow-50/50 p-4 rounded-xl border border-yellow-100 text-sm italic">{selectedReservation.notes}</p>
                       </div>
                     )}
-                    <div>
-                      <span className="font-bold text-slate-700 block text-xs uppercase mb-1">Estado</span>
-                      <span className={`px-3 py-1 inline-block rounded-full text-xs font-bold uppercase ${
-                        selectedReservation.status === 'approved' ? 'bg-green-100 text-green-700' : 
-                        selectedReservation.status === 'cancelled' ? 'bg-red-100 text-red-700' : 
-                        'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {selectedReservation.status === 'approved' ? 'Aprobada' : selectedReservation.status === 'cancelled' ? 'Cancelada' : 'Pendiente'}
-                      </span>
-                    </div>
                   </div>
-                  <button 
-                    onClick={() => setSelectedReservation(null)}
-                    className="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
-                  >
-                    Cerrar
-                  </button>
+
+                  <div className="p-6 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl">
+                    <button 
+                      onClick={() => setSelectedReservation(null)}
+                      className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 active:scale-95 transition-all shadow-lg shadow-slate-900/20"
+                    >
+                      Cerrar Detalles
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
             {actionConfirm && (
               <div className="fixed inset-0 z-[110] bg-slate-900/40 flex items-center justify-center p-4 backdrop-blur-sm">
-                <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-                  <h3 className="text-xl font-bold mb-4 text-slate-900 text-center">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+                  <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white text-center">
                     {actionConfirm.action === 'approved' ? 'Aprobar Reserva' : 'Cancelar Reserva'}
                   </h3>
                   
-                  <div className="space-y-3 mb-6 bg-slate-50 p-4 rounded-xl text-sm">
-                    <div className="flex justify-between border-b border-slate-200 pb-2">
-                      <span className="font-bold text-slate-700">Precio:</span> 
-                      <span className="font-bold text-slate-900">{actionConfirm.res.price ? `€${actionConfirm.res.price.toFixed(2)}` : 'Pendiente'}</span>
+                  <div className="space-y-3 mb-6 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl text-sm">
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+                      <span className="font-bold text-slate-700 dark:text-slate-200">Precio:</span> 
+                      <span className="font-bold text-slate-900 dark:text-white">{actionConfirm.res.price ? `€${actionConfirm.res.price.toFixed(2)}` : 'Pendiente'}</span>
                     </div>
-                    <div className="flex justify-between border-b border-slate-200 pb-2">
-                      <span className="font-bold text-slate-700">Pago:</span> 
-                      <span className="text-slate-900">{actionConfirm.res.paymentMethod === 'card' ? 'Tarjeta' : actionConfirm.res.paymentMethod === 'cash' ? 'Efectivo' : 'No especificado'}</span>
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+                      <span className="font-bold text-slate-700 dark:text-slate-200">Pago:</span> 
+                      <span className="text-slate-900 dark:text-white">{actionConfirm.res.paymentMethod === 'card' ? 'Tarjeta' : actionConfirm.res.paymentMethod === 'cash' ? 'Efectivo' : 'No especificado'}</span>
                     </div>
-                    <div className="flex justify-between border-b border-slate-200 pb-2">
-                      <span className="font-bold text-slate-700">Pasajeros:</span> 
-                      <span className="text-slate-900">{actionConfirm.res.passengers}</span>
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+                      <span className="font-bold text-slate-700 dark:text-slate-200">Pasajeros:</span> 
+                      <span className="text-slate-900 dark:text-white">{actionConfirm.res.passengers}</span>
                     </div>
                     <div className="pt-1">
-                      <span className="font-bold text-slate-700 block mb-1">Ruta:</span> 
-                      <span className="text-slate-600 block line-clamp-2">{actionConfirm.res.pickup} &rarr; {actionConfirm.res.dropoff}</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Ruta:</span> 
+                      <span className="text-slate-600 dark:text-slate-300 block line-clamp-2">{actionConfirm.res.pickup} &rarr; {actionConfirm.res.dropoff}</span>
                     </div>
                     {actionConfirm.res.notes && (
                       <div className="pt-1">
-                        <span className="font-bold text-slate-700 block mb-1">Notas:</span> 
-                        <span className="text-slate-600 block bg-slate-100 p-2 rounded-lg">{actionConfirm.res.notes}</span>
+                        <span className="font-bold text-slate-700 dark:text-slate-200 block mb-1">Notas:</span> 
+                        <span className="text-slate-600 dark:text-slate-300 block bg-slate-100 dark:bg-slate-800 p-2 rounded-lg">{actionConfirm.res.notes}</span>
                       </div>
                     )}
                   </div>
@@ -230,7 +258,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                   <div className="flex gap-3">
                     <button 
                       onClick={() => setActionConfirm(null)}
-                      className="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors"
+                      className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold py-3 rounded-xl hover:bg-slate-200 dark:bg-slate-700 transition-colors"
                     >
                       Volver
                     </button>
@@ -248,37 +276,37 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
               </div>
             )}
 
-            <div className="flex border-b border-slate-100 pt-6 px-6">
+            <div className="flex border-b border-slate-100 dark:border-slate-700 pt-6 px-6">
                <button
                  onClick={() => setActiveTab('reservations')}
-                 className={`px-4 py-3 font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'reservations' ? 'border-[#FFD700] text-slate-900' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+                 className={`px-4 py-3 font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'reservations' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700 dark:text-slate-200'}`}
                >
                  <List className="w-5 h-5" /> Reservas
                </button>
                <button
                  onClick={() => setActiveTab('settings')}
-                 className={`px-4 py-3 font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'settings' ? 'border-[#FFD700] text-slate-900' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+                 className={`px-4 py-3 font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'settings' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700 dark:text-slate-200'}`}
                >
                  <Settings className="w-5 h-5" /> Configuración
                </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-800/50">
               {activeTab === 'reservations' && (
                 <div className="space-y-4">
                   {reservations.length === 0 ? (
-                    <div className="text-center text-slate-500 py-10">No hay reservas registradas.</div>
+                    <div className="text-center text-slate-500 dark:text-slate-400 py-10">No hay reservas registradas.</div>
                   ) : (
                     reservations.map((res) => (
                       <div 
                         key={res.id} 
-                        className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                        className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                         onClick={() => setSelectedReservation(res)}
                       >
                         <div className="flex justify-between items-start mb-4">
                           <div>
-                            <h3 className="font-bold text-lg text-slate-900">{res.name}</h3>
-                            <p className="text-sm text-slate-500">{res.phone}</p>
+                            <h3 className="font-bold text-lg text-slate-900 dark:text-white">{res.name}</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{res.phone}</p>
                           </div>
                           <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
                             res.status === 'approved' ? 'bg-green-100 text-green-700' : 
@@ -292,16 +320,16 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm">
                           <div>
                             <span className="text-slate-400 block text-xs uppercase font-bold">Ruta</span>
-                            <p className="text-slate-700 font-medium">{res.pickup} &rarr; {res.dropoff}</p>
+                            <p className="text-slate-700 dark:text-slate-200 font-medium">{res.pickup} &rarr; {res.dropoff}</p>
                           </div>
                           <div>
                             <span className="text-slate-400 block text-xs uppercase font-bold">Fecha / Hora</span>
-                            <p className="text-slate-700 font-medium">{res.date} a las {res.time}</p>
+                            <p className="text-slate-700 dark:text-slate-200 font-medium">{res.date} a las {res.time}</p>
                           </div>
                         </div>
 
                         {res.status === 'pending' && (
-                          <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
+                          <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                             <button
                               onClick={(e) => { e.stopPropagation(); setActionConfirm({ id: res.id!, action: 'approved', res }); }}
                               className="flex-1 bg-green-50 text-green-600 hover:bg-green-100 font-bold py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
@@ -323,29 +351,29 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
               )}
 
               {activeTab === 'settings' && (
-                <div className="space-y-5 bg-white p-6 rounded-2xl border border-slate-200">
+                <div className="space-y-5 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wide">Número de WhatsApp</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide">Número de WhatsApp</label>
                     <input
                       type="text"
                       value={waNumber}
                       onChange={(e) => setWaNumber(e.target.value)}
                       placeholder="Ej. 34600000000"
-                      className="w-full bg-slate-50 border-2 border-slate-100 focus:ring-4 focus:ring-green-500/20 focus:border-green-500 rounded-xl py-3 px-4 text-slate-900 outline-none transition-all"
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-green-500/20 focus:border-green-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none transition-all"
                     />
-                    <p className="text-xs text-slate-500">Incluye el código de país sin el símbolo +.</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Incluye el código de país sin el símbolo +.</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wide">Usuario de Telegram</label>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide">Usuario de Telegram</label>
                     <input
                       type="text"
                       value={tgUser}
                       onChange={(e) => setTgUser(e.target.value)}
                       placeholder="Ej. tu_usuario_taxi"
-                      className="w-full bg-slate-50 border-2 border-slate-100 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 outline-none transition-all"
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none transition-all"
                     />
-                    <p className="text-xs text-slate-500">Sin el símbolo @.</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Sin el símbolo @.</p>
                   </div>
 
                   <button
@@ -358,9 +386,9 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
               )}
             </div>
 
-            <div className="p-4 bg-white border-t border-slate-100 space-y-3">
-              <div className="text-center text-sm font-medium text-slate-500">
-                Conectado como: <span className="text-slate-900 font-bold">{username}</span>
+            <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 space-y-3">
+              <div className="text-center text-sm font-medium text-slate-500 dark:text-slate-400">
+                Conectado como: <span className="text-slate-900 dark:text-white font-bold">{username}</span>
               </div>
               <button
                 onClick={() => {
@@ -368,7 +396,7 @@ export default function AdminPanel({ onClose, onUpdateSettings, currentWhatsapp,
                   setUsername('');
                   setPassword('');
                 }}
-                className="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold py-3 rounded-xl hover:bg-slate-200 dark:bg-slate-700 transition-colors flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" /> Cerrar Sesión
               </button>
