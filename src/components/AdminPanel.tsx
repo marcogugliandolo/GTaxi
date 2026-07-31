@@ -411,9 +411,9 @@ export default function AdminPanel() {
 
       {/* Modals */}
       {selectedReservation && (
-        <div className="fixed inset-0 z-[110] bg-slate-900/60 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl w-full max-w-xl shadow-2xl max-h-[92vh] sm:max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
-            <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 shrink-0">
+        <div className="fixed inset-0 z-[110] bg-slate-900/60 flex items-center justify-center p-3 sm:p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl w-full max-w-xl shadow-2xl max-h-[82dvh] sm:max-h-[85vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 my-auto">
+            <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/80 shrink-0">
               <div>
                 <h3 className="font-extrabold text-base sm:text-xl text-slate-900 dark:text-white">Detalles de Reserva</h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Ref: {selectedReservation.id?.slice(0, 8)}</p>
@@ -423,7 +423,7 @@ export default function AdminPanel() {
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-4 sm:space-y-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-5 rounded-2xl">
                 <div>
                   <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold tracking-widest mb-1">Estado de la reserva</span>
@@ -529,8 +529,8 @@ export default function AdminPanel() {
       )}
 
       {actionConfirm && (
-        <div className="fixed inset-0 z-[120] bg-slate-900/60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm p-8 shadow-2xl">
+        <div className="fixed inset-0 z-[120] bg-slate-900/60 flex items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm p-6 sm:p-8 shadow-2xl">
             <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 ${actionConfirm.action === 'approved' ? 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400' : 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400'}`}>
               {actionConfirm.action === 'approved' ? <Check className="w-8 h-8" /> : <Ban className="w-8 h-8" />}
             </div>
