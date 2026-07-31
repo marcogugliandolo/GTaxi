@@ -629,90 +629,121 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 5: PAYMENT / SUMMARY */}
             {step === 5 && (
-              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-6 md:p-12 lg:p-16">
+              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-12">
                 
-                <div className="text-center mb-6 pt-4 md:pt-0">
-                  <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("paymentProcess")}</h1>
-                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-sm md:text-lg font-medium">{t("reviewPayment")}</p>
+                <div className="text-center mb-4 md:mb-6 pt-2 md:pt-0">
+                  <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("paymentProcess")}</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs sm:text-sm md:text-lg font-medium">{t("reviewPayment")}</p>
                 </div>
                 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-5 md:p-8 space-y-6 flex-shrink-0 mb-6 md:mb-8 border border-slate-200 dark:border-slate-700 shadow-lg shadow-slate-200/40">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 flex-shrink-0 mb-6 border border-slate-200 dark:border-slate-700 shadow-md shadow-slate-200/40 dark:shadow-none">
                   
-                  {/* Summary Block */}
-                  <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                     <div className="space-y-1">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t("selectedRoute")}</span>
-                        <p className="text-slate-900 dark:text-white font-semibold text-sm truncate max-w-[200px] md:max-w-xs">{formData.pickup}</p>
+                  {/* Detailed Summary Card for Mobile & Desktop */}
+                  <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 sm:p-5 rounded-xl border border-slate-100 dark:border-slate-700/80 space-y-3 sm:space-y-4">
+                     <div className="flex justify-between items-start gap-2 border-b border-slate-200/60 dark:border-slate-700/60 pb-3">
+                        <div className="space-y-0.5 min-w-0 flex-1">
+                           <span className="text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-widest block">{t("selectedRoute")}</span>
+                           <div className="space-y-1 mt-1">
+                             <div className="flex items-center gap-2">
+                               <div className="w-2 h-2 rounded-full bg-green-500 shrink-0"></div>
+                               <p className="text-slate-900 dark:text-white font-semibold text-xs sm:text-sm truncate">{formData.pickup || "Origen no especificado"}</p>
+                             </div>
+                             {formData.dropoff && (
+                               <div className="flex items-center gap-2">
+                                 <div className="w-2 h-2 rounded-full bg-red-500 shrink-0"></div>
+                                 <p className="text-slate-900 dark:text-white font-semibold text-xs sm:text-sm truncate">{formData.dropoff}</p>
+                               </div>
+                             )}
+                           </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                           <span className="text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-widest block">{t("totalAmount")}</span>
+                           <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-none mt-1">{calculatePrice()}€</p>
+                        </div>
                      </div>
-                     <div className="text-right space-y-1">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t("totalAmount")}</span>
-                        <p className="text-3xl font-extrabold text-slate-900 dark:text-white leading-none">{calculatePrice()}€</p>
+
+                     {/* Trip badges */}
+                     <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300 pt-0.5">
+                       {formData.date && (
+                         <span className="inline-flex items-center gap-1 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-medium">
+                           <CalendarIcon className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                           {formData.date}
+                         </span>
+                       )}
+                       {formData.time && (
+                         <span className="inline-flex items-center gap-1 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-medium">
+                           <ClockIcon className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                           {formData.time}
+                         </span>
+                       )}
+                       <span className="inline-flex items-center gap-1 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-medium">
+                         <Users className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                         {formData.passengers} {formData.passengers === 1 ? 'pasajero' : 'pasajeros'}
+                       </span>
                      </div>
                   </div>
                   
-                  <div className="h-px bg-slate-100 dark:bg-slate-800 w-full" />
-                  
                   {/* Payment Options */}
-                  <div className="flex flex-col gap-3">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t("selectPayment")}</span>
+                  <div className="flex flex-col gap-2.5 sm:gap-3">
+                    <span className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">{t("selectPayment")}</span>
                     
                     <button 
                       onClick={() => setPaymentMethod('tarjeta')}
-                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'tarjeta' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-100 dark:border-slate-700 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
+                      className={`flex items-center p-3.5 sm:p-4 rounded-xl border-2 transition-all ${paymentMethod === 'tarjeta' ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30' : 'border-slate-100 dark:border-slate-800 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'tarjeta' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-3 sm:mr-4 shrink-0 ${paymentMethod === 'tarjeta' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                         <CreditCard className="w-5 h-5" />
                       </div>
-                      <div className="text-left flex-1">
-                        <p className={`font-bold ${paymentMethod === 'tarjeta' ? 'text-blue-900' : 'text-slate-700 dark:text-slate-200'}`}>{t("card")}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{t("cardDesc")}</p>
+                      <div className="text-left flex-1 min-w-0">
+                        <p className={`font-bold text-sm sm:text-base ${paymentMethod === 'tarjeta' ? 'text-blue-900 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'}`}>{t("card")}</p>
+                        <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">{t("cardDesc")}</p>
                       </div>
-                      {paymentMethod === 'tarjeta' && <CheckCircle2 className="w-5 h-5 text-blue-500" />}
+                      {paymentMethod === 'tarjeta' && <CheckCircle2 className="w-5 h-5 text-blue-500 shrink-0 ml-2" />}
                     </button>
 
                     <button 
                       onClick={() => setPaymentMethod('bizum')}
-                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'bizum' ? 'border-[#00c4b3] bg-[#00c4b3]/10' : 'border-slate-100 dark:border-slate-700 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
+                      className={`flex items-center p-3.5 sm:p-4 rounded-xl border-2 transition-all ${paymentMethod === 'bizum' ? 'border-[#00c4b3] bg-[#00c4b3]/10 dark:bg-[#00c4b3]/20' : 'border-slate-100 dark:border-slate-800 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'bizum' ? 'bg-[#00c4b3]/20 text-[#008f83]' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-3 sm:mr-4 shrink-0 ${paymentMethod === 'bizum' ? 'bg-[#00c4b3]/20 text-[#008f83] dark:text-[#00e6d2]' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                         <Smartphone className="w-5 h-5" />
                       </div>
-                      <div className="text-left flex-1">
-                        <p className={`font-bold ${paymentMethod === 'bizum' ? 'text-[#008f83]' : 'text-slate-700 dark:text-slate-200'}`}>{t("bizum")}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{t("bizumDesc")}</p>
+                      <div className="text-left flex-1 min-w-0">
+                        <p className={`font-bold text-sm sm:text-base ${paymentMethod === 'bizum' ? 'text-[#008f83] dark:text-[#00e6d2]' : 'text-slate-700 dark:text-slate-200'}`}>{t("bizum")}</p>
+                        <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">{t("bizumDesc")}</p>
                       </div>
-                      {paymentMethod === 'bizum' && <CheckCircle2 className="w-5 h-5 text-[#00c4b3]" />}
+                      {paymentMethod === 'bizum' && <CheckCircle2 className="w-5 h-5 text-[#00c4b3] shrink-0 ml-2" />}
                     </button>
 
                     <button 
                       onClick={() => setPaymentMethod('efectivo')}
-                      className={`flex items-center p-4 rounded-xl border-2 transition-all ${paymentMethod === 'efectivo' ? 'border-green-500 bg-green-50/50' : 'border-slate-100 dark:border-slate-700 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
+                      className={`flex items-center p-3.5 sm:p-4 rounded-xl border-2 transition-all ${paymentMethod === 'efectivo' ? 'border-green-500 bg-green-50/50 dark:bg-green-950/30' : 'border-slate-100 dark:border-slate-800 hover:border-slate-300 bg-white dark:bg-slate-900'}`}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${paymentMethod === 'efectivo' ? 'bg-green-100 text-green-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-3 sm:mr-4 shrink-0 ${paymentMethod === 'efectivo' ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                         <Banknote className="w-5 h-5" />
                       </div>
-                      <div className="text-left flex-1">
-                        <p className={`font-bold ${paymentMethod === 'efectivo' ? 'text-green-900' : 'text-slate-700 dark:text-slate-200'}`}>{t("cash")}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{t("cashDesc")}</p>
+                      <div className="text-left flex-1 min-w-0">
+                        <p className={`font-bold text-sm sm:text-base ${paymentMethod === 'efectivo' ? 'text-green-900 dark:text-green-300' : 'text-slate-700 dark:text-slate-200'}`}>{t("cash")}</p>
+                        <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">{t("cashDesc")}</p>
                       </div>
-                      {paymentMethod === 'efectivo' && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                      {paymentMethod === 'efectivo' && <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 ml-2" />}
                     </button>
                   </div>
                 </div>
 
-                <div className="mt-auto pb-6">
-                  <div className="bg-[#0F172A] rounded-2xl md:rounded-3xl p-5 md:p-8 flex flex-col items-center justify-between gap-5 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full  opacity-20 pointer-events-none"></div>
+                <div className="mt-auto pb-4 sm:pb-6">
+                  <div className="bg-[#0F172A] rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center justify-between gap-4 sm:gap-5 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full opacity-20 pointer-events-none"></div>
                     
                     <div className="text-center w-full z-10">
-                      <p className="text-white font-bold text-xl">{t("confirmBooking")}</p>
-                      <p className="text-slate-400 text-xs md:text-sm mt-1">{t("confirmDesc")}</p>
+                      <p className="text-white font-bold text-lg sm:text-xl">{t("confirmBooking")}</p>
+                      <p className="text-slate-400 text-xs sm:text-sm mt-0.5">{t("confirmDesc")}</p>
                     </div>
                     
                     <button
                       onClick={submitReservation}
                       disabled={!paymentMethod || isSending}
-                      className="w-full bg-[#FFD700] text-[#0F172A] font-bold py-4 px-6 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FFD700]/20 disabled:opacity-70 disabled:scale-100 text-lg"
+                      className="w-full bg-[#FFD700] text-[#0F172A] font-bold py-3.5 sm:py-4 px-6 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FFD700]/20 disabled:opacity-70 disabled:scale-100 text-base sm:text-lg"
                     >
                       {isSending ? (
                         <div className="w-6 h-6 border-2 border-[#0F172A]/30 border-t-[#0F172A] rounded-full animate-spin"></div>
@@ -722,8 +753,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     </button>
                   </div>
 
-                  <div className="flex justify-center mt-6">
-                     <button onClick={prevStep} disabled={isSending} className="flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-2 px-4 disabled:opacity-50">
+                  <div className="flex justify-center mt-4">
+                     <button onClick={prevStep} disabled={isSending} className="flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-2 px-4 disabled:opacity-50 text-sm sm:text-base">
                        <ArrowLeft className="w-5 h-5" /> {t("back")}
                      </button>
                   </div>

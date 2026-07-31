@@ -411,20 +411,20 @@ export default function AdminPanel() {
 
       {/* Modals */}
       {selectedReservation && (
-        <div className="fixed inset-0 z-[110] bg-slate-900/60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+        <div className="fixed inset-0 z-[110] bg-slate-900/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl w-full max-w-xl shadow-2xl max-h-[92vh] sm:max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
+            <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
               <div>
-                <h3 className="font-extrabold text-xl text-slate-900 dark:text-white">Detalles de Reserva</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Ref: {selectedReservation.id?.slice(0, 8)}</p>
+                <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white">Detalles de Reserva</h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Ref: {selectedReservation.id?.slice(0, 8)}</p>
               </div>
               <button onClick={() => setSelectedReservation(null)} className="p-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors shadow-sm">
                 <X className="w-5 h-5 text-slate-500" />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 bg-slate-50 dark:bg-slate-800/50 p-4 sm:p-5 rounded-2xl">
                 <div>
                   <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold tracking-widest mb-1">Estado de la reserva</span>
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
@@ -435,7 +435,7 @@ export default function AdminPanel() {
                     {selectedReservation.status === 'approved' ? 'Aprobada' : selectedReservation.status === 'cancelled' ? 'Cancelada' : 'Pendiente'}
                   </span>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right">
                   <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold tracking-widest mb-1">Precio Estimado</span>
                   <p className="text-slate-900 dark:text-white font-extrabold text-2xl">
                     {selectedReservation.price ? `€${Number(selectedReservation.price).toFixed(2)}` : 'Pendiente'}
@@ -443,63 +443,63 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white mb-3 text-sm tracking-wide">DATOS DEL PASAJERO</h4>
-                  <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Nombre:</span>
-                      <span className="text-slate-900 dark:text-white font-bold">{selectedReservation.name}</span>
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-2.5 text-xs sm:text-sm tracking-wide">DATOS DEL PASAJERO</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3.5 sm:p-4 rounded-2xl space-y-2.5 sm:space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0">
+                      <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium">Nombre:</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-sm sm:text-base break-words">{selectedReservation.name}</span>
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0">
+                      <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium">Teléfono:</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-sm sm:text-base break-words">{selectedReservation.phone}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Teléfono:</span>
-                      <span className="text-slate-900 dark:text-white font-bold">{selectedReservation.phone}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Pasajeros:</span>
-                      <span className="text-slate-900 dark:text-white font-bold">{selectedReservation.passengers}</span>
+                      <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium">Pasajeros:</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-sm sm:text-base">{selectedReservation.passengers}</span>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white mb-3 text-sm tracking-wide">DETALLES DEL VIAJE</h4>
-                  <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl relative">
-                    <div className="absolute left-[27px] top-8 bottom-8 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-2.5 text-xs sm:text-sm tracking-wide">DETALLES DEL VIAJE</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3.5 sm:p-4 rounded-2xl relative">
+                    <div className="absolute left-[23px] sm:left-[27px] top-8 bottom-8 w-0.5 bg-slate-200 dark:bg-slate-700"></div>
                     
-                    <div className="flex items-start gap-4 mb-6 relative">
-                      <div className="w-3 h-3 rounded-full bg-green-500 mt-1.5 shadow-[0_0_0_4px_rgba(34,197,94,0.2)] dark:shadow-[0_0_0_4px_rgba(34,197,94,0.1)] z-10"></div>
-                      <div>
+                    <div className="flex items-start gap-3 sm:gap-4 mb-5 sm:mb-6 relative">
+                      <div className="w-3 h-3 rounded-full bg-green-500 mt-1 sm:mt-1.5 shrink-0 shadow-[0_0_0_4px_rgba(34,197,94,0.2)] dark:shadow-[0_0_0_4px_rgba(34,197,94,0.1)] z-10"></div>
+                      <div className="min-w-0 flex-1">
                         <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold tracking-widest mb-0.5">Recogida</span>
-                        <p className="text-slate-900 dark:text-white font-medium">{selectedReservation.pickup}</p>
+                        <p className="text-slate-900 dark:text-white font-medium text-xs sm:text-sm break-words">{selectedReservation.pickup}</p>
                       </div>
                     </div>
                     
-                    <div className="flex items-start gap-4 relative">
-                      <div className="w-3 h-3 rounded-full bg-red-500 mt-1.5 shadow-[0_0_0_4px_rgba(239,68,68,0.2)] dark:shadow-[0_0_0_4px_rgba(239,68,68,0.1)] z-10"></div>
-                      <div>
+                    <div className="flex items-start gap-3 sm:gap-4 relative">
+                      <div className="w-3 h-3 rounded-full bg-red-500 mt-1 sm:mt-1.5 shrink-0 shadow-[0_0_0_4px_rgba(239,68,68,0.2)] dark:shadow-[0_0_0_4px_rgba(239,68,68,0.1)] z-10"></div>
+                      <div className="min-w-0 flex-1">
                         <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold tracking-widest mb-0.5">Destino</span>
-                        <p className="text-slate-900 dark:text-white font-medium">{selectedReservation.dropoff}</p>
+                        <p className="text-slate-900 dark:text-white font-medium text-xs sm:text-sm break-words">{selectedReservation.dropoff}</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white mb-3 text-sm tracking-wide">INFORMACIÓN ADICIONAL</h4>
-                  <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl space-y-3">
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-2.5 text-xs sm:text-sm tracking-wide">INFORMACIÓN ADICIONAL</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-3.5 sm:p-4 rounded-2xl space-y-2.5 sm:space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Fecha programada:</span>
-                      <span className="text-slate-900 dark:text-white font-bold">{selectedReservation.date}</span>
+                      <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium">Fecha programada:</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm">{selectedReservation.date}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Hora de recogida:</span>
-                      <span className="text-slate-900 dark:text-white font-bold">{selectedReservation.time}</span>
+                      <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium">Hora de recogida:</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm">{selectedReservation.time}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Método de pago:</span>
-                      <span className="text-slate-900 dark:text-white font-bold">
-                        {selectedReservation.paymentMethod === 'card' ? 'Tarjeta' : selectedReservation.paymentMethod === 'cash' ? 'Efectivo' : 'No especificado'}
+                      <span className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium">Método de pago:</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm">
+                        {selectedReservation.paymentMethod === 'card' || selectedReservation.paymentMethod === 'tarjeta' ? 'Tarjeta' : selectedReservation.paymentMethod === 'cash' || selectedReservation.paymentMethod === 'efectivo' ? 'Efectivo' : selectedReservation.paymentMethod === 'bizum' ? 'Bizum' : 'No especificado'}
                       </span>
                     </div>
                   </div>
@@ -507,8 +507,8 @@ export default function AdminPanel() {
 
                 {selectedReservation.notes && (
                   <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white mb-3 text-sm tracking-wide">NOTAS DEL CLIENTE</h4>
-                    <div className="bg-yellow-50 dark:bg-yellow-500/10 p-4 rounded-2xl text-yellow-800 dark:text-yellow-200 text-sm font-medium">
+                    <h4 className="font-bold text-slate-900 dark:text-white mb-2.5 text-xs sm:text-sm tracking-wide">NOTAS DEL CLIENTE</h4>
+                    <div className="bg-yellow-50 dark:bg-yellow-500/10 p-3.5 sm:p-4 rounded-2xl text-yellow-800 dark:text-yellow-200 text-xs sm:text-sm font-medium break-words">
                       "{selectedReservation.notes}"
                     </div>
                   </div>
@@ -516,10 +516,10 @@ export default function AdminPanel() {
               </div>
             </div>
             
-            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
               <button 
                 onClick={() => setSelectedReservation(null)}
-                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3.5 sm:py-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base"
               >
                 Cerrar Detalles
               </button>
