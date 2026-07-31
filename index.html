@@ -1,10 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>GTaxi</title>
+    <title>GTaxi - Reserva tu Taxi</title>
+    <script>
+      window.addEventListener('error', function(e) {
+        if (e && e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
+          console.warn('Network asset failed to load. Reloading to get latest version...', e);
+          var key = 'reload_attempts';
+          var count = parseInt(sessionStorage.getItem(key) || '0', 10);
+          if (count < 2) {
+            sessionStorage.setItem(key, (count + 1).toString());
+            window.location.reload(true);
+          }
+        }
+      }, true);
+    </script>
   </head>
   <body>
     <div id="root"></div>

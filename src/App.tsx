@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import BookingWizard from './components/BookingWizard';
 import AdminPanel from './components/AdminPanel';
 import { useLanguage } from './contexts/LanguageContext';
@@ -14,8 +14,8 @@ function Splash({ loading }: { loading: boolean }) {
           key="splash"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 pointer-events-none"
         >
           <motion.svg
             animate={{ y: [0, -4, 0] }}
@@ -56,7 +56,7 @@ function MainApp() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 200);
+    }, 150);
     return () => clearTimeout(timer);
   }, []);
 
@@ -74,8 +74,8 @@ function MainApp() {
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <MainApp />
-    </HashRouter>
+    </BrowserRouter>
   );
 }
