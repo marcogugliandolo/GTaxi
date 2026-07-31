@@ -129,6 +129,28 @@ app.get('/api/bookings', async (req, res) => {
   }
 });
 
+
+const clients = new Set<express.Response>();
+
+app.get('/api/admin/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  clients.add(res);
+
+  req.on('close', () => {
+    clients.delete(res);
+  });
+});
+
+function notifyAdmins(event: string, data: any) {
+  for (const client of clients) {
+    client.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  }
+}
+
 app.post('/api/bookings', async (req, res) => {
   try {
     const newBooking = { ...req.body, id: Date.now().toString(), createdAt: Date.now(), status: 'pending' };
@@ -136,6 +158,7 @@ app.post('/api/bookings', async (req, res) => {
       'INSERT INTO bookings (id, status, createdAt, data) VALUES (?, ?, ?, ?)',
       [newBooking.id, newBooking.status, newBooking.createdAt, JSON.stringify(newBooking)]
     );
+    notifyAdmins('new_booking', newBooking);
     res.json(newBooking);
   } catch (error) {
     res.status(500).json({ error: 'Failed to save booking' });

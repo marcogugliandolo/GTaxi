@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+const fs = require('fs');
+
+const content = `import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import BookingWizard from './components/BookingWizard';
@@ -78,3 +80,6 @@ export default function App() {
     </BrowserRouter>
   );
 }
+`;
+
+fs.writeFileSync('src/App.tsx', content);

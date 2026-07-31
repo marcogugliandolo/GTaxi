@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Moon, 
@@ -27,7 +28,7 @@ import AddressInput from './AddressInput';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
-const AdminPanel = React.lazy(() => import('./AdminPanel'));
+
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -73,6 +74,7 @@ const INITIAL_DATA: Omit<BookingData, 'id' | 'status' | 'createdAt'> = {
 };
 
 export default function BookingWizard() {
+  const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
 
@@ -80,7 +82,7 @@ export default function BookingWizard() {
   const [direction, setDirection] = useState(1);
   const [formData, setFormData] = useState(INITIAL_DATA);
   const [isSending, setIsSending] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
+  
   const [whatsappNumber, setWhatsappNumber] = useState('34664287876');
   const [telegramUsername, setTelegramUsername] = useState('gtaxi_admin');
   
@@ -277,7 +279,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#FFD700] rounded-full  opacity-20 pointer-events-none"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full  opacity-10 pointer-events-none"></div>
 
-        <div className="relative z-10 flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setShowAdmin(true)}>
+        <div className="relative z-10 flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/admin')}>
           <div className="relative w-12 h-12 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,215,0,0.3)]">
             <CarFront className="w-7 h-7 text-slate-900 dark:text-white" strokeWidth={2.5} />
           </div>
@@ -349,12 +351,12 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
       <div className="flex-1 relative flex flex-col min-w-0 bg-slate-50 dark:bg-slate-800/50 md:bg-white dark:bg-slate-900 h-[100dvh] overflow-y-auto overflow-x-hidden">
         
         {step > 0 && (
-          <div className="md:hidden bg-white dark:bg-slate-900 px-5 py-3 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-20 flex items-center justify-between shadow-sm">
+          <div className="md:hidden flex-shrink-0 bg-white dark:bg-slate-900 px-5 py-3 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-20 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2">
               <button onClick={prevStep} className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowAdmin(true)}>
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/admin')}>
                 <div className="relative w-7 h-7 bg-[#FFD700] rounded-md flex items-center justify-center">
                   <CarFront className="w-4 h-4 text-slate-900 dark:text-white" strokeWidth={2.5} />
                 </div>
@@ -387,7 +389,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
                   <div 
                     className="md:hidden relative w-20 h-20 bg-[#FFD700] rounded-[1.5rem] flex items-center justify-center shadow-[0_12px_32px_rgba(255,215,0,0.3)] mb-8 cursor-pointer hover:scale-105 transition-transform"
-                    onClick={() => setShowAdmin(true)}
+                    onClick={() => navigate('/admin')}
                   >
                     <CarFront className="w-10 h-10 text-slate-900 dark:text-white" strokeWidth={2.5} />
                   </div>
@@ -765,16 +767,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         </div>
       </div>
 
-      {showAdmin && (
-        <React.Suspense fallback={<div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center"><div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div></div>}>
-          <AdminPanel
-            onClose={() => setShowAdmin(false)}
-            onUpdateSettings={handleUpdateSettings}
-            currentWhatsapp={whatsappNumber}
-            currentTelegram={telegramUsername}
-          />
-        </React.Suspense>
-      )}
+      
     </div>
   );
 }

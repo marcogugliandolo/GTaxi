@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+const fs = require('fs');
+
+const content = `import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard } from 'lucide-react';
+import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, Car, Home } from 'lucide-react';
 import { BookingData } from '../types';
 import { getBookings, updateBookingStatus, getSettings, saveSettings } from '../api';
-import AdminDashboard from './AdminDashboard';
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function AdminPanel() {
   const [waNumber, setWaNumber] = useState('');
   const [tgUser, setTgUser] = useState('');
   
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'reservations' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'reservations' | 'settings'>('reservations');
   const [reservations, setReservations] = useState<BookingData[]>([]);
   
   const [actionConfirm, setActionConfirm] = useState<{ id: string, action: 'approved' | 'cancelled', res: BookingData } | null>(null);
@@ -90,19 +91,19 @@ export default function AdminPanel() {
       
       let message = '';
       if (action === 'approved') {
-        message = `✅ *RESERVA CONFIRMADA - GTaxi*\n\nHola ${res.name}, tu reserva ha sido aprobada.\n📍 De: ${res.pickup}\n🏁 A: ${res.dropoff}\n📅 El ${res.date} a las ${res.time}\n\nEl conductor estará allí puntualmente. ¡Gracias por elegir GTaxi!`;
+        message = \`✅ *RESERVA CONFIRMADA - GTaxi*\\n\\nHola \${res.name}, tu reserva ha sido aprobada.\\n📍 De: \${res.pickup}\\n🏁 A: \${res.dropoff}\\n📅 El \${res.date} a las \${res.time}\\n\\nEl conductor estará allí puntualmente. ¡Gracias por elegir GTaxi!\`;
       } else {
-        message = `❌ *RESERVA CANCELADA - GTaxi*\n\nHola ${res.name}, lamentablemente no podemos confirmar tu reserva para el ${res.date} a las ${res.time}.\n\nPor favor, disculpa las molestias o contáctanos para buscar otra alternativa.`;
+        message = \`❌ *RESERVA CANCELADA - GTaxi*\\n\\nHola \${res.name}, lamentablemente no podemos confirmar tu reserva para el \${res.date} a las \${res.time}.\\n\\nPor favor, disculpa las molestias o contáctanos para buscar otra alternativa.\`;
       }
       
       const text = encodeURIComponent(message);
       
-      let formattedPhone = res.phone.replace(/\D/g, '');
+      let formattedPhone = res.phone.replace(/\\D/g, '');
       if (formattedPhone.length === 9) {
         formattedPhone = '34' + formattedPhone;
       }
       
-      window.open(`https://wa.me/${formattedPhone}?text=${text}`, '_blank');
+      window.open(\`https://wa.me/\${formattedPhone}?text=\${text}\`, '_blank');
     } catch (e) {
       console.error(e);
       alert('Error al actualizar la reserva');
@@ -111,7 +112,7 @@ export default function AdminPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 flex flex-col p-4 md:p-8 items-center justify-center">
+      <div className="min-h-screen w-full bg-slate-50 dark:bg-slate-950 flex flex-col p-4 md:p-8 items-center justify-center">
         <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative border border-slate-100 dark:border-slate-800">
           <button 
             onClick={() => navigate('/')}
@@ -121,13 +122,8 @@ export default function AdminPanel() {
           </button>
           
           <div className="p-8">
-            <div className="relative w-20 h-20 mx-auto mb-6">
-              <div className="w-full h-full bg-[#FFD700] rounded-[1.5rem] flex items-center justify-center shadow-[0_8px_32px_rgba(255,215,0,0.4)]">
-                <CarFront className="w-10 h-10 text-slate-900 dark:text-white" strokeWidth={2.5} />
-              </div>
-              <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center shadow-xl border-[3px] border-white dark:border-slate-900">
-                <Shield className="w-4 h-4 text-white dark:text-slate-900" strokeWidth={2.5} />
-              </div>
+            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-700 dark:text-slate-200">
+              <Lock className="w-8 h-8" />
             </div>
             
             <h2 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-2">Acceso Administrativo</h2>
@@ -167,18 +163,15 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="flex h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
+    <div className="flex h-screen w-full bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
       <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
       
       {/* Sidebar */}
       <div className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col shadow-sm z-10">
         <div className="h-20 flex items-center px-8 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3 text-slate-900 dark:text-white">
-            <div className="w-10 h-10 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgba(255,215,0,0.3)] relative">
-              <CarFront className="w-5 h-5 text-slate-900 dark:text-white" strokeWidth={2.5} />
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-900 dark:bg-white rounded-md flex items-center justify-center border-2 border-white dark:border-slate-900">
-                <Shield className="w-2.5 h-2.5 text-white dark:text-slate-900" strokeWidth={3} />
-              </div>
+            <div className="w-10 h-10 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-sm">
+              <Car className="w-5 h-5 text-black" />
             </div>
             <span className="font-extrabold text-xl tracking-tight">GTaxi Admin</span>
           </div>
@@ -186,32 +179,22 @@ export default function AdminPanel() {
         
         <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
           <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-              activeTab === 'dashboard' 
-                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' 
-                : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-700 dark:hover:text-slate-300'
-            }`}
-          >
-            <LayoutDashboard className="w-5 h-5" /> Dashboard
-          </button>
-          <button
             onClick={() => setActiveTab('reservations')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
+            className={\`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all \${
               activeTab === 'reservations' 
                 ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' 
                 : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-700 dark:hover:text-slate-300'
-            }`}
+            }\`}
           >
             <List className="w-5 h-5" /> Reservas
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
+            className={\`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all \${
               activeTab === 'settings' 
                 ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' 
                 : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-700 dark:hover:text-slate-300'
-            }`}
+            }\`}
           >
             <Settings className="w-5 h-5" /> Configuración
           </button>
@@ -236,14 +219,9 @@ export default function AdminPanel() {
       {/* Main Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Mobile Header */}
-        <div className="md:hidden flex-shrink-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 shadow-sm z-10">
+        <div className="md:hidden h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 shadow-sm z-10">
           <span className="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#FFD700] rounded-lg flex items-center justify-center shadow-sm relative mr-1">
-              <CarFront className="w-4 h-4 text-slate-900 dark:text-white" strokeWidth={2.5} />
-              <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-slate-900 dark:bg-white rounded flex items-center justify-center border-[1.5px] border-white dark:border-slate-900">
-                <Shield className="w-2 h-2 text-white dark:text-slate-900" strokeWidth={3} />
-              </div>
-            </div> GTaxi Admin
+            <Car className="w-5 h-5 text-[#FFD700]" /> GTaxi Admin
           </span>
           <button onClick={handleLogout} className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
             <LogOut className="w-5 h-5" />
@@ -251,22 +229,16 @@ export default function AdminPanel() {
         </div>
         
         {/* Mobile Tabs */}
-        <div className="md:hidden flex-shrink-0 flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2 pt-2">
-          <button
-             onClick={() => setActiveTab('dashboard')}
-             className={`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'dashboard' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
-           >
-             <LayoutDashboard className="w-4 h-4" /> Dashboard
-           </button>
+        <div className="md:hidden flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2 pt-2">
           <button
              onClick={() => setActiveTab('reservations')}
-             className={`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'reservations' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             className={\`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 \${activeTab === 'reservations' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}\`}
            >
              <List className="w-4 h-4" /> Reservas
            </button>
            <button
              onClick={() => setActiveTab('settings')}
-             className={`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'settings' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             className={\`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 \${activeTab === 'settings' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}\`}
            >
              <Settings className="w-4 h-4" /> Configuración
            </button>
@@ -275,16 +247,12 @@ export default function AdminPanel() {
         {/* Header Desktop */}
         <div className="hidden md:flex h-20 items-center px-10">
            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-             {activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'reservations' ? 'Gestión de Reservas' : 'Configuración del Sistema'}
+             {activeTab === 'reservations' ? 'Gestión de Reservas' : 'Configuración del Sistema'}
            </h1>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 md:p-10 pb-20 md:pb-10 bg-slate-50 dark:bg-slate-950">
           <div className="max-w-5xl mx-auto space-y-6">
-            {activeTab === 'dashboard' && (
-              <AdminDashboard bookings={reservations} />
-            )}
-
             {activeTab === 'reservations' && (
               <div className="space-y-4">
                 {reservations.length === 0 ? (
@@ -310,11 +278,11 @@ export default function AdminPanel() {
                             <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{res.phone}</p>
                           </div>
                         </div>
-                        <span className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                        <span className={\`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider \${
                           res.status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400' : 
                           res.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400' : 
                           'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400'
-                        }`}>
+                        }\`}>
                           {res.status === 'approved' ? 'Aprobada' : res.status === 'cancelled' ? 'Cancelada' : 'Pendiente'}
                         </span>
                       </div>
@@ -413,18 +381,18 @@ export default function AdminPanel() {
               <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl">
                 <div>
                   <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold tracking-widest mb-1">Estado de la reserva</span>
-                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                  <span className={\`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider \${
                     selectedReservation.status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' : 
                     selectedReservation.status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400' : 
                     'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400'
-                  }`}>
+                  }\`}>
                     {selectedReservation.status === 'approved' ? 'Aprobada' : selectedReservation.status === 'cancelled' ? 'Cancelada' : 'Pendiente'}
                   </span>
                 </div>
                 <div className="text-right">
                   <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold tracking-widest mb-1">Precio Estimado</span>
                   <p className="text-slate-900 dark:text-white font-extrabold text-2xl">
-                    {selectedReservation.price ? `€${Number(selectedReservation.price).toFixed(2)}` : 'Pendiente'}
+                    {selectedReservation.price ? \`€\${Number(selectedReservation.price).toFixed(2)}\` : 'Pendiente'}
                   </p>
                 </div>
               </div>
@@ -517,7 +485,7 @@ export default function AdminPanel() {
       {actionConfirm && (
         <div className="fixed inset-0 z-[120] bg-slate-900/60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm p-8 shadow-2xl">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 ${actionConfirm.action === 'approved' ? 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400' : 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400'}`}>
+            <div className={\`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 \${actionConfirm.action === 'approved' ? 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400' : 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400'}\`}>
               {actionConfirm.action === 'approved' ? <Check className="w-8 h-8" /> : <Ban className="w-8 h-8" />}
             </div>
             
@@ -541,7 +509,7 @@ export default function AdminPanel() {
                   handleAction(actionConfirm.id, actionConfirm.action);
                   setActionConfirm(null);
                 }}
-                className={`flex-1 text-white font-bold py-3 rounded-xl transition-colors ${actionConfirm.action === 'approved' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`}
+                className={\`flex-1 text-white font-bold py-3 rounded-xl transition-colors \${actionConfirm.action === 'approved' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}\`}
               >
                 Confirmar
               </button>
@@ -552,3 +520,6 @@ export default function AdminPanel() {
     </div>
   );
 }
+`
+fs.writeFileSync('src/components/AdminPanel.tsx', content);
+console.log('Done');
