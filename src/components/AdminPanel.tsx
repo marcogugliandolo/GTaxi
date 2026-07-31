@@ -411,11 +411,11 @@ export default function AdminPanel() {
 
       {/* Modals */}
       {selectedReservation && (
-        <div className="fixed inset-0 z-[110] bg-slate-900/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl w-full max-w-xl shadow-2xl max-h-[92vh] sm:max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
-            <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+        <div className="fixed inset-0 z-[110] bg-slate-900/60 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl w-full max-w-xl shadow-2xl max-h-[92vh] sm:max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
+            <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 shrink-0">
               <div>
-                <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white">Detalles de Reserva</h3>
+                <h3 className="font-extrabold text-base sm:text-xl text-slate-900 dark:text-white">Detalles de Reserva</h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Ref: {selectedReservation.id?.slice(0, 8)}</p>
               </div>
               <button onClick={() => setSelectedReservation(null)} className="p-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors shadow-sm">
@@ -516,7 +516,7 @@ export default function AdminPanel() {
               </div>
             </div>
             
-            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
               <button 
                 onClick={() => setSelectedReservation(null)}
                 className="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3.5 sm:py-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base"
