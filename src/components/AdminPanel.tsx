@@ -11,7 +11,13 @@ export default function AdminPanel() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { t } = useLanguage();
   
-  const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('admin_auth') === 'true');
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    try {
+      return localStorage.getItem('admin_auth') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -58,7 +64,11 @@ export default function AdminPanel() {
     e.preventDefault();
     if (username.toLowerCase() === 'gabriel' && password === 'gtaxi2026') {
       setIsAuthenticated(true);
-      localStorage.setItem('admin_auth', 'true');
+      try {
+        localStorage.setItem('admin_auth', 'true');
+      } catch (e) {
+        console.error(e);
+      }
       setError('');
     } else {
       setError('Usuario o contraseña incorrectos');
@@ -69,7 +79,11 @@ export default function AdminPanel() {
     setIsAuthenticated(false);
     setUsername('');
     setPassword('');
-    localStorage.removeItem('admin_auth');
+    try {
+      localStorage.removeItem('admin_auth');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleSave = async () => {

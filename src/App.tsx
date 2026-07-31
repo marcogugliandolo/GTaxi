@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import BookingWizard from './components/BookingWizard';
 import AdminPanel from './components/AdminPanel';
 import { useLanguage } from './contexts/LanguageContext';
@@ -15,7 +15,7 @@ function Splash({ loading }: { loading: boolean }) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950"
         >
           <motion.svg
             animate={{ y: [0, -4, 0] }}
@@ -56,15 +56,15 @@ function MainApp() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 300);
+    }, 200);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 flex font-sans selection:bg-[#FFD700]/30 overflow-hidden relative">
+    <div className="min-h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 flex flex-col font-sans selection:bg-[#FFD700]/30 relative overflow-x-hidden">
       <Routes>
-        <Route path="/" element={<BookingWizard />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/" element={<BookingWizard />} />
         <Route path="*" element={<BookingWizard />} />
       </Routes>
       <Splash loading={loading} />
@@ -74,8 +74,8 @@ function MainApp() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <MainApp />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
