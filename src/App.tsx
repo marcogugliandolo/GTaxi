@@ -56,7 +56,7 @@ function MainApp() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 300);
     return () => clearTimeout(timer);
   }, []);
 
@@ -65,6 +65,7 @@ function MainApp() {
       <Routes>
         <Route path="/" element={<BookingWizard />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="*" element={<BookingWizard />} />
       </Routes>
       <Splash loading={loading} />
     </div>

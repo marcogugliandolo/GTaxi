@@ -104,7 +104,11 @@ async function initDb() {
 app.get('/api/settings', async (req, res) => {
   try {
     const row = await db.get('SELECT data FROM settings WHERE id = 1');
-    res.json(JSON.parse(row.data));
+    if (row && row.data) {
+      res.json(JSON.parse(row.data));
+    } else {
+      res.json({ whatsapp: '34664287876', telegram: '' });
+    }
   } catch (error) {
     res.status(500).json({ error: 'Failed to read settings' });
   }
