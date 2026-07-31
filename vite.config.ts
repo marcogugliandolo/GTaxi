@@ -12,18 +12,7 @@ export default defineConfig(() => {
       },
     },
     build: {
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes("node_modules")) {
-              if (id.includes("lucide-react")) return "lucide";
-              if (id.includes("motion")) return "motion";
-              if (id.includes("react") || id.includes("react-dom")) return "react-vendor";
-              return "vendor";
-            }
-          }
-        }
-      }
+      chunkSizeWarningLimit: 1000
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
