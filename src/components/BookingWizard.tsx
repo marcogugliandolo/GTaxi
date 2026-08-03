@@ -427,7 +427,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 1: ROUTE */}
             {step === 1 && (
-              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-12">
+              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whereTo")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("searchCity")}</p>
@@ -459,7 +459,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -476,7 +476,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 2: DATE & TIME */}
             {step === 2 && (
-              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-12">
+              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whenTravel")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("selectDateTime")}</p>
@@ -513,7 +513,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -530,7 +530,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 3: DETAILS */}
             {step === 3 && (
-              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-12">
+              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("tripDetails")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("passengersNotes")}</p>
@@ -573,7 +573,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -590,7 +590,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 4: USER DATA */}
             {step === 4 && (
-              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-12">
+              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("yourData")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("contactConfirm")}</p>
@@ -627,7 +627,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -644,7 +644,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 5: PAYMENT / SUMMARY */}
             {step === 5 && (
-              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-12">
+              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
                 
                 <div className="text-center mb-4 md:mb-6 pt-2 md:pt-0">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("paymentProcess")}</h1>
