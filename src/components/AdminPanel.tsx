@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard } from 'lucide-react';
+import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText } from 'lucide-react';
 import { BookingData } from '../types';
 import { getBookings, updateBookingStatus, getSettings, saveSettings } from '../api';
 import AdminDashboard from './AdminDashboard';
+import InvoiceModal from './InvoiceModal';
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function AdminPanel() {
   
   const [actionConfirm, setActionConfirm] = useState<{ id: string, action: 'approved' | 'cancelled', res: BookingData } | null>(null);
   const [selectedReservation, setSelectedReservation] = useState<BookingData | null>(null);
+  const [showInvoiceModal, setShowInvoiceModal] = useState<BookingData | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -523,6 +525,16 @@ export default function AdminPanel() {
                     </div>
                   </div>
                 )}
+                
+                {/* Generate Invoice Button */}
+                <div className="pt-2">
+                  <button
+                    onClick={() => setShowInvoiceModal(selectedReservation)}
+                    className="w-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold py-3.5 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <FileText className="w-5 h-5" /> Generar Factura
+                  </button>
+                </div>
               </div>
             </div>
             
@@ -572,6 +584,13 @@ export default function AdminPanel() {
             </div>
           </div>
         </div>
+      )}
+
+      {showInvoiceModal && (
+        <InvoiceModal 
+          booking={showInvoiceModal} 
+          onClose={() => setShowInvoiceModal(null)} 
+        />
       )}
     </div>
   );
