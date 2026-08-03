@@ -333,15 +333,10 @@ export default function AddressInput({ label, placeholder, value, onChange, onLo
           ))}
 
           {/* Footer badge */}
-          {isGoogleActive ? (
+          {isGoogleActive && (
             <div className="px-5 py-2 bg-slate-50/80 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1.5 text-[11px] text-slate-400 font-medium">
               <span>Powered by</span>
               <span className="font-bold text-slate-600 dark:text-slate-300">Google Maps</span>
-            </div>
-          ) : (
-            <div className="px-4 py-2.5 bg-amber-50/80 dark:bg-amber-950/30 border-t border-amber-100 dark:border-amber-900/40 text-[11px] text-amber-800 dark:text-amber-300 font-medium flex items-center justify-between">
-              <span>💡 ¿Quieres usar la API oficial de Google Maps?</span>
-              <span className="font-semibold text-amber-900 dark:text-amber-200 underline cursor-pointer">Añade GOOGLE_MAPS_PLATFORM_KEY</span>
             </div>
           )}
         </div>
