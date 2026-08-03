@@ -6,13 +6,6 @@ import BookingWizard from './components/BookingWizard';
 import AdminPanel from './components/AdminPanel';
 import { useLanguage } from './contexts/LanguageContext';
 
-const API_KEY =
-  process.env.GOOGLE_MAPS_PLATFORM_KEY ||
-  (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
-  (globalThis as any).GOOGLE_MAPS_PLATFORM_KEY ||
-  '';
-const hasValidKey = Boolean(API_KEY) && API_KEY !== 'YOUR_API_KEY';
-
 function Splash({ loading }: { loading: boolean }) {
   const { t } = useLanguage();
   return (
@@ -82,15 +75,41 @@ function MainApp() {
 }
 
 export default function App() {
+  const [apiKey, setApiKey] = useState<string>(() => {
+    return (
+      process.env.GOOGLE_MAPS_PLATFORM_KEY ||
+      (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
+      (globalThis as any).GOOGLE_MAPS_PLATFORM_KEY ||
+      ''
+    );
+  });
+
+  useEffect(() => {
+    if (!apiKey) {
+      fetch('/api/config')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.googleMapsKey) {
+            setApiKey(data.googleMapsKey);
+          }
+        })
+        .catch((err) => {
+          console.warn('Failed to fetch runtime config:', err);
+        });
+    }
+  }, [apiKey]);
+
   const appContent = (
     <BrowserRouter>
       <MainApp />
     </BrowserRouter>
   );
 
-  if (hasValidKey) {
+  const isValidKey = Boolean(apiKey) && apiKey !== 'YOUR_API_KEY';
+
+  if (isValidKey) {
     return (
-      <APIProvider apiKey={API_KEY} version="weekly" libraries={['places', 'geocoding']}>
+      <APIProvider apiKey={apiKey} version="weekly" libraries={['places', 'geocoding']}>
         {appContent}
       </APIProvider>
     );

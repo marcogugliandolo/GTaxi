@@ -101,6 +101,14 @@ async function initDb() {
 }
 
 // API ROUTES
+app.get('/api/config', (req, res) => {
+  const googleMapsKey =
+    process.env.GOOGLE_MAPS_PLATFORM_KEY ||
+    process.env.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
+    '';
+  res.json({ googleMapsKey });
+});
+
 app.get('/api/settings', async (req, res) => {
   try {
     const row = await db.get('SELECT data FROM settings WHERE id = 1');
