@@ -129,9 +129,10 @@ export default function AdminPanel() {
         <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative border border-slate-100 dark:border-slate-800">
           <button 
             onClick={() => navigate('/')}
-            className="absolute top-4 right-4 px-4 py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full transition-colors z-10"
+            title="Volver al Inicio"
+            className="absolute top-4 right-4 p-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full transition-colors z-10 flex items-center justify-center"
           >
-            <span className="font-bold">Volver al Inicio</span>
+            <Home className="w-5 h-5 text-slate-700 dark:text-slate-200" />
           </button>
           
           <div className="p-8">
@@ -259,9 +260,18 @@ export default function AdminPanel() {
               </div>
             </div> GTaxi Admin
           </span>
-          <button onClick={handleLogout} className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-            <LogOut className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => navigate('/')} 
+              title="Volver al Inicio"
+              className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-center transition-colors"
+            >
+              <Home className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+            </button>
+            <button onClick={handleLogout} title="Cerrar Sesión" className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
         </div>
         
         {/* Mobile Tabs */}
