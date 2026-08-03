@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import BookingWizard from './components/BookingWizard';
 import AdminPanel from './components/AdminPanel';
 import { useLanguage } from './contexts/LanguageContext';
+
+const API_KEY =
+  process.env.GOOGLE_MAPS_PLATFORM_KEY ||
+  (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
+  (globalThis as any).GOOGLE_MAPS_PLATFORM_KEY ||
+  '';
+const hasValidKey = Boolean(API_KEY) && API_KEY !== 'YOUR_API_KEY';
 
 function Splash({ loading }: { loading: boolean }) {
   const { t } = useLanguage();
@@ -74,9 +82,19 @@ function MainApp() {
 }
 
 export default function App() {
-  return (
+  const appContent = (
     <BrowserRouter>
       <MainApp />
     </BrowserRouter>
   );
+
+  if (hasValidKey) {
+    return (
+      <APIProvider apiKey={API_KEY} version="weekly" libraries={['places', 'geocoding']}>
+        {appContent}
+      </APIProvider>
+    );
+  }
+
+  return appContent;
 }

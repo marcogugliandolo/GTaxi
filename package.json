@@ -16,6 +16,7 @@
     "@tailwindcss/vite": "^4.1.14",
     "@types/compression": "^1.8.1",
     "@types/sqlite3": "^5.1.0",
+    "@vis.gl/react-google-maps": "^1.9.0",
     "@vitejs/plugin-react": "^5.0.4",
     "compression": "^1.8.1",
     "date-fns": "^4.4.0",
