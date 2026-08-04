@@ -25,6 +25,7 @@ import {
 import { BookingData, LocationData } from '../types';
 import { getSettings, saveBooking, saveSettings } from '../api';
 import AddressInput from './AddressInput';
+import ModernDateTimePicker from './ModernDateTimePicker';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -476,41 +477,19 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 2: DATE & TIME */}
             {step === 2 && (
-              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
-                <div className="mb-4 md:mb-10">
+              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-4xl mx-auto px-4 py-4 md:p-8 lg:p-12 pb-28 md:pb-12">
+                <div className="mb-4 md:mb-8">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whenTravel")}</h1>
-                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("selectDateTime")}</p>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-base font-medium">{t("selectDateTime")}</p>
                 </div>
                 
-                <div className="flex-1 flex flex-col gap-4">
-                  <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                      <div className="space-y-2 md:space-y-3">
-                        <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">{t("dateLabel")}</label>
-                        <div className="relative">
-                          <CalendarIcon className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10 pointer-events-none" />
-                          <input
-                            type="date"
-                            value={formData.date}
-                            onChange={(e) => updateForm({ date: e.target.value })}
-                            className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 dark:text-white text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2 md:space-y-3">
-                        <label className="text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide ml-1">{t("timeLabel")}</label>
-                        <div className="relative">
-                          <ClockIcon className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-slate-400 z-10 pointer-events-none" />
-                          <input
-                            type="time"
-                            value={formData.time}
-                            onChange={(e) => updateForm({ time: e.target.value })}
-                            className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl md:rounded-2xl outline-none text-slate-900 dark:text-white text-base md:text-lg transition-all shadow-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer relative z-0 appearance-none min-h-[3.5rem] md:min-h-[4rem]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex-1">
+                  <ModernDateTimePicker
+                    date={formData.date}
+                    time={formData.time}
+                    onDateChange={(d) => updateForm({ date: d })}
+                    onTimeChange={(t) => updateForm({ time: t })}
+                  />
                 </div>
 
                 <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
