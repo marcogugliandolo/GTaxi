@@ -26,7 +26,7 @@ import { BookingData, LocationData } from '../types';
 import { getSettings, saveBooking, saveSettings } from '../api';
 import AddressInput from './AddressInput';
 import ModernDateTimePicker from './ModernDateTimePicker';
-import GaliTaxiLogo from './GaliTaxiLogo';
+import VaixaLogo from './VaixaLogo';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -297,7 +297,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full  opacity-10 pointer-events-none"></div>
 
         <div className="relative z-10 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/admin')}>
-          <GaliTaxiLogo size={64} variant="light" />
+          <VaixaLogo size={64} variant="light" />
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col justify-center my-4 space-y-4 lg:space-y-6">
@@ -382,7 +382,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="flex items-center cursor-pointer" onClick={() => navigate('/admin')}>
-                <GaliTaxiLogo size={46} />
+                <VaixaLogo size={46} />
               </div>
             </div>
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Paso {step}/5</span>
@@ -413,7 +413,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-8"
                     onClick={() => navigate('/admin')}
                   >
-                    <GaliTaxiLogo size={108} layout="vertical" variant="light" />
+                    <VaixaLogo size={108} layout="vertical" variant="light" />
                   </div>
                   
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">

@@ -6,7 +6,7 @@ import BookingWizard from './components/BookingWizard';
 import AdminPanel from './components/AdminPanel';
 import { useLanguage } from './contexts/LanguageContext';
 
-import GaliTaxiLogo from './components/GaliTaxiLogo';
+import VaixaLogo from './components/VaixaLogo';
 
 function Splash({ loading }: { loading: boolean }) {
   const { t } = useLanguage();
@@ -24,7 +24,7 @@ function Splash({ loading }: { loading: boolean }) {
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
           >
-            <GaliTaxiLogo size={88} layout="vertical" />
+            <VaixaLogo size={88} layout="vertical" />
           </motion.div>
           
           <div className="w-[200px] h-1.5 bg-slate-200 dark:bg-slate-800 mt-6 rounded-full overflow-hidden relative">

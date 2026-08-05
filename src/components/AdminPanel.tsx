@@ -6,7 +6,7 @@ import { BookingData } from '../types';
 import { getBookings, updateBookingStatus, getSettings, saveSettings } from '../api';
 import AdminDashboard from './AdminDashboard';
 import InvoiceModal from './InvoiceModal';
-import GaliTaxiLogo from './GaliTaxiLogo';
+import VaixaLogo from './VaixaLogo';
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -140,7 +140,7 @@ export default function AdminPanel() {
           
           <div className="p-8">
             <div className="flex justify-center mb-6">
-              <GaliTaxiLogo size={80} layout="vertical" />
+              <VaixaLogo size={80} layout="vertical" />
             </div>
             
             <h2 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-2">Acceso Administrativo</h2>
@@ -186,7 +186,7 @@ export default function AdminPanel() {
       {/* Sidebar */}
       <div className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col shadow-sm z-10">
         <div className="h-20 flex items-center px-6 border-b border-slate-100 dark:border-slate-800">
-          <GaliTaxiLogo size={46} />
+          <VaixaLogo size={46} />
         </div>
         
         <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
@@ -242,7 +242,7 @@ export default function AdminPanel() {
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Mobile Header */}
         <div className="md:hidden flex-shrink-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 shadow-sm z-10">
-          <GaliTaxiLogo size={44} />
+          <VaixaLogo size={44} />
           <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate('/')} 
