@@ -1,11 +1,12 @@
 import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 export interface VaixaLogoProps {
   className?: string;
   iconOnly?: boolean;
   size?: number;
   showText?: boolean;
-  variant?: 'light' | 'dark';
+  variant?: 'light' | 'dark' | 'auto';
   layout?: 'horizontal' | 'vertical';
   outlineColor?: string;
   accentColor?: string;
@@ -14,9 +15,14 @@ export interface VaixaLogoProps {
 export default function VaixaLogo({
   className = '',
   size = 48,
-  variant = 'dark',
+  variant = 'auto',
 }: VaixaLogoProps) {
-  const imageSrc = variant === 'light' ? '/logo-blanco.png' : '/logo.png';
+  const { theme } = useTheme();
+  
+  const isDarkTheme = theme === 'dark';
+  const isLightVariant = variant === 'light' || (variant === 'auto' && isDarkTheme);
+  
+  const imageSrc = isLightVariant ? '/logo-blanco.png' : '/logo.png';
 
   return (
     <div className={`inline-flex items-center justify-center shrink-0 ${className}`}>
