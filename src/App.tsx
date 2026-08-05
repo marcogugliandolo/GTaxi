@@ -66,15 +66,6 @@ function MainApp() {
         <Route path="/" element={<BookingWizard />} />
         <Route path="*" element={<BookingWizard />} />
       </Routes>
-      <a
-        href="https://marcogugliandolo.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-2 right-3 z-[100] text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex items-center gap-1"
-      >
-        <span>Creado por</span>
-        <span className="font-bold">Marco Gugliandolo</span>
-      </a>
       <Splash loading={loading} />
     </div>
   );
