@@ -80,7 +80,7 @@ export default function BookingWizard() {
   const { t, language, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [formData, setFormData] = useState(INITIAL_DATA);
   const [isSending, setIsSending] = useState(false);
@@ -152,7 +152,7 @@ export default function BookingWizard() {
   };
 
   const prevStep = () => {
-    if (step > 0) {
+    if (step > 1) {
       setDirection(-1);
       setStep(s => s - 1);
     }
@@ -297,7 +297,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full  opacity-10 pointer-events-none"></div>
 
         <div className="relative z-10 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/admin')}>
-          <VaixaLogo size={110} variant="light" />
+          <VaixaLogo size={160} variant="light" />
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col justify-center my-4 space-y-4 lg:space-y-6">
@@ -378,7 +378,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         {step > 0 && (
           <div className="md:hidden flex-shrink-0 bg-white dark:bg-slate-900 px-5 py-3 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-20 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2">
-              <button onClick={prevStep} className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
+              <button onClick={prevStep} className={`p-2 -ml-2 rounded-full hover:bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors ${step === 1 ? 'opacity-0 pointer-events-none' : ''}`}>
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="flex items-center cursor-pointer" onClick={() => navigate('/admin')}>
@@ -392,46 +392,6 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         <div className="flex-1 w-full relative flex flex-col min-h-full">
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
             
-            {/* STEP 0: INTRO */}
-            {step === 0 && (
-              <motion.div
-                key="step0"
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 min-h-[100dvh] md:min-h-full w-full"
-              >
-                <div className="absolute inset-0 overflow-hidden md:hidden pointer-events-none">
-                  <div className="absolute -top-[10%] -right-[20%] w-[80%] h-[60%] rounded-full bg-[#FFD700]  opacity-20" />
-                  <div className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[50%] rounded-full bg-blue-500  opacity-10" />
-                </div>
-
-                <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
-                  <div 
-                    className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-8"
-                    onClick={() => navigate('/admin')}
-                  >
-                    <VaixaLogo size={180} layout="vertical" variant="light" />
-                  </div>
-                  
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">
-                    {t("slogan1")} <br /> {t("slogan2")}
-                  </h1>
-                  <p className="text-slate-400 md:text-slate-500 dark:text-slate-400 mb-10 text-lg max-w-md leading-relaxed font-medium">
-                    {t("heroFeatures")}
-                  </p>
-                  <button
-                    onClick={nextStep}
-                    className="w-full sm:w-auto sm:px-12 bg-[#FFD700] text-black font-bold text-lg py-4 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#FFD700]/20"
-                  >
-                    {t("bookNow")} <ArrowRight className="w-6 h-6" />
-                  </button>
-                </div>
-              </motion.div>
-            )}
-
             {/* STEP 1: ROUTE */}
             {step === 1 && (
               <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">

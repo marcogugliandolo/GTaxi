@@ -140,7 +140,7 @@ export default function AdminPanel() {
           
           <div className="p-8">
             <div className="flex justify-center mb-6">
-              <VaixaLogo size={80} layout="vertical" />
+              <VaixaLogo size={140} layout="vertical" />
             </div>
             
             <h2 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-2">Acceso Administrativo</h2>
