@@ -25,14 +25,9 @@ export default function VaixaLogo({
         alt="Vaixa Logo"
         className="object-contain transition-transform hover:scale-105"
         style={{
-          height: `${size * 1.4}px`,
+          height: `${size}px`,
           width: 'auto',
           maxWidth: '100%',
-        }}
-        onError={(e) => {
-          if (e.currentTarget.src.includes('logo-blanco.png')) {
-            e.currentTarget.src = '/logo.png';
-          }
         }}
       />
     </div>

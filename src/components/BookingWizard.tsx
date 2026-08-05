@@ -297,7 +297,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full  opacity-10 pointer-events-none"></div>
 
         <div className="relative z-10 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/admin')}>
-          <VaixaLogo size={64} variant="light" />
+          <VaixaLogo size={110} variant="light" />
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col justify-center my-4 space-y-4 lg:space-y-6">
@@ -413,7 +413,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-8"
                     onClick={() => navigate('/admin')}
                   >
-                    <VaixaLogo size={108} layout="vertical" variant="light" />
+                    <VaixaLogo size={180} layout="vertical" variant="light" />
                   </div>
                   
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">
