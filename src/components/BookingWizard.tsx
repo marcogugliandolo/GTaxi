@@ -299,7 +299,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
           <div className="relative w-12 h-12 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,215,0,0.3)]">
             <CarFront className="w-7 h-7 text-slate-900 dark:text-white" strokeWidth={2.5} />
           </div>
-          <span className="text-3xl font-extrabold tracking-tight text-white">GTaxi</span>
+          <span className="text-3xl font-extrabold tracking-tight text-white">GaliTaxi</span>
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col justify-center my-4 space-y-4 lg:space-y-6">
@@ -350,7 +350,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
           </div>
         </div>
 
-        <div className="relative z-10 bg-white/5 border border-white/10 p-5 rounded-2xl ">
+        <div className="relative z-10 bg-white/5 border border-white/10 p-5 rounded-2xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700">
               <ShieldCheck className="w-5 h-5 text-green-400" />
@@ -360,6 +360,17 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
               <p className="text-xs font-medium text-slate-300">{t("bookAndWait")}</p>
             </div>
           </div>
+        </div>
+
+        <div className="relative z-10 text-center pt-2">
+          <a 
+            href="https://marcogugliandolo.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-[11px] font-medium text-slate-400 hover:text-slate-200 transition-colors inline-block"
+          >
+            Creado por <span>Marco Gugliandolo</span>
+          </a>
         </div>
       </div>
 
@@ -376,7 +387,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 <div className="relative w-7 h-7 bg-[#FFD700] rounded-md flex items-center justify-center">
                   <CarFront className="w-4 h-4 text-slate-900 dark:text-white" strokeWidth={2.5} />
                 </div>
-                <span className="font-bold text-slate-900 dark:text-white tracking-tight">GTaxi</span>
+                <span className="font-bold text-slate-900 dark:text-white tracking-tight">GaliTaxi</span>
               </div>
             </div>
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Paso {step}/5</span>

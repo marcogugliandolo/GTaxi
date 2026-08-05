@@ -260,7 +260,7 @@ export default function AdminPanel() {
               <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-slate-900 dark:bg-white rounded flex items-center justify-center border-[1.5px] border-white dark:border-slate-900">
                 <Shield className="w-2 h-2 text-white dark:text-slate-900" strokeWidth={3} />
               </div>
-            </div> GTaxi Admin
+            </div> GaliTaxi Admin
           </span>
           <div className="flex items-center gap-2">
             <button 

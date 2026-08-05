@@ -16,7 +16,7 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
   const [clientNif, setClientNif] = useState('');
   const [clientAddress, setClientAddress] = useState('');
   
-  const [companyName, setCompanyName] = useState('GTaxi S.L.');
+  const [companyName, setCompanyName] = useState('GaliTaxi S.L.');
   const [companyNif, setCompanyNif] = useState('B-12345678');
   const [companyAddress, setCompanyAddress] = useState('Calle Principal 123, 28001 Madrid');
   
@@ -58,7 +58,7 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
     doc.setFontSize(22);
     doc.setTextColor(15, 23, 42); // slate-900
     doc.setFont('helvetica', 'bold');
-    doc.text('GTaxi', 30, 23);
+    doc.text('GaliTaxi', 30, 23);
     
     doc.setFontSize(20);
     doc.setTextColor(100, 116, 139); // slate-500
@@ -198,7 +198,7 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
             </div>
             
             <div className="col-span-1 md:col-span-2 space-y-4">
-              <h4 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-2">Tus Datos Fiscales (GTaxi)</h4>
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-2">Tus Datos Fiscales (GaliTaxi)</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Nombre Fiscal</label>
