@@ -28,25 +28,21 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
     
     // Add Logo
     try {
-      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 8 160 146" width="200" height="200"><path d="M76 34 C76 22 84 18 100 18 C116 18 124 22 124 34 Z" fill="#FFC400" /><rect x="87" y="22" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="107" y="22" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="93" y="26" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="101" y="26" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="87" y="30" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="107" y="30" width="6" height="4" fill="#1E293B" rx="0.5" /><path d="M72 40 C64 26 69 16 76 12 C82 20 80 34 76 42 Z" fill="#FFC400" /><path d="M128 40 C136 26 131 16 124 12 C118 20 120 34 124 42 Z" fill="#FFC400" /><path d="M68 50 C44 44 32 58 46 70 C60 68 66 58 68 50 Z" fill="#1E293B" /><path d="M132 50 C156 44 168 58 154 70 C140 68 134 58 132 50 Z" fill="#1E293B" /><path d="M67 48 C78 44 122 44 133 48 C140 66 128 110 118 126 C110 138 90 138 82 126 C72 110 60 66 67 48 Z" fill="#FFFFFF" stroke="#1E293B" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 58 C132 82 136 112 138 128 C139 140 131 148 122 146" fill="none" stroke="#1E293B" stroke-width="9" stroke-linecap="round" /><ellipse cx="84" cy="78" rx="4.5" ry="7.5" fill="#1E293B" /><ellipse cx="116" cy="78" rx="4.5" ry="7.5" fill="#1E293B" /><rect x="68" y="102" width="64" height="38" rx="19" fill="#FFFFFF" stroke="#FFC400" stroke-width="8" /><ellipse cx="85" cy="121" rx="3.5" ry="6" fill="#FFC400" /><ellipse cx="115" cy="121" rx="3.5" ry="6" fill="#FFC400" /></svg>`;
-      const imgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStr)}`;
-      
-      const canvas = document.createElement('canvas');
-      canvas.width = 128;
-      canvas.height = 128;
-      const ctx = canvas.getContext('2d');
-      
       const img = new Image();
       await new Promise((resolve, reject) => {
         img.onload = resolve;
         img.onerror = reject;
-        img.src = imgUrl;
+        img.src = '/logo.png';
       });
       
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width || 300;
+      canvas.height = img.height || 200;
+      const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.drawImage(img, 0, 0, 128, 128);
+        ctx.drawImage(img, 0, 0);
         const logoData = canvas.toDataURL('image/png');
-        doc.addImage(logoData, 'PNG', 14, 14, 12, 12);
+        doc.addImage(logoData, 'PNG', 14, 12, 24, 16);
       }
     } catch (err) {
       console.warn("Could not load logo", err);
