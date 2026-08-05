@@ -6,6 +6,7 @@ import { BookingData } from '../types';
 import { getBookings, updateBookingStatus, getSettings, saveSettings } from '../api';
 import AdminDashboard from './AdminDashboard';
 import InvoiceModal from './InvoiceModal';
+import GaliTaxiLogo from './GaliTaxiLogo';
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -138,13 +139,8 @@ export default function AdminPanel() {
           </button>
           
           <div className="p-8">
-            <div className="relative w-20 h-20 mx-auto mb-6">
-              <div className="w-full h-full bg-[#FFD700] rounded-[1.5rem] flex items-center justify-center shadow-[0_8px_32px_rgba(255,215,0,0.4)]">
-                <CarFront className="w-10 h-10 text-slate-900 dark:text-white" strokeWidth={2.5} />
-              </div>
-              <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center shadow-xl border-[3px] border-white dark:border-slate-900">
-                <Shield className="w-4 h-4 text-white dark:text-slate-900" strokeWidth={2.5} />
-              </div>
+            <div className="flex justify-center mb-6">
+              <GaliTaxiLogo size={80} layout="vertical" />
             </div>
             
             <h2 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-2">Acceso Administrativo</h2>
@@ -189,16 +185,8 @@ export default function AdminPanel() {
       
       {/* Sidebar */}
       <div className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col shadow-sm z-10">
-        <div className="h-20 flex items-center px-8 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-3 text-slate-900 dark:text-white">
-            <div className="w-10 h-10 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-[0_4px_12px_rgba(255,215,0,0.3)] relative">
-              <CarFront className="w-5 h-5 text-slate-900 dark:text-white" strokeWidth={2.5} />
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-900 dark:bg-white rounded-md flex items-center justify-center border-2 border-white dark:border-slate-900">
-                <Shield className="w-2.5 h-2.5 text-white dark:text-slate-900" strokeWidth={3} />
-              </div>
-            </div>
-            <span className="font-extrabold text-xl tracking-tight">GTaxi Admin</span>
-          </div>
+        <div className="h-20 flex items-center px-6 border-b border-slate-100 dark:border-slate-800">
+          <GaliTaxiLogo size={46} />
         </div>
         
         <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
@@ -254,14 +242,7 @@ export default function AdminPanel() {
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Mobile Header */}
         <div className="md:hidden flex-shrink-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 shadow-sm z-10">
-          <span className="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#FFD700] rounded-lg flex items-center justify-center shadow-sm relative mr-1">
-              <CarFront className="w-4 h-4 text-slate-900 dark:text-white" strokeWidth={2.5} />
-              <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-slate-900 dark:bg-white rounded flex items-center justify-center border-[1.5px] border-white dark:border-slate-900">
-                <Shield className="w-2 h-2 text-white dark:text-slate-900" strokeWidth={3} />
-              </div>
-            </div> GaliTaxi Admin
-          </span>
+          <GaliTaxiLogo size={44} />
           <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate('/')} 

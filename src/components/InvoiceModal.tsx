@@ -16,7 +16,7 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
   const [clientNif, setClientNif] = useState('');
   const [clientAddress, setClientAddress] = useState('');
   
-  const [companyName, setCompanyName] = useState('GaliTaxi S.L.');
+  const [companyName, setCompanyName] = useState('vaixa S.L.');
   const [companyNif, setCompanyNif] = useState('B-12345678');
   const [companyAddress, setCompanyAddress] = useState('Calle Principal 123, 28001 Madrid');
   
@@ -28,7 +28,7 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
     
     // Add Logo
     try {
-      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128"><rect width="32" height="32" rx="8" fill="#FFD700" /><g transform="translate(4,4)" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.64 5H8.4a2 2 0 0 0-1.82 1.3L5 10 3 8"/><path d="M7 14h.01"/><path d="M17 14h.01"/><rect width="18" height="8" x="3" y="10" rx="2"/><path d="M5 18v2"/><path d="M19 18v2"/></g></svg>`;
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 8 160 146" width="200" height="200"><path d="M76 34 C76 22 84 18 100 18 C116 18 124 22 124 34 Z" fill="#FFC400" /><rect x="87" y="22" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="107" y="22" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="93" y="26" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="101" y="26" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="87" y="30" width="6" height="4" fill="#1E293B" rx="0.5" /><rect x="107" y="30" width="6" height="4" fill="#1E293B" rx="0.5" /><path d="M72 40 C64 26 69 16 76 12 C82 20 80 34 76 42 Z" fill="#FFC400" /><path d="M128 40 C136 26 131 16 124 12 C118 20 120 34 124 42 Z" fill="#FFC400" /><path d="M68 50 C44 44 32 58 46 70 C60 68 66 58 68 50 Z" fill="#1E293B" /><path d="M132 50 C156 44 168 58 154 70 C140 68 134 58 132 50 Z" fill="#1E293B" /><path d="M67 48 C78 44 122 44 133 48 C140 66 128 110 118 126 C110 138 90 138 82 126 C72 110 60 66 67 48 Z" fill="#FFFFFF" stroke="#1E293B" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 58 C132 82 136 112 138 128 C139 140 131 148 122 146" fill="none" stroke="#1E293B" stroke-width="9" stroke-linecap="round" /><ellipse cx="84" cy="78" rx="4.5" ry="7.5" fill="#1E293B" /><ellipse cx="116" cy="78" rx="4.5" ry="7.5" fill="#1E293B" /><rect x="68" y="102" width="64" height="38" rx="19" fill="#FFFFFF" stroke="#FFC400" stroke-width="8" /><ellipse cx="85" cy="121" rx="3.5" ry="6" fill="#FFC400" /><ellipse cx="115" cy="121" rx="3.5" ry="6" fill="#FFC400" /></svg>`;
       const imgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgStr)}`;
       
       const canvas = document.createElement('canvas');
@@ -58,7 +58,7 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
     doc.setFontSize(22);
     doc.setTextColor(15, 23, 42); // slate-900
     doc.setFont('helvetica', 'bold');
-    doc.text('GaliTaxi', 30, 23);
+    doc.text('vaixa', 30, 23);
     
     doc.setFontSize(20);
     doc.setTextColor(100, 116, 139); // slate-500
@@ -198,7 +198,7 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
             </div>
             
             <div className="col-span-1 md:col-span-2 space-y-4">
-              <h4 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-2">Tus Datos Fiscales (GaliTaxi)</h4>
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-2">Tus Datos Fiscales (vaixa)</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Nombre Fiscal</label>

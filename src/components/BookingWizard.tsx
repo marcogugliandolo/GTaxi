@@ -26,6 +26,7 @@ import { BookingData, LocationData } from '../types';
 import { getSettings, saveBooking, saveSettings } from '../api';
 import AddressInput from './AddressInput';
 import ModernDateTimePicker from './ModernDateTimePicker';
+import GaliTaxiLogo from './GaliTaxiLogo';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -295,11 +296,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#FFD700] rounded-full  opacity-20 pointer-events-none"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full  opacity-10 pointer-events-none"></div>
 
-        <div className="relative z-10 flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/admin')}>
-          <div className="relative w-12 h-12 bg-[#FFD700] rounded-xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,215,0,0.3)]">
-            <CarFront className="w-7 h-7 text-slate-900 dark:text-white" strokeWidth={2.5} />
-          </div>
-          <span className="text-3xl font-extrabold tracking-tight text-white">GaliTaxi</span>
+        <div className="relative z-10 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/admin')}>
+          <GaliTaxiLogo size={64} variant="light" />
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col justify-center my-4 space-y-4 lg:space-y-6">
@@ -383,11 +381,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
               <button onClick={prevStep} className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/admin')}>
-                <div className="relative w-7 h-7 bg-[#FFD700] rounded-md flex items-center justify-center">
-                  <CarFront className="w-4 h-4 text-slate-900 dark:text-white" strokeWidth={2.5} />
-                </div>
-                <span className="font-bold text-slate-900 dark:text-white tracking-tight">GaliTaxi</span>
+              <div className="flex items-center cursor-pointer" onClick={() => navigate('/admin')}>
+                <GaliTaxiLogo size={46} />
               </div>
             </div>
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Paso {step}/5</span>
@@ -415,10 +410,10 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
                 <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
                   <div 
-                    className="md:hidden relative w-20 h-20 bg-[#FFD700] rounded-[1.5rem] flex items-center justify-center shadow-[0_12px_32px_rgba(255,215,0,0.3)] mb-8 cursor-pointer hover:scale-105 transition-transform"
+                    className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-8"
                     onClick={() => navigate('/admin')}
                   >
-                    <CarFront className="w-10 h-10 text-slate-900 dark:text-white" strokeWidth={2.5} />
+                    <GaliTaxiLogo size={108} layout="vertical" variant="light" />
                   </div>
                   
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">

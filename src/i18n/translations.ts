@@ -6,11 +6,11 @@ export const translations = {
     back: 'Volver atrás',
     continue: 'Continuar',
     
-    brand: 'GaliTaxi',
+    brand: 'vaixa',
     slogan1: 'Tu viaje premium,', slogan2: 'a un solo toque.',
     bookNow: 'Reservar mi Taxi',
     adminAccess: 'Acceso Admin',
-    heroFeatures: 'Reserva tu GaliTaxi al instante. Indica tus paradas, paga cómodamente y espera la confirmación de nuestro equipo.',
+    heroFeatures: 'Reserva tu vaixa al instante. Indica tus paradas, paga cómodamente y espera la confirmación de nuestro equipo.',
 
     whereTo: '¿A dónde vamos?',
     fromLabel: 'Punto de recogida',
@@ -91,11 +91,11 @@ export const translations = {
     back: 'Volver atrás',
     continue: 'Continuar',
     
-    brand: 'GaliTaxi',
+    brand: 'vaixa',
     slogan1: 'A túa viaxe premium,', slogan2: 'a un só toque.',
     bookNow: 'Reservar o meu Taxi',
     adminAccess: 'Acceso Admin',
-    heroFeatures: 'Reserva o teu GaliTaxi ao instante. Indica as túas paradas, paga comodamente e agarda a confirmación do noso equipo.',
+    heroFeatures: 'Reserva o teu vaixa ao instante. Indica as túas paradas, paga comodamente e agarda a confirmación do noso equipo.',
 
     whereTo: 'Onde imos?',
     fromLabel: 'Punto de recollida',
@@ -176,11 +176,11 @@ export const translations = {
     back: 'Go back',
     continue: 'Continue',
     
-    brand: 'GaliTaxi',
+    brand: 'vaixa',
     slogan1: 'Your premium ride,', slogan2: 'just one tap away.',
     bookNow: 'Book my Taxi',
     adminAccess: 'Admin Access',
-    heroFeatures: 'Book your GaliTaxi instantly. Indicate your stops, pay comfortably and wait for our team\'s confirmation.',
+    heroFeatures: 'Book your vaixa instantly. Indicate your stops, pay comfortably and wait for our team\'s confirmation.',
 
     whereTo: 'Where to?',
     fromLabel: 'Pickup location',
