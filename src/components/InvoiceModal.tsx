@@ -36,43 +36,45 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
       });
       
       const canvas = document.createElement('canvas');
-      canvas.width = img.width || 300;
-      canvas.height = img.height || 200;
+      canvas.width = img.naturalWidth || img.width || 300;
+      canvas.height = img.naturalHeight || img.height || 200;
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.drawImage(img, 0, 0);
         const logoData = canvas.toDataURL('image/png');
-        doc.addImage(logoData, 'PNG', 14, 12, 24, 16);
+        const aspect = (canvas.width && canvas.height) ? (canvas.width / canvas.height) : 2;
+        const logoHeight = 26;
+        const logoWidth = logoHeight * aspect;
+        doc.addImage(logoData, 'PNG', 14, 8, logoWidth, logoHeight);
       }
     } catch (err) {
       console.warn("Could not load logo", err);
       doc.setFillColor(255, 215, 0);
-      doc.roundedRect(14, 14, 12, 12, 2, 2, 'F');
+      doc.roundedRect(14, 8, 18, 18, 2, 2, 'F');
+      doc.setFontSize(22);
+      doc.setTextColor(15, 23, 42); // slate-900
+      doc.setFont('helvetica', 'bold');
+      doc.text('vaixa', 36, 20);
     }
     
-    // Header text
-    doc.setFontSize(22);
-    doc.setTextColor(15, 23, 42); // slate-900
-    doc.setFont('helvetica', 'bold');
-    doc.text('vaixa', 30, 23);
-    
+    // Header title
     doc.setFontSize(20);
     doc.setTextColor(100, 116, 139); // slate-500
     doc.setFont('helvetica', 'normal');
-    doc.text('FACTURA', 160, 23);
+    doc.text('FACTURA', 160, 22);
     
     // Company Info
     doc.setFontSize(10);
     doc.setTextColor(100, 116, 139);
-    doc.text(companyName, 14, 38);
-    doc.text(`NIF: ${companyNif}`, 14, 44);
-    doc.text(companyAddress, 14, 50);
+    doc.text(companyName, 14, 42);
+    doc.text(`NIF: ${companyNif}`, 14, 48);
+    doc.text(companyAddress, 14, 54);
     
     // Invoice details
     doc.setFontSize(12);
     doc.setTextColor(30, 41, 59);
-    doc.text(`Factura Nº: ${invoiceNumber}`, 130, 38);
-    doc.text(`Fecha: ${date}`, 130, 44);
+    doc.text(`Factura Nº: ${invoiceNumber}`, 130, 42);
+    doc.text(`Fecha: ${date}`, 130, 48);
     
     // Client Info
     doc.setFontSize(11);
