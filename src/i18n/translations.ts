@@ -7,10 +7,11 @@ export const translations = {
     continue: 'Continuar',
     
     brand: 'vaixa',
+    serviceAreaBadge: 'Taxi & VTC • Vilalba & Galicia',
     slogan1: 'Tu viaje premium,', slogan2: 'a un solo toque.',
     bookNow: 'Reservar mi Taxi',
     adminAccess: 'Acceso Admin',
-    heroFeatures: 'Reserva tu vaixa al instante. Indica tus paradas, paga cómodamente y espera la confirmación de nuestro equipo.',
+    heroFeatures: 'Tu servicio oficial de Taxi y VTC en Vilalba (Lugo) y toda Galicia. Reserva tu trayecto al instante, selecciona paradas, paga cómodamente y viaja seguro.',
 
     whereTo: '¿A dónde vamos?',
     fromLabel: 'Punto de recogida',
@@ -92,10 +93,11 @@ export const translations = {
     continue: 'Continuar',
     
     brand: 'vaixa',
+    serviceAreaBadge: 'Taxi & VTC • Vilalba e Galicia',
     slogan1: 'A túa viaxe premium,', slogan2: 'a un só toque.',
     bookNow: 'Reservar o meu Taxi',
     adminAccess: 'Acceso Admin',
-    heroFeatures: 'Reserva o teu vaixa ao instante. Indica as túas paradas, paga comodamente e agarda a confirmación do noso equipo.',
+    heroFeatures: 'O teu servizo oficial de Taxi e VTC en Vilalba (Lugo) e toda Galicia. Reserva a túa viaxe ao instante, indica paradas e viaxa seguro.',
 
     whereTo: 'Onde imos?',
     fromLabel: 'Punto de recollida',
@@ -177,10 +179,11 @@ export const translations = {
     continue: 'Continue',
     
     brand: 'vaixa',
+    serviceAreaBadge: 'Taxi & VTC • Vilalba & Galicia',
     slogan1: 'Your premium ride,', slogan2: 'just one tap away.',
     bookNow: 'Book my Taxi',
     adminAccess: 'Admin Access',
-    heroFeatures: 'Book your vaixa instantly. Indicate your stops, pay comfortably and wait for our team\'s confirmation.',
+    heroFeatures: 'Official Taxi & VTC service in Vilalba (Lugo) and all across Galicia. Book your trip instantly, add stops, and travel safely with confirmation.',
 
     whereTo: 'Where to?',
     fromLabel: 'Pickup location',

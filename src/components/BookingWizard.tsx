@@ -298,6 +298,10 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
         <div className="relative z-10 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate('/admin')}>
           <VaixaLogo size={160} variant="light" />
+          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-medium text-slate-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FFD700]"></span>
+            <span>{t("serviceAreaBadge")}</span>
+          </div>
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col justify-center my-4 space-y-4 lg:space-y-6">
@@ -406,6 +410,11 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     <VaixaLogo size={180} layout="vertical" variant="light" />
                   </div>
                   
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-amber-300 md:bg-amber-50 md:border-amber-200/80 md:text-amber-950 dark:md:bg-slate-800/90 dark:md:border-slate-700 dark:md:text-amber-300 text-xs font-semibold mb-5 shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 dark:bg-amber-300 shrink-0"></span>
+                    <span className="tracking-wide">{t("serviceAreaBadge")}</span>
+                  </div>
+
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">
                     {t("slogan1")} <br /> {t("slogan2")}
                   </h1>
@@ -419,16 +428,6 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                     {t("bookNow")} <ArrowRight className="w-6 h-6" />
                   </button>
                 </div>
-                
-                <a
-                  href="https://marcogugliandolo.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center gap-1.5"
-                >
-                  <span>Creado por</span>
-                  <span className="font-bold">Marco Gugliandolo</span>
-                </a>
               </motion.div>
             )}
 

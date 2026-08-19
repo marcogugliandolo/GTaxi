@@ -1,6 +1,6 @@
 {
-  "name": "vaixa",
-  "description": "Aplicación moderna y por fases para reservar un servicio de taxi, inspirada en diseño de alta usabilidad. Envía solicitudes vía WhatsApp o Telegram.",
+  "name": "vaixa - Taxi & VTC Vilalba",
+  "description": "Aplicación oficial de reserva de Taxi y servicio VTC en Vilalba (Lugo) y toda Galicia. Traslados rápidos a aeropuertos, estaciones y trayectos interurbanos.",
   "requestFramePermissions": ["geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
