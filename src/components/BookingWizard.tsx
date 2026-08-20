@@ -370,37 +370,39 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 min-h-[100dvh] md:min-h-full w-full"
+                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-4 md:py-12 min-h-[100dvh] md:min-h-full w-full"
               >
                 <div className="absolute inset-0 overflow-hidden md:hidden pointer-events-none">
                   <div className="absolute -top-[10%] -right-[20%] w-[80%] h-[60%] rounded-full bg-[#FFD700]  opacity-20" />
                   <div className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[50%] rounded-full bg-blue-500  opacity-10" />
                 </div>
 
-                <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
+                <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-2 md:pt-0">
                   <div 
-                    className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-8"
+                    className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-4"
                     onClick={() => navigate('/admin')}
                   >
-                    <VaixaLogo size={180} layout="vertical" variant="light" />
+                    <VaixaLogo size={140} layout="vertical" variant="light" />
                   </div>
                   
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-amber-300 md:bg-amber-50 md:border-amber-200/80 md:text-amber-950 dark:md:bg-slate-800/90 dark:md:border-slate-700 dark:md:text-amber-300 text-xs font-semibold mb-5 shadow-sm">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-amber-300 md:bg-amber-50 md:border-amber-200/80 md:text-amber-950 dark:md:bg-slate-800/90 dark:md:border-slate-700 dark:md:text-amber-300 text-xs font-semibold mb-3 md:mb-5 shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-amber-400 dark:bg-amber-300 shrink-0"></span>
                     <span className="tracking-wide">{t("serviceAreaBadge")}</span>
                   </div>
 
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">
+                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-3 md:mb-5 tracking-tight leading-tight">
                     {t("slogan1")} <br /> {t("slogan2")}
                   </h1>
-                  <p className="text-slate-400 md:text-slate-500 dark:text-slate-400 mb-10 text-lg max-w-md leading-relaxed font-medium">
+
+                  <p className="text-slate-400 md:text-slate-500 dark:text-slate-400 mb-6 md:mb-10 text-sm sm:text-base md:text-lg max-w-md leading-relaxed font-medium">
                     {t("heroFeatures")}
                   </p>
+
                   <button
                     onClick={nextStep}
-                    className="w-full sm:w-auto sm:px-12 bg-[#FFD700] text-black font-bold text-lg py-4 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#FFD700]/20"
+                    className="w-full sm:w-auto sm:px-12 bg-[#FFD700] text-black font-bold text-base md:text-lg py-3.5 md:py-4 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#FFD700]/20"
                   >
-                    {t("bookNow")} <ArrowRight className="w-6 h-6" />
+                    {t("bookNow")} <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
                   </button>
                 </div>
               </motion.div>
@@ -440,7 +442,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -472,7 +474,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   />
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -532,7 +534,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -586,7 +588,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
+                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
