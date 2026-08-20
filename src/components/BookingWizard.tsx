@@ -370,39 +370,37 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-4 md:py-12 min-h-[100dvh] md:min-h-full w-full"
+                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 min-h-[100dvh] md:min-h-full w-full"
               >
                 <div className="absolute inset-0 overflow-hidden md:hidden pointer-events-none">
                   <div className="absolute -top-[10%] -right-[20%] w-[80%] h-[60%] rounded-full bg-[#FFD700]  opacity-20" />
                   <div className="absolute -bottom-[20%] -left-[10%] w-[70%] h-[50%] rounded-full bg-blue-500  opacity-10" />
                 </div>
 
-                <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-2 md:pt-0">
+                <div className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center md:items-start text-center md:text-left pt-12 md:pt-0">
                   <div 
-                    className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-4"
+                    className="md:hidden cursor-pointer hover:scale-105 transition-transform mb-8"
                     onClick={() => navigate('/admin')}
                   >
-                    <VaixaLogo size={140} layout="vertical" variant="light" />
+                    <VaixaLogo size={180} layout="vertical" variant="light" />
                   </div>
                   
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-amber-300 md:bg-amber-50 md:border-amber-200/80 md:text-amber-950 dark:md:bg-slate-800/90 dark:md:border-slate-700 dark:md:text-amber-300 text-xs font-semibold mb-3 md:mb-5 shadow-sm">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-amber-300 md:bg-amber-50 md:border-amber-200/80 md:text-amber-950 dark:md:bg-slate-800/90 dark:md:border-slate-700 dark:md:text-amber-300 text-xs font-semibold mb-5 shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-amber-400 dark:bg-amber-300 shrink-0"></span>
                     <span className="tracking-wide">{t("serviceAreaBadge")}</span>
                   </div>
 
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-3 md:mb-5 tracking-tight leading-tight">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white md:text-slate-900 dark:text-white mb-5 tracking-tight leading-tight">
                     {t("slogan1")} <br /> {t("slogan2")}
                   </h1>
-
-                  <p className="text-slate-400 md:text-slate-500 dark:text-slate-400 mb-6 md:mb-10 text-sm sm:text-base md:text-lg max-w-md leading-relaxed font-medium">
+                  <p className="text-slate-400 md:text-slate-500 dark:text-slate-400 mb-10 text-lg max-w-md leading-relaxed font-medium">
                     {t("heroFeatures")}
                   </p>
-
                   <button
                     onClick={nextStep}
-                    className="w-full sm:w-auto sm:px-12 bg-[#FFD700] text-black font-bold text-base md:text-lg py-3.5 md:py-4 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#FFD700]/20"
+                    className="w-full sm:w-auto sm:px-12 bg-[#FFD700] text-black font-bold text-lg py-4 rounded-2xl hover:bg-[#F2CB00] active:scale-95 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#FFD700]/20"
                   >
-                    {t("bookNow")} <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
+                    {t("bookNow")} <ArrowRight className="w-6 h-6" />
                   </button>
                 </div>
               </motion.div>
