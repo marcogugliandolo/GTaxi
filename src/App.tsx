@@ -51,7 +51,14 @@ function Splash({ loading }: { loading: boolean }) {
 }
 
 function MainApp() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2400);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 flex flex-col font-sans selection:bg-[#FFD700]/30 relative overflow-x-hidden">
