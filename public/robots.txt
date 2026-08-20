@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://vaixa.es/sitemap.xml
+Sitemap: https://vaixataxi.es/sitemap.xml
