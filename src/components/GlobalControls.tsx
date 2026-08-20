@@ -2,10 +2,16 @@ import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Moon, Sun } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 export default function GlobalControls() {
   const { language, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
+
+  if (location.pathname === '/admin') {
+    return null;
+  }
 
   return (
     <div className="fixed top-4 right-4 md:right-8 z-[100] flex items-center gap-3">

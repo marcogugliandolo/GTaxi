@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2 } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2, Menu, Moon, Sun } from 'lucide-react';
 import { BookingData } from '../types';
 import { getBookings, updateBookingStatus, getSettings, saveSettings, login, getUsers, createUser, deleteUser, changePassword, updateProfile } from '../api';
 import AdminDashboard from './AdminDashboard';
@@ -12,6 +13,7 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     try {
@@ -42,6 +44,7 @@ export default function AdminPanel() {
   const [tgUser, setTgUser] = useState('');
   
   const [activeTab, setActiveTab] = useState<'dashboard' | 'reservations' | 'settings' | 'users' | 'vehicles' | 'profile'>('dashboard');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [reservations, setReservations] = useState<BookingData[]>([]);
   
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
@@ -380,6 +383,12 @@ export default function AdminPanel() {
         
         <div className="p-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
           <button
+            onClick={toggleTheme}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-slate-600 dark:text-slate-300 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800 transition-colors"
+          >
+            {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />} {theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
+          </button>
+          <button
             onClick={() => setActiveTab('profile')}
             className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-colors ${
               activeTab === 'profile'
@@ -407,67 +416,79 @@ export default function AdminPanel() {
       {/* Main Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Mobile Header */}
-        <div className="md:hidden flex-shrink-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 shadow-sm z-10">
+        <div className="md:hidden flex-shrink-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 shadow-sm z-[60] relative">
           <VaixaLogo size={44} />
           <div className="flex items-center gap-2">
             <button 
-              onClick={() => navigate('/')} 
-              title="Volver al Inicio"
-              className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-center transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-center transition-colors"
             >
-              <Home className="w-5 h-5 text-slate-700 dark:text-slate-200" />
-            </button>
-            <button onClick={handleLogout} title="Cerrar Sesión" className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-              <LogOut className="w-5 h-5" />
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
         
-        {/* Mobile Tabs */}
-        <div className="md:hidden flex-shrink-0 flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2 pt-2 overflow-x-auto">
-          <button
-             onClick={() => setActiveTab('dashboard')}
-             className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'dashboard' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
-           >
-             <LayoutDashboard className="w-4 h-4" /> Dash
-           </button>
-           <button
-             onClick={() => setActiveTab('reservations')}
-             className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'reservations' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
-           >
-             <List className="w-4 h-4" /> Reservas
-           </button>
-           <button
-             onClick={() => setActiveTab('profile')}
-             className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'profile' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
-           >
-             <User className="w-4 h-4" /> Perfil
-           </button>
-           {currentUserRole === 'admin' && (
-             <button
-               onClick={() => setActiveTab('settings')}
-               className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'settings' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
-             >
-               <Settings className="w-4 h-4" /> Config
-             </button>
-           )}
-           {currentUserRole === 'admin' && (
-             <button
-               onClick={() => setActiveTab('vehicles')}
-               className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'vehicles' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
-             >
-               <CarFront className="w-4 h-4" /> Cars
-             </button>
-           )}
-           {currentUserRole === 'admin' && (
-             <button
-               onClick={() => setActiveTab('users')}
-               className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'users' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
-             >
-               <Shield className="w-4 h-4" /> Users
-             </button>
-           )}
-        </div>
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-16 left-0 right-0 bottom-0 z-[50] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md overflow-y-auto animate-in slide-in-from-top-2 flex flex-col justify-between">
+            <div className="p-4 space-y-2">
+              <button
+                onClick={() => { setActiveTab('dashboard'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all ${activeTab === 'dashboard' ? 'bg-[#FFD700] text-slate-900 shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+              >
+                <LayoutDashboard className="w-6 h-6" /> Dashboard
+              </button>
+              <button
+                onClick={() => { setActiveTab('reservations'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all ${activeTab === 'reservations' ? 'bg-[#FFD700] text-slate-900 shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+              >
+                <List className="w-6 h-6" /> Gestión de Reservas
+              </button>
+              <button
+                onClick={() => { setActiveTab('profile'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all ${activeTab === 'profile' ? 'bg-[#FFD700] text-slate-900 shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+              >
+                <User className="w-6 h-6" /> Mi Perfil
+              </button>
+              
+              {currentUserRole === 'admin' && (
+                <>
+                  <div className="h-px bg-slate-200 dark:bg-slate-800 my-4" />
+                  <p className="px-5 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Administración</p>
+                  <button
+                    onClick={() => { setActiveTab('settings'); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all ${activeTab === 'settings' ? 'bg-[#FFD700] text-slate-900 shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                  >
+                    <Settings className="w-6 h-6" /> Ajustes del Sistema
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('vehicles'); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all ${activeTab === 'vehicles' ? 'bg-[#FFD700] text-slate-900 shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                  >
+                    <CarFront className="w-6 h-6" /> Flota de Vehículos
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('users'); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all ${activeTab === 'users' ? 'bg-[#FFD700] text-slate-900 shadow-md' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                  >
+                    <Shield className="w-6 h-6" /> Usuarios y Permisos
+                  </button>
+                </>
+              )}
+            </div>
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 mt-auto">
+              <button onClick={toggleTheme} className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition-colors">
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />} {theme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}
+              </button>
+              <button onClick={() => navigate('/')} className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 transition-colors">
+                <Home className="w-5 h-5" /> Volver al Inicio
+              </button>
+              <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl font-bold text-red-600 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 transition-colors">
+                <LogOut className="w-5 h-5" /> Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Header Desktop */}
         <div className="hidden md:flex h-20 items-center px-10">
