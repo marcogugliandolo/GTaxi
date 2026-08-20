@@ -43,3 +43,72 @@ export const updateBookingStatus = async (id: string, status: 'approved' | 'canc
   if (!res.ok) throw new Error('Failed to update booking status');
   return res.json();
 };
+
+export const login = async (username: string, password: string) => {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Error de autenticación');
+  }
+  return res.json();
+};
+
+export const changePassword = async (username: string, oldPassword: string, newPassword: string) => {
+  const res = await fetch(`${API_BASE}/auth/change-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, oldPassword, newPassword }),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Error al cambiar contraseña');
+  }
+  return res.json();
+};
+
+export const updateProfile = async (username: string, fullName: string, carModel: string, carPlate: string) => {
+  const res = await fetch(`${API_BASE}/auth/profile`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, fullName, carModel, carPlate }),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Error al actualizar el perfil');
+  }
+  return res.json();
+};
+
+export const getUsers = async () => {
+  const res = await fetch(`${API_BASE}/admin/users`);
+  if (!res.ok) throw new Error('Failed to fetch users');
+  return res.json();
+};
+
+export const createUser = async (username: string, password: string, role: string = 'admin', fullName: string = '', carModel: string = '', carPlate: string = '') => {
+  const res = await fetch(`${API_BASE}/admin/users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password, role, fullName, carModel, carPlate }),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Error al crear usuario');
+  }
+  return res.json();
+};
+
+export const deleteUser = async (username: string) => {
+  const res = await fetch(`${API_BASE}/admin/users/${username}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Error al eliminar usuario');
+  }
+  return res.json();
+};

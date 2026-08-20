@@ -5,6 +5,7 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import BookingWizard from './components/BookingWizard';
 import AdminPanel from './components/AdminPanel';
 import { useLanguage } from './contexts/LanguageContext';
+import GlobalControls from "./components/GlobalControls";
 
 import VaixaLogo from './components/VaixaLogo';
 
@@ -61,6 +62,7 @@ function MainApp() {
 
   return (
     <div className="min-h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 flex flex-col font-sans selection:bg-[#FFD700]/30 relative overflow-x-hidden">
+      <GlobalControls />
       <Routes>
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/" element={<BookingWizard />} />

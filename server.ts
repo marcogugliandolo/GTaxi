@@ -66,11 +66,32 @@ async function initDb() {
           createdAt INTEGER,
           data TEXT
         );
+        CREATE TABLE IF NOT EXISTS users (
+          username TEXT PRIMARY KEY,
+          password TEXT,
+          role TEXT
+        );
       `);
     } else {
       throw error;
     }
   }
+
+  // Ensure default user exists
+  try {
+    await db.run('CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, role TEXT)');
+    const userCount = await db.get('SELECT COUNT(*) as count FROM users');
+    if (userCount.count === 0) {
+      await db.run('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', ['gabriel', 'gtaxi2026', 'admin']);
+    }
+  } catch(e) {
+    console.error("Error setting up users table", e);
+  }
+
+  // Migrations for new user fields
+  try { await db.run('ALTER TABLE users ADD COLUMN fullName TEXT'); } catch(e) {}
+  try { await db.run('ALTER TABLE users ADD COLUMN carModel TEXT'); } catch(e) {}
+  try { await db.run('ALTER TABLE users ADD COLUMN carPlate TEXT'); } catch(e) {}
 
   const settings = await db.get('SELECT data FROM settings WHERE id = 1');
   if (!settings) {
@@ -101,6 +122,88 @@ async function initDb() {
 }
 
 // API ROUTES
+app.post('/api/auth/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await db.get('SELECT * FROM users WHERE username = ? COLLATE NOCASE', [username]);
+    if (user && user.password === password) {
+      res.json({ success: true, username: user.username, role: user.role });
+    } else {
+      res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.post('/api/auth/change-password', async (req, res) => {
+  const { username, oldPassword, newPassword } = req.body;
+  try {
+    const user = await db.get('SELECT * FROM users WHERE username = ? COLLATE NOCASE', [username]);
+    if (user && user.password === oldPassword) {
+      await db.run('UPDATE users SET password = ? WHERE username = ? COLLATE NOCASE', [newPassword, username]);
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ error: 'Contraseña actual incorrecta' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+app.put('/api/auth/profile', async (req, res) => {
+  const { username, fullName, carModel, carPlate } = req.body;
+  try {
+    await db.run(
+      'UPDATE users SET fullName = ?, carModel = ?, carPlate = ? WHERE username = ? COLLATE NOCASE',
+      [fullName, carModel, carPlate, username]
+    );
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating profile' });
+  }
+});
+
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const rows = await db.all('SELECT username, role, fullName, carModel, carPlate FROM users');
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching users' });
+  }
+});
+
+app.post('/api/admin/users', async (req, res) => {
+  const { username, password, role, fullName, carModel, carPlate } = req.body;
+  try {
+    const existing = await db.get('SELECT username FROM users WHERE username = ? COLLATE NOCASE', [username]);
+    if (existing) {
+      return res.status(400).json({ error: 'El usuario ya existe' });
+    }
+    await db.run(
+      'INSERT INTO users (username, password, role, fullName, carModel, carPlate) VALUES (?, ?, ?, ?, ?, ?)',
+      [username, password, role || 'admin', fullName || '', carModel || '', carPlate || '']
+    );
+    res.json({ success: true, username, role: role || 'admin', fullName, carModel, carPlate });
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating user' });
+  }
+});
+
+app.delete('/api/admin/users/:username', async (req, res) => {
+  const { username } = req.params;
+  try {
+    const count = await db.get('SELECT COUNT(*) as count FROM users');
+    if (count.count <= 1) {
+      return res.status(400).json({ error: 'No puedes eliminar el único usuario' });
+    }
+    await db.run('DELETE FROM users WHERE username = ? COLLATE NOCASE', [username]);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting user' });
+  }
+});
+
 app.get('/api/config', (req, res) => {
   const googleMapsKey =
     process.env.GOOGLE_MAPS_PLATFORM_KEY ||

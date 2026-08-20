@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText } from 'lucide-react';
+import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2 } from 'lucide-react';
 import { BookingData } from '../types';
-import { getBookings, updateBookingStatus, getSettings, saveSettings } from '../api';
+import { getBookings, updateBookingStatus, getSettings, saveSettings, login, getUsers, createUser, deleteUser, changePassword, updateProfile } from '../api';
 import AdminDashboard from './AdminDashboard';
 import InvoiceModal from './InvoiceModal';
 import VaixaLogo from './VaixaLogo';
@@ -20,6 +20,20 @@ export default function AdminPanel() {
       return false;
     }
   });
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return localStorage.getItem('admin_user') || 'gabriel';
+    } catch (e) {
+      return 'gabriel';
+    }
+  });
+  const [currentUserRole, setCurrentUserRole] = useState(() => {
+    try {
+      return localStorage.getItem('admin_role') || 'admin';
+    } catch (e) {
+      return 'admin';
+    }
+  });
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,16 +41,33 @@ export default function AdminPanel() {
   const [waNumber, setWaNumber] = useState('');
   const [tgUser, setTgUser] = useState('');
   
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'reservations' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'reservations' | 'settings' | 'users' | 'vehicles' | 'profile'>('dashboard');
   const [reservations, setReservations] = useState<BookingData[]>([]);
   
+  const [adminUsers, setAdminUsers] = useState<any[]>([]);
+  const [newUsername, setNewUsername] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+  const [newUserRole, setNewUserRole] = useState('staff');
+  const [newFullName, setNewFullName] = useState('');
+  const [newCarModel, setNewCarModel] = useState('');
+  const [newCarPlate, setNewCarPlate] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  
+  const [myFullName, setMyFullName] = useState('');
+  const [myCarModel, setMyCarModel] = useState('');
+  const [myCarPlate, setMyCarPlate] = useState('');
+
   const [actionConfirm, setActionConfirm] = useState<{ id: string, action: 'approved' | 'cancelled', res: BookingData } | null>(null);
   const [selectedReservation, setSelectedReservation] = useState<BookingData | null>(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState<BookingData | null>(null);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
       loadReservations();
+      loadUsers();
       getSettings().then(s => {
         setWaNumber(s.whatsapp || '');
         setTgUser(s.telegram || '');
@@ -63,18 +94,46 @@ export default function AdminPanel() {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username.toLowerCase() === 'gabriel' && password === 'gtaxi2026') {
-      setIsAuthenticated(true);
-      try {
-        localStorage.setItem('admin_auth', 'true');
-      } catch (e) {
-        console.error(e);
+  const loadUsers = async (loggedInUser?: string) => {
+    try {
+      const users = await getUsers();
+      setAdminUsers(users);
+      const targetUser = loggedInUser || currentUser;
+      if (targetUser) {
+        const me = users.find((u: any) => u.username === targetUser);
+        if (me) {
+          setMyFullName(me.fullName || '');
+          setMyCarModel(me.carModel || '');
+          setMyCarPlate(me.carPlate || '');
+        }
       }
-      setError('');
-    } else {
-      setError('Usuario o contraseña incorrectos');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await login(username.toLowerCase(), password);
+      if (res.success) {
+        setIsAuthenticated(true);
+        setCurrentUser(res.username);
+        setCurrentUserRole(res.role);
+        try {
+          localStorage.setItem('admin_auth', 'true');
+          localStorage.setItem('admin_user', res.username);
+          localStorage.setItem('admin_role', res.role);
+        } catch (e) {
+          console.error(e);
+        }
+        setError('');
+        if (res.role !== 'admin' && (activeTab === 'settings' || activeTab === 'users')) {
+          setActiveTab('dashboard');
+        }
+      }
+    } catch (e: any) {
+      setError(e.message || 'Usuario o contraseña incorrectos');
     }
   };
   
@@ -82,8 +141,12 @@ export default function AdminPanel() {
     setIsAuthenticated(false);
     setUsername('');
     setPassword('');
+    setCurrentUser('');
+    setCurrentUserRole('');
     try {
       localStorage.removeItem('admin_auth');
+      localStorage.removeItem('admin_user');
+      localStorage.removeItem('admin_role');
     } catch (e) {
       console.error(e);
     }
@@ -125,6 +188,70 @@ export default function AdminPanel() {
       alert('Error al actualizar la reserva');
     }
   };
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername || !newUserPassword) return;
+    try {
+      await createUser(newUsername.toLowerCase(), newUserPassword, newUserRole, newFullName, newCarModel, newCarPlate);
+      setNewUsername('');
+      setNewUserPassword('');
+      setNewUserRole('staff');
+      setNewFullName('');
+      setNewCarModel('');
+      setNewCarPlate('');
+      loadUsers();
+      setFeedbackMsg({ type: 'success', text: 'Usuario creado exitosamente' });
+    } catch (e: any) {
+      setFeedbackMsg({ type: 'error', text: e.message || 'Error al crear usuario' });
+    }
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    try {
+      await deleteUser(userToDelete);
+      loadUsers();
+      setUserToDelete(null);
+      setFeedbackMsg({ type: 'success', text: 'Usuario eliminado correctamente' });
+    } catch (e: any) {
+      setUserToDelete(null);
+      setFeedbackMsg({ type: 'error', text: e.message || 'Error al eliminar usuario' });
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!oldPassword || !newPassword) return;
+    try {
+      await changePassword(currentUser, oldPassword, newPassword);
+      setOldPassword('');
+      setNewPassword('');
+      setFeedbackMsg({ type: 'success', text: 'Contraseña actualizada exitosamente' });
+    } catch (e: any) {
+      setFeedbackMsg({ type: 'error', text: e.message || 'Error al cambiar contraseña' });
+    }
+  };
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await updateProfile(currentUser, myFullName, myCarModel, myCarPlate);
+      setFeedbackMsg({ type: 'success', text: 'Perfil actualizado exitosamente' });
+      loadUsers();
+    } catch (e: any) {
+      setFeedbackMsg({ type: 'error', text: e.message || 'Error al actualizar perfil' });
+    }
+  };
+
+  useEffect(() => {
+    if (feedbackMsg) {
+      const timer = setTimeout(() => {
+        setFeedbackMsg(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [feedbackMsg]);
 
   if (!isAuthenticated) {
     return (
@@ -210,19 +337,58 @@ export default function AdminPanel() {
           >
             <List className="w-5 h-5" /> Reservas
           </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-              activeTab === 'settings' 
-                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' 
-                : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-700 dark:hover:text-slate-300'
-            }`}
-          >
-            <Settings className="w-5 h-5" /> Configuración
-          </button>
+          
+          {currentUserRole === 'admin' && (
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
+                activeTab === 'settings' 
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' 
+                  : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+            >
+              <Settings className="w-5 h-5" /> Configuración
+            </button>
+          )}
+          
+          {currentUserRole === 'admin' && (
+            <button
+              onClick={() => setActiveTab('vehicles')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
+                activeTab === 'vehicles' 
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' 
+                  : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+            >
+              <CarFront className="w-5 h-5" /> Vehículos
+            </button>
+          )}
+          
+          {currentUserRole === 'admin' && (
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
+                activeTab === 'users' 
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' 
+                  : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+            >
+              <Shield className="w-5 h-5" /> Usuarios
+            </button>
+          )}
         </div>
         
         <div className="p-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-colors ${
+              activeTab === 'profile'
+                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-300 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800'
+            }`}
+          >
+            <User className="w-4 h-4" /> Mi Perfil
+          </button>
           <button
             onClick={() => navigate('/')}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-slate-600 dark:text-slate-300 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800 transition-colors"
@@ -258,31 +424,55 @@ export default function AdminPanel() {
         </div>
         
         {/* Mobile Tabs */}
-        <div className="md:hidden flex-shrink-0 flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2 pt-2">
+        <div className="md:hidden flex-shrink-0 flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2 pt-2 overflow-x-auto">
           <button
              onClick={() => setActiveTab('dashboard')}
-             className={`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'dashboard' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'dashboard' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
            >
-             <LayoutDashboard className="w-4 h-4" /> Dashboard
+             <LayoutDashboard className="w-4 h-4" /> Dash
            </button>
-          <button
+           <button
              onClick={() => setActiveTab('reservations')}
-             className={`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'reservations' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'reservations' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
            >
              <List className="w-4 h-4" /> Reservas
            </button>
            <button
-             onClick={() => setActiveTab('settings')}
-             className={`flex-1 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'settings' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             onClick={() => setActiveTab('profile')}
+             className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'profile' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
            >
-             <Settings className="w-4 h-4" /> Configuración
+             <User className="w-4 h-4" /> Perfil
            </button>
+           {currentUserRole === 'admin' && (
+             <button
+               onClick={() => setActiveTab('settings')}
+               className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'settings' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             >
+               <Settings className="w-4 h-4" /> Config
+             </button>
+           )}
+           {currentUserRole === 'admin' && (
+             <button
+               onClick={() => setActiveTab('vehicles')}
+               className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'vehicles' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             >
+               <CarFront className="w-4 h-4" /> Cars
+             </button>
+           )}
+           {currentUserRole === 'admin' && (
+             <button
+               onClick={() => setActiveTab('users')}
+               className={`flex-1 min-w-max px-3 pb-3 pt-2 font-bold text-sm border-b-2 transition-colors flex justify-center items-center gap-2 ${activeTab === 'users' ? 'border-[#FFD700] text-slate-900 dark:text-white' : 'border-transparent text-slate-400 hover:text-slate-700'}`}
+             >
+               <Shield className="w-4 h-4" /> Users
+             </button>
+           )}
         </div>
 
         {/* Header Desktop */}
         <div className="hidden md:flex h-20 items-center px-10">
            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-             {activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'reservations' ? 'Gestión de Reservas' : 'Configuración del Sistema'}
+             {activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'reservations' ? 'Gestión de Reservas' : activeTab === 'vehicles' ? 'Gestión de Vehículos' : activeTab === 'users' ? 'Gestión de Usuarios' : 'Configuración del Sistema'}
            </h1>
         </div>
 
@@ -395,6 +585,239 @@ export default function AdminPanel() {
                   >
                     <Save className="w-5 h-5" /> Guardar Configuración
                   </button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'vehicles' && (
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-4xl">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Flota de Vehículos</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {adminUsers.filter(u => u.carModel || u.carPlate).length === 0 ? (
+                    <div className="col-span-full text-center text-slate-500 dark:text-slate-400 py-10 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                      <CarFront className="w-12 h-12 mx-auto mb-3 text-slate-300 dark:text-slate-600" />
+                      <p className="font-medium">No hay vehículos registrados en la flota.</p>
+                      <p className="text-sm mt-1">Los vehículos se añaden al crear usuarios conductores.</p>
+                    </div>
+                  ) : (
+                    adminUsers.filter(u => u.carModel || u.carPlate).map((user) => (
+                      <div key={user.username} className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-5 flex flex-col h-full border border-slate-100 dark:border-slate-700">
+                        <div className="w-12 h-12 bg-[#FFD700]/20 text-[#b39600] rounded-xl flex items-center justify-center mb-4">
+                          <CarFront className="w-6 h-6" />
+                        </div>
+                        
+                        <div className="flex-1 space-y-4">
+                          <div>
+                            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Modelo</p>
+                            <p className="font-bold text-lg text-slate-900 dark:text-white leading-tight">{user.carModel || 'No especificado'}</p>
+                          </div>
+                          
+                          {user.carPlate && (
+                            <div>
+                              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Matrícula</p>
+                              <div className="inline-block bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 font-mono text-slate-900 dark:text-white font-bold px-3 py-1 rounded-md shadow-sm">
+                                {user.carPlate}
+                              </div>
+                            </div>
+                          )}
+                          
+                          <div className="pt-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
+                            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Conductor Asignado</p>
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                                <User className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                              </div>
+                              <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">
+                                {user.fullName || user.username}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'users' && (
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-2xl">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Gestión de Usuarios</h2>
+                
+                <div className="mb-8">
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-4">Usuarios Activos</h3>
+                  <div className="space-y-3">
+                    {adminUsers.map((user) => (
+                      <div key={user.username} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl gap-4">
+                        <div className="flex items-start sm:items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                            <User className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                              {user.fullName || user.username} 
+                              <span className="text-xs font-normal text-slate-500 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">@{user.username}</span>
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 capitalize mb-1">
+                              {user.role === 'admin' ? 'Administrador' : 'Empleado'}
+                            </p>
+                            {(user.carModel || user.carPlate) && (
+                              <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 mt-1">
+                                <CarFront className="w-3.5 h-3.5" />
+                                <span>{user.carModel || 'Sin modelo'}</span>
+                                {user.carPlate && <span className="font-mono bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px]">{user.carPlate}</span>}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {user.username !== currentUser && (
+                          <button
+                            onClick={() => setUserToDelete(user.username)}
+                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors self-end sm:self-auto"
+                            title="Eliminar usuario"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-200 dark:border-slate-800 pt-8 mb-8">
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-4">Crear Nuevo Usuario</h3>
+                  <form onSubmit={handleCreateUser} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Nombre de usuario (ej. juan123)"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                      />
+                      <input
+                        type="password"
+                        placeholder="Contraseña"
+                        value={newUserPassword}
+                        onChange={(e) => setNewUserPassword(e.target.value)}
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                      />
+                    </div>
+                    
+                    <input
+                      type="text"
+                      placeholder="Nombre y Apellidos (Opcional)"
+                      value={newFullName}
+                      onChange={(e) => setNewFullName(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Modelo del Vehículo (Opcional)"
+                        value={newCarModel}
+                        onChange={(e) => setNewCarModel(e.target.value)}
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Matrícula (Opcional)"
+                        value={newCarPlate}
+                        onChange={(e) => setNewCarPlate(e.target.value)}
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                      />
+                    </div>
+
+                    <select
+                      value={newUserRole}
+                      onChange={(e) => setNewUserRole(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                    >
+                      <option value="staff">Empleado (Solo Reservas)</option>
+                      <option value="admin">Administrador (Acceso Total)</option>
+                    </select>
+                    <button
+                      type="submit"
+                      disabled={!newUsername || !newUserPassword}
+                      className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    >
+                      Crear Usuario
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'profile' && (
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm max-w-2xl">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Mi Perfil</h2>
+                
+                <form onSubmit={handleUpdateProfile} className="space-y-4 mb-8">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Nombre Completo</label>
+                    <input
+                      type="text"
+                      placeholder="Tu nombre (opcional)"
+                      value={myFullName}
+                      onChange={(e) => setMyFullName(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Modelo del Vehículo</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. Toyota Prius"
+                      value={myCarModel}
+                      onChange={(e) => setMyCarModel(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Matrícula</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. 1234 ABC"
+                      value={myCarPlate}
+                      onChange={(e) => setMyCarPlate(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-[#FFD700] text-black font-extrabold py-3 rounded-xl hover:bg-[#F2CB00] transition-colors"
+                  >
+                    Actualizar Perfil
+                  </button>
+                </form>
+
+                <div className="border-t border-slate-200 dark:border-slate-800 pt-8">
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-4">Cambiar Mi Contraseña</h3>
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    <input
+                      type="password"
+                      placeholder="Contraseña actual"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Nueva contraseña"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-800 focus:ring-4 focus:ring-[#FFD700]/20 focus:border-[#FFD700] rounded-xl py-3 px-4 text-slate-900 dark:text-white outline-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!oldPassword || !newPassword}
+                      className="w-full bg-slate-800 dark:bg-slate-700 text-white font-extrabold py-3 rounded-xl hover:bg-slate-900 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
+                    >
+                      Actualizar Contraseña
+                    </button>
+                  </form>
                 </div>
               </div>
             )}
@@ -572,6 +995,45 @@ export default function AdminPanel() {
           booking={showInvoiceModal} 
           onClose={() => setShowInvoiceModal(null)} 
         />
+      )}
+
+      {userToDelete && (
+        <div className="fixed inset-0 z-[120] bg-slate-900/60 flex items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm p-6 sm:p-8 shadow-2xl">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400">
+              <Trash2 className="w-8 h-8" />
+            </div>
+            
+            <h3 className="text-2xl font-extrabold mb-2 text-slate-900 dark:text-white text-center">
+              Eliminar Usuario
+            </h3>
+            
+            <p className="text-center text-slate-500 dark:text-slate-400 mb-8 text-sm">
+              ¿Estás seguro de que deseas eliminar permanentemente al usuario <strong className="text-slate-900 dark:text-white">{userToDelete}</strong>?
+            </p>
+            
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setUserToDelete(null)}
+                className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmDeleteUser}
+                className="flex-1 bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {feedbackMsg && (
+        <div className={`fixed bottom-4 right-4 z-[150] px-6 py-4 rounded-xl shadow-2xl font-bold animate-in slide-in-from-bottom-5 fade-in ${feedbackMsg.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+          {feedbackMsg.text}
+        </div>
       )}
     </div>
   );
