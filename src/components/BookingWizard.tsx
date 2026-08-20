@@ -440,7 +440,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -472,7 +472,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   />
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -532,7 +532,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -586,7 +586,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="fixed bottom-0 left-0 right-0 md:static md:mt-auto p-4 pb-6 md:pb-0 md:p-0 md:pt-6 bg-white dark:bg-slate-900 md:bg-transparent flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30 md:z-auto shadow-[0_-10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.2)] md:shadow-none">
+                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
