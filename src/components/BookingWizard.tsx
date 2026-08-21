@@ -440,7 +440,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -472,7 +472,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   />
                 </div>
 
-                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -532,7 +532,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -586,7 +586,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -705,7 +705,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pb-6 sm:pb-8 md:pb-6">
+                <div className="mt-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:pb-[calc(2rem+env(safe-area-inset-bottom))] md:pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
                   <div className="bg-[#0F172A] rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center justify-between gap-4 sm:gap-5 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full opacity-20 pointer-events-none"></div>
                     
