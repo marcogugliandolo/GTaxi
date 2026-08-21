@@ -258,7 +258,7 @@ export default function AdminPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 flex flex-col p-4 md:p-8 items-center justify-center">
+      <div className="min-h-full w-full bg-slate-50 dark:bg-slate-950 flex flex-col p-4 md:p-8 items-center justify-center">
         <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden relative border border-slate-100 dark:border-slate-800">
           <button 
             onClick={() => navigate('/')}
@@ -310,7 +310,7 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="flex h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
+    <div className="flex h-full w-full bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
       <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
       
       {/* Sidebar */}

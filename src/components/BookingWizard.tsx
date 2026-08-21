@@ -262,7 +262,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
   };
 
   return (
-    <div className="flex h-[100dvh] w-full bg-slate-50 dark:bg-slate-800/50 font-sans overflow-hidden">
+    <div className="flex flex-1 h-full min-h-0 w-full bg-slate-50 dark:bg-slate-800/50 font-sans overflow-hidden">
 
 
       {/* LEFT PANEL - DESKTOP ONLY */}
@@ -342,7 +342,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
       </div>
 
       {/* RIGHT PANEL - MAIN CONTENT */}
-      <div className="flex-1 relative flex flex-col min-w-0 bg-slate-50 dark:bg-slate-800/50 md:bg-white dark:bg-slate-900 h-[100dvh] overflow-y-auto overflow-x-hidden">
+      <div className="flex-1 relative flex flex-col min-w-0 bg-slate-50 dark:bg-slate-800/50 md:bg-white dark:bg-slate-900 h-full min-h-0 overflow-y-auto overflow-x-hidden">
         
         {step > 0 && (
           <div className="md:hidden flex-shrink-0 bg-white dark:bg-slate-900 px-5 py-3 border-b border-slate-100 dark:border-slate-700 sticky top-0 z-20 flex items-center justify-between shadow-sm">
@@ -370,7 +370,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 min-h-[100dvh] md:min-h-full w-full"
+                className="absolute inset-0 z-50 bg-[#0F172A] md:bg-transparent md:static md:z-auto flex flex-col justify-center px-6 py-12 min-h-full md:min-h-full w-full"
               >
                 <div className="absolute inset-0 overflow-hidden md:hidden pointer-events-none">
                   <div className="absolute -top-[10%] -right-[20%] w-[80%] h-[60%] rounded-full bg-[#FFD700]  opacity-20" />
@@ -408,7 +408,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 1: ROUTE */}
             {step === 1 && (
-              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
+              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whereTo")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("searchCity")}</p>
@@ -440,14 +440,14 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
-                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
+                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
                   <button
                     onClick={nextStep}
                     disabled={!isStepValid()}
-                    className="flex-1 bg-[#0F172A] text-white font-bold py-3.5 px-6 rounded-xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 shadow-md text-sm sm:text-base"
+                    className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 px-6 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 shadow-md shadow-slate-900/20 dark:shadow-white/10 text-sm sm:text-base"
                   >
                     {t("continue")} <ArrowRight className="w-5 h-5" />
                   </button>
@@ -457,7 +457,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 2: DATE & TIME */}
             {step === 2 && (
-              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-4xl mx-auto px-4 py-4 md:p-8 lg:p-12 pb-28 md:pb-12">
+              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-4xl mx-auto px-4 py-4 md:p-8 lg:p-12 pb-6 md:pb-8">
                 <div className="mb-4 md:mb-8">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whenTravel")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-base font-medium">{t("selectDateTime")}</p>
@@ -472,14 +472,14 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   />
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
-                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
+                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
                   <button
                     onClick={nextStep}
                     disabled={!isStepValid()}
-                    className="flex-1 bg-[#0F172A] text-white font-bold py-3.5 px-6 rounded-xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 shadow-md text-sm sm:text-base"
+                    className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 px-6 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 shadow-md shadow-slate-900/20 dark:shadow-white/10 text-sm sm:text-base"
                   >
                     {t("continue")} <ArrowRight className="w-5 h-5" />
                   </button>
@@ -489,7 +489,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 3: DETAILS */}
             {step === 3 && (
-              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
+              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("tripDetails")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("passengersNotes")}</p>
@@ -532,14 +532,14 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
-                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
+                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
                   <button
                     onClick={nextStep}
                     disabled={!isStepValid()}
-                    className="flex-1 bg-[#0F172A] text-white font-bold py-3.5 px-6 rounded-xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 shadow-md text-sm sm:text-base"
+                    className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 px-6 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 shadow-md shadow-slate-900/20 dark:shadow-white/10 text-sm sm:text-base"
                   >
                     {t("continue")} <ArrowRight className="w-5 h-5" />
                   </button>
@@ -549,7 +549,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 4: USER DATA */}
             {step === 4 && (
-              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
+              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("yourData")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("contactConfirm")}</p>
@@ -586,8 +586,8 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-auto pt-6 pb-6 md:pb-0 flex gap-3 items-center border-t border-slate-100 dark:border-slate-800 md:border-t-0">
-                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0">
+                <div className="mt-auto pt-6 pb-2 md:pb-0 flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                  <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
                   <button
@@ -603,7 +603,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 5: PAYMENT / SUMMARY */}
             {step === 5 && (
-              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-28 md:pb-12">
+              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
                 
                 <div className="text-center mb-4 md:mb-6 pt-2 md:pt-0">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("paymentProcess")}</h1>
@@ -705,7 +705,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pb-12 sm:pb-8 md:pb-6">
+                <div className="mt-auto pb-6 sm:pb-8 md:pb-6">
                   <div className="bg-[#0F172A] rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center justify-between gap-4 sm:gap-5 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700] rounded-full opacity-20 pointer-events-none"></div>
                     
@@ -728,7 +728,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
 
                   <div className="flex justify-center mt-4">
-                     <button onClick={prevStep} disabled={isSending} className="flex text-slate-400 hover:text-slate-700 dark:text-slate-200 font-bold items-center gap-2 transition-colors py-2 px-4 disabled:opacity-50 text-sm sm:text-base">
+                     <button onClick={prevStep} disabled={isSending} className="flex text-slate-400 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white font-bold items-center gap-2 transition-colors py-2 px-4 disabled:opacity-50 text-sm sm:text-base">
                        <ArrowLeft className="w-5 h-5" /> {t("back")}
                      </button>
                   </div>
