@@ -61,7 +61,7 @@ function MainApp() {
   }, []);
 
   return (
-    <div className="w-full h-[100dvh] flex flex-col bg-slate-50 dark:bg-slate-950 font-sans selection:bg-[#FFD700]/30 overflow-hidden">
+    <div className="absolute inset-0 w-full bg-slate-50 dark:bg-slate-950 flex flex-col font-sans selection:bg-[#FFD700]/30 overflow-hidden">
       <GlobalControls />
       <Routes>
         <Route path="/admin" element={<AdminPanel />} />

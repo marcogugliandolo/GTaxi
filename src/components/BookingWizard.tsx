@@ -408,7 +408,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 1: ROUTE */}
             {step === 1 && (
-              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
+              <motion.div key="step1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-0 md:pb-8">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whereTo")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("searchCity")}</p>
@@ -440,7 +440,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="sticky bottom-0 -mx-4 px-4 bg-slate-50 dark:bg-slate-900 md:bg-transparent md:mx-0 md:px-0 mt-auto pt-4 md:pt-6 pb-[calc(1rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -457,7 +457,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 2: DATE & TIME */}
             {step === 2 && (
-              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-4xl mx-auto px-4 py-4 md:p-8 lg:p-12 pb-6 md:pb-8">
+              <motion.div key="step2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-4xl mx-auto px-4 py-4 md:p-8 lg:p-12 pb-0 md:pb-8">
                 <div className="mb-4 md:mb-8">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("whenTravel")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-base font-medium">{t("selectDateTime")}</p>
@@ -472,7 +472,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   />
                 </div>
 
-                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="sticky bottom-0 -mx-4 px-4 bg-slate-50 dark:bg-slate-900 md:bg-transparent md:mx-0 md:px-0 mt-auto pt-4 md:pt-6 pb-[calc(1rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -489,7 +489,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 3: DETAILS */}
             {step === 3 && (
-              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
+              <motion.div key="step3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-0 md:pb-8">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("tripDetails")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("passengersNotes")}</p>
@@ -532,7 +532,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="sticky bottom-0 -mx-4 px-4 bg-slate-50 dark:bg-slate-900 md:bg-transparent md:mx-0 md:px-0 mt-auto pt-4 md:pt-6 pb-[calc(1rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -549,7 +549,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 4: USER DATA */}
             {step === 4 && (
-              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
+              <motion.div key="step4" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-0 md:pb-8">
                 <div className="mb-4 md:mb-10">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("yourData")}</h1>
                   <p className="text-slate-500 dark:text-slate-400 mt-1 md:mt-2 text-xs sm:text-sm md:text-lg font-medium">{t("contactConfirm")}</p>
@@ -586,7 +586,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0">
+                <div className="sticky bottom-0 -mx-4 px-4 bg-slate-50 dark:bg-slate-900 md:bg-transparent md:mx-0 md:px-0 mt-auto pt-4 md:pt-6 pb-[calc(1rem+env(safe-area-inset-bottom))] md:pb-[env(safe-area-inset-bottom)] flex gap-3 items-center border-t border-slate-200 dark:border-slate-800 md:border-t-0 z-30">
                   <button onClick={prevStep} className="flex text-slate-600 dark:text-slate-200 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-600 font-bold items-center justify-center gap-2 transition-colors py-3.5 px-4 sm:px-5 rounded-xl text-sm sm:text-base shrink-0 border border-transparent dark:border-slate-600">
                     <ArrowLeft className="w-5 h-5" /> <span>{t("back")}</span>
                   </button>
@@ -603,7 +603,7 @@ ${formData.notes ? `📝 *Paradas/Notas:* ${formData.notes}` : ''}
 
             {/* STEP 5: PAYMENT / SUMMARY */}
             {step === 5 && (
-              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-6 md:pb-8">
+              <motion.div key="step5" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" className="flex-1 flex flex-col min-h-full w-full max-w-2xl mx-auto px-4 py-4 md:p-12 lg:p-16 pb-0 md:pb-8">
                 
                 <div className="text-center mb-4 md:mb-6 pt-2 md:pt-0">
                   <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("paymentProcess")}</h1>
