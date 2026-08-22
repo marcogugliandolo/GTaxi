@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2, Menu, Moon, Sun } from 'lucide-react';
+import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2, Menu, Moon, Sun, Bell, Volume2, VolumeX, BellOff } from 'lucide-react';
 import { BookingData } from '../types';
 import { getBookings, updateBookingStatus, getSettings, saveSettings, login, getUsers, createUser, deleteUser, changePassword, updateProfile } from '../api';
 import AdminDashboard from './AdminDashboard';
@@ -46,6 +46,65 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'reservations' | 'settings' | 'users' | 'vehicles' | 'profile'>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [reservations, setReservations] = useState<BookingData[]>([]);
+  const [notifPerm, setNotifPerm] = useState<NotificationPermission>('Notification' in window ? Notification.permission : 'default');
+  const [notifMessage, setNotifMessage] = useState<string | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    try { return localStorage.getItem('admin_sound') !== 'false'; } catch { return true; }
+  });
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    try { return localStorage.getItem('admin_notif') !== 'false'; } catch { return true; }
+  });
+
+  const toggleSound = () => {
+    const newVal = !soundEnabled;
+    setSoundEnabled(newVal);
+    localStorage.setItem('admin_sound', String(newVal));
+  };
+
+  const toggleNotifications = async () => {
+    setNotifMessage(null);
+    if (!('Notification' in window)) {
+      setNotifMessage('Tu navegador no soporta notificaciones de escritorio.');
+      return;
+    }
+
+    if (Notification.permission === 'denied') {
+      setNotifMessage('Las notificaciones están bloqueadas. Haz clic en el candado 🔒 de la barra de direcciones superior, cambia el permiso a "Permitir" y recarga la página.');
+      return;
+    }
+
+    if (Notification.permission !== 'granted') {
+      try {
+        const permission = await Notification.requestPermission();
+        setNotifPerm(permission);
+        if (permission === 'granted') {
+          new Notification('Notificaciones activadas', {
+            body: 'Recibirás avisos de nuevas reservas aquí.',
+            icon: '/favicon.ico'
+          });
+          setNotificationsEnabled(true);
+          localStorage.setItem('admin_notif', 'true');
+        } else {
+          setNotifMessage('No se concedió el permiso. Si estás en la vista previa, abre la app en una NUEVA PESTAÑA (ícono arriba a la derecha) e inténtalo de nuevo.');
+        }
+      } catch (err) {
+        console.error('Error al pedir permisos de notificación', err);
+        setNotifMessage('Ocurrió un error. Si estás en la vista previa, abre la app en una NUEVA PESTAÑA.');
+      }
+    } else {
+      const newVal = !notificationsEnabled;
+      setNotificationsEnabled(newVal);
+      localStorage.setItem('admin_notif', String(newVal));
+    }
+  };
+
+  const testSound = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(e => console.log('Audio play failed', e));
+    }
+  };
+
   
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [newUsername, setNewUsername] = useState('');
@@ -80,13 +139,23 @@ export default function AdminPanel() {
       evtSource.addEventListener('new_booking', (event) => {
         const booking = JSON.parse(event.data);
         setReservations(prev => [booking, ...prev]);
-        if (audioRef.current) {
+        if (soundEnabled && audioRef.current) {
           audioRef.current.play().catch(e => console.log('Audio play failed', e));
+        }
+        if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+          try {
+            new Notification('¡Nueva Reserva Recibida!', {
+              body: `${booking.name} viaja de ${booking.pickup.split(',')[0]} a ${booking.dropoff.split(',')[0]}`,
+              icon: '/favicon.ico'
+            });
+          } catch (err) {
+            console.error('Error showing notification', err);
+          }
         }
       });
       return () => evtSource.close();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, soundEnabled, notificationsEnabled]);
 
   const loadReservations = async () => {
     try {
@@ -311,7 +380,7 @@ export default function AdminPanel() {
 
   return (
     <div className="flex h-full w-full bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
-      <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" />
+      <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/933/933-preview.mp3" preload="auto" />
       
       {/* Sidebar */}
       <div className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col shadow-sm z-10">
@@ -491,7 +560,7 @@ export default function AdminPanel() {
         )}
 
         {/* Header Desktop */}
-        <div className="hidden md:flex h-20 items-center px-10">
+        <div className="hidden md:flex h-20 items-center justify-between px-10">
            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
              {activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'reservations' ? 'Gestión de Reservas' : activeTab === 'vehicles' ? 'Gestión de Vehículos' : activeTab === 'users' ? 'Gestión de Usuarios' : 'Configuración del Sistema'}
            </h1>
@@ -578,6 +647,73 @@ export default function AdminPanel() {
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Notificaciones y Contacto</h2>
                 
                 <div className="space-y-6">
+                  <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 space-y-4">
+                    <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <Bell className="w-5 h-5" /> Avisos de Nueva Reserva
+                    </h3>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-slate-900 dark:text-white">Notificaciones de Escritorio</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Recibe una alerta visual cuando la app esté en segundo plano.</p>
+                      </div>
+                      <button 
+                        onClick={toggleNotifications}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-colors ${
+                          notificationsEnabled && notifPerm === 'granted'
+                            ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
+                            : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300'
+                        }`}
+                      >
+                        {notificationsEnabled && notifPerm === 'granted' ? (
+                          <><Check className="w-4 h-4" /> Activado</>
+                        ) : (
+                          <><BellOff className="w-4 h-4" /> Activar</>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="h-px w-full bg-slate-200 dark:bg-slate-700/50"></div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-slate-900 dark:text-white">Alerta Sonora</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Reproduce un sonido de campana de recepción.</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={testSound}
+                          className="p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 rounded-lg transition-colors"
+                          title="Probar sonido"
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={toggleSound}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-colors ${
+                            soundEnabled
+                              ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
+                              : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300'
+                          }`}
+                        >
+                          {soundEnabled ? (
+                            <><Check className="w-4 h-4" /> Activado</>
+                          ) : (
+                            <><VolumeX className="w-4 h-4" /> Muteado</>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    {notifMessage && (
+                      <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 p-4 rounded-xl text-sm font-medium flex items-start gap-3 mt-4">
+                        <div className="bg-red-100 dark:bg-red-500/20 p-1 rounded-full shrink-0">
+                          <X className="w-4 h-4" />
+                        </div>
+                        <p>{notifMessage}</p>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="space-y-3">
                     <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Número de WhatsApp</label>
                     <input
