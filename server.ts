@@ -5,6 +5,7 @@ import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import webpush from 'web-push';
 
 const app = express();
 const PORT = 3000;
@@ -98,6 +99,31 @@ async function initDb() {
     await db.run('INSERT INTO settings (id, data) VALUES (1, ?)', JSON.stringify({ whatsapp: '34664287876', telegram: '' }));
   }
   
+  // Web Push setup
+  try {
+    await db.run('CREATE TABLE IF NOT EXISTS push_subscriptions (endpoint TEXT PRIMARY KEY, subscription TEXT)');
+    await db.run('CREATE TABLE IF NOT EXISTS vapid_keys (id INTEGER PRIMARY KEY, keys TEXT)');
+  } catch(e) {}
+
+  let vapidKeys = { publicKey: '', privateKey: '' };
+  try {
+    let keysRow = await db.get('SELECT keys FROM vapid_keys WHERE id = 1');
+    if (!keysRow) {
+      vapidKeys = webpush.generateVAPIDKeys();
+      await db.run('INSERT INTO vapid_keys (id, keys) VALUES (1, ?)', JSON.stringify(vapidKeys));
+    } else {
+      vapidKeys = JSON.parse(keysRow.keys);
+    }
+  } catch (e) {
+    console.error("Error setting up VAPID keys", e);
+  }
+
+  webpush.setVapidDetails(
+    'mailto:marcogugliandolo94@gmail.com',
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
+  );
+
   // Try to migrate from JSON if exists (for backwards compatibility if they have existing data in JSON)
   const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
   const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
@@ -122,6 +148,29 @@ async function initDb() {
 }
 
 // API ROUTES
+
+// Push Notifications
+app.get('/api/push/public-key', (req, res) => {
+  try {
+    res.json({ publicKey: webpush.vapidDetails.publicKey });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to retrieve public key' });
+  }
+});
+
+app.post('/api/push/subscribe', async (req, res) => {
+  const subscription = req.body;
+  try {
+    await db.run(
+      'INSERT OR REPLACE INTO push_subscriptions (endpoint, subscription) VALUES (?, ?)',
+      [subscription.endpoint, JSON.stringify(subscription)]
+    );
+    res.status(201).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to subscribe' });
+  }
+});
+
 app.post('/api/auth/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -287,6 +336,28 @@ app.post('/api/bookings', async (req, res) => {
       [newBooking.id, newBooking.status, newBooking.createdAt, JSON.stringify(newBooking)]
     );
     notifyAdmins('new_booking', newBooking);
+
+    // Send push notification to all subscribed clients
+    try {
+      const subscriptions = await db.all('SELECT subscription FROM push_subscriptions');
+      const payload = JSON.stringify({
+        title: '¡Nueva Reserva Recibida!',
+        body: `${newBooking.name} viaja de ${newBooking.pickup.split(',')[0]} a ${newBooking.dropoff.split(',')[0]}`
+      });
+
+      for (const row of subscriptions) {
+        const sub = JSON.parse(row.subscription);
+        webpush.sendNotification(sub, payload).catch(err => {
+          if (err.statusCode === 404 || err.statusCode === 410) {
+            // Subscription has expired or is no longer valid
+            db.run('DELETE FROM push_subscriptions WHERE endpoint = ?', [sub.endpoint]).catch(console.error);
+          }
+        });
+      }
+    } catch (pushErr) {
+      console.error('Error sending push notifications', pushErr);
+    }
+
     res.json(newBooking);
   } catch (error) {
     res.status(500).json({ error: 'Failed to save booking' });
@@ -309,6 +380,16 @@ app.put('/api/bookings/:id/status', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'Failed to update booking' });
+  }
+});
+
+app.delete('/api/bookings/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.run('DELETE FROM bookings WHERE id = ?', id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete booking' });
   }
 });
 

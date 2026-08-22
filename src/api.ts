@@ -44,6 +44,14 @@ export const updateBookingStatus = async (id: string, status: 'approved' | 'canc
   return res.json();
 };
 
+export const deleteBooking = async (id: string) => {
+  const res = await fetch(`${API_BASE}/bookings/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete booking');
+  return res.json();
+};
+
 export const login = async (username: string, password: string) => {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',

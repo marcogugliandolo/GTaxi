@@ -4,10 +4,55 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2, Menu, Moon, Sun, Bell, Volume2, VolumeX, BellOff, Search, Calendar, Filter } from 'lucide-react';
 import { BookingData } from '../types';
-import { getBookings, updateBookingStatus, getSettings, saveSettings, login, getUsers, createUser, deleteUser, changePassword, updateProfile } from '../api';
+import { getBookings, updateBookingStatus, deleteBooking, getSettings, saveSettings, login, getUsers, createUser, deleteUser, changePassword, updateProfile } from '../api';
 import AdminDashboard from './AdminDashboard';
 import InvoiceModal from './InvoiceModal';
 import VaixaLogo from './VaixaLogo';
+
+const urlBase64ToUint8Array = (base64String: string) => {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+};
+
+const subscribeToPush = async () => {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const existingSub = await reg.pushManager.getSubscription();
+    if (existingSub) {
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(existingSub)
+      });
+      return;
+    }
+    const res = await fetch('/api/push/public-key');
+    const { publicKey } = await res.json();
+    const convertedVapidKey = urlBase64ToUint8Array(publicKey);
+    const subscription = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: convertedVapidKey
+    });
+    await fetch('/api/push/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(subscription)
+    });
+  } catch(e) {
+    console.error("Push registration failed", e);
+  }
+};
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -51,6 +96,8 @@ export default function AdminPanel() {
   const [filterDate, setFilterDate] = useState<string>('');
   const [notifPerm, setNotifPerm] = useState<NotificationPermission>('Notification' in window ? Notification.permission : 'default');
   const [notifMessage, setNotifMessage] = useState<string | null>(null);
+  const [inAppNotification, setInAppNotification] = useState<{title: string, body: string} | null>(null);
+  const audioUnlockedRef = useRef(false);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     try { return localStorage.getItem('admin_sound') !== 'false'; } catch { return true; }
   });
@@ -67,7 +114,7 @@ export default function AdminPanel() {
   const toggleNotifications = async () => {
     setNotifMessage(null);
     if (!('Notification' in window)) {
-      setNotifMessage('Tu navegador no soporta notificaciones de escritorio.');
+      setNotifMessage('Tu navegador no soporta notificaciones de sistema, pero SÍ verás los avisos visuales amarillos dentro de la app.');
       return;
     }
 
@@ -81,10 +128,17 @@ export default function AdminPanel() {
         const permission = await Notification.requestPermission();
         setNotifPerm(permission);
         if (permission === 'granted') {
-          new Notification('Notificaciones activadas', {
+          const title = 'Notificaciones activadas';
+          const options = {
             body: 'Recibirás avisos de nuevas reservas aquí.',
             icon: '/logo-blanco.png'
-          });
+          };
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options)).catch(() => new Notification(title, options));
+            subscribeToPush();
+          } else {
+            new Notification(title, options);
+          }
           setNotificationsEnabled(true);
           localStorage.setItem('admin_notif', 'true');
         } else {
@@ -138,6 +192,10 @@ export default function AdminPanel() {
         setTgUser(s.telegram || '');
       }).catch(e => console.error(e));
       
+      if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+        subscribeToPush();
+      }
+
       const evtSource = new EventSource('/api/admin/events');
       evtSource.addEventListener('new_booking', (event) => {
         const booking = JSON.parse(event.data);
@@ -145,20 +203,42 @@ export default function AdminPanel() {
         if (soundEnabled && audioRef.current) {
           audioRef.current.play().catch(e => console.log('Audio play failed', e));
         }
-        if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-          try {
-            new Notification('¡Nueva Reserva Recibida!', {
-              body: `${booking.name} viaja de ${booking.pickup.split(',')[0]} a ${booking.dropoff.split(',')[0]}`,
-              icon: '/logo-blanco.png'
-            });
-          } catch (err) {
-            console.error('Error showing notification', err);
-          }
-        }
+        
+        // Show in-app notification toast as fallback
+        setInAppNotification({
+          title: '¡Nueva Reserva Recibida!',
+          body: `${booking.name} viaja de ${booking.pickup.split(',')[0]} a ${booking.dropoff.split(',')[0]}`
+        });
+        setTimeout(() => setInAppNotification(null), 8000);
+
       });
       return () => evtSource.close();
     }
   }, [isAuthenticated, soundEnabled, notificationsEnabled]);
+
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (audioRef.current && !audioUnlockedRef.current) {
+        audioRef.current.muted = true;
+        audioRef.current.play().then(() => {
+          audioRef.current?.pause();
+          if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.muted = false;
+          }
+          audioUnlockedRef.current = true;
+        }).catch(e => console.log('Unlock failed', e));
+        document.removeEventListener('touchstart', unlockAudio);
+        document.removeEventListener('click', unlockAudio);
+      }
+    };
+    document.addEventListener('touchstart', unlockAudio);
+    document.addEventListener('click', unlockAudio);
+    return () => {
+      document.removeEventListener('touchstart', unlockAudio);
+      document.removeEventListener('click', unlockAudio);
+    };
+  }, []);
 
   const loadReservations = async () => {
     try {
@@ -261,6 +341,18 @@ export default function AdminPanel() {
     } catch (e) {
       console.error(e);
       alert('Error al actualizar la reserva');
+    }
+  };
+
+  const handleDeleteReservation = async (id: string) => {
+    if (!window.confirm('¿Estás seguro de que deseas eliminar permanentemente esta reserva?')) return;
+    try {
+      await deleteBooking(id);
+      setReservations(prev => prev.filter(r => r.id !== id));
+      setSelectedReservation(null);
+    } catch (e) {
+      console.error(e);
+      alert('Error al eliminar la reserva');
     }
   };
 
@@ -404,6 +496,24 @@ export default function AdminPanel() {
     <div className="flex h-full w-full bg-slate-50 dark:bg-slate-950 overflow-hidden font-sans">
       <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/933/933-preview.mp3" preload="auto" />
       
+      {/* Toast Notification para móviles y navegadores sin Push API */}
+      {inAppNotification && (
+        <div className="fixed top-4 right-4 z-[9999] animate-in fade-in slide-in-from-top-5 duration-300 shadow-2xl">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 border-2 border-[#FFD700] flex items-start gap-4 max-w-sm cursor-pointer" onClick={() => setInAppNotification(null)}>
+            <div className="bg-amber-100 dark:bg-amber-500/20 p-3 rounded-xl text-amber-600 dark:text-amber-400">
+              <Bell className="w-6 h-6 animate-bounce" />
+            </div>
+            <div className="flex-1 pr-2">
+              <h4 className="font-bold text-slate-900 dark:text-white">{inAppNotification.title}</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 font-medium">{inAppNotification.body}</p>
+            </div>
+            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" onClick={(e) => { e.stopPropagation(); setInAppNotification(null); }}>
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       <div className="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col shadow-sm z-10">
         <div className="h-20 flex items-center px-6 border-b border-slate-100 dark:border-slate-800">
@@ -1160,12 +1270,19 @@ export default function AdminPanel() {
               </div>
             </div>
             
-            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
+            <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 flex gap-3">
               <button 
                 onClick={() => setSelectedReservation(null)}
-                className="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3.5 sm:py-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base"
+                className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3.5 sm:py-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base"
               >
                 Cerrar Detalles
+              </button>
+              <button 
+                onClick={() => handleDeleteReservation(selectedReservation.id)}
+                className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 font-bold px-5 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors flex items-center justify-center"
+                title="Eliminar reserva permanentemente"
+              >
+                <Trash2 className="w-5 h-5" />
               </button>
             </div>
           </div>
