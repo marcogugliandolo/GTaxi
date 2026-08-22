@@ -211,6 +211,19 @@ export default function AdminPanel() {
         });
         setTimeout(() => setInAppNotification(null), 8000);
 
+        if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+          const title = '¡Nueva Reserva Recibida!';
+          const options = {
+            body: `${booking.name} viaja de ${booking.pickup.split(',')[0]} a ${booking.dropoff.split(',')[0]}`,
+            icon: '/logo-blanco.png'
+          };
+          
+          // Si estamos en otra pestaña, forzamos la notificación visual desde el navegador web directamente
+          if (document.hidden) {
+            new Notification(title, options);
+          }
+        }
+
       });
       return () => evtSource.close();
     }
