@@ -259,6 +259,9 @@ app.get('/api/admin/events', (req, res) => {
   // Send a heartbeat ping every 15 seconds to keep the connection alive
   const pingInterval = setInterval(() => {
     res.write(': ping\n\n');
+    if (typeof (res as any).flush === 'function') {
+      (res as any).flush();
+    }
   }, 15000);
 
   req.on('close', () => {
@@ -270,6 +273,9 @@ app.get('/api/admin/events', (req, res) => {
 function notifyAdmins(event: string, data: any) {
   for (const client of clients) {
     client.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    if (typeof (client as any).flush === 'function') {
+      (client as any).flush();
+    }
   }
 }
 
