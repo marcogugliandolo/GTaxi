@@ -80,7 +80,7 @@ export default function AdminPanel() {
         if (permission === 'granted') {
           new Notification('Notificaciones activadas', {
             body: 'Recibirás avisos de nuevas reservas aquí.',
-            icon: '/favicon.ico'
+            icon: '/logo-blanco.png'
           });
           setNotificationsEnabled(true);
           localStorage.setItem('admin_notif', 'true');
@@ -146,7 +146,7 @@ export default function AdminPanel() {
           try {
             new Notification('¡Nueva Reserva Recibida!', {
               body: `${booking.name} viaja de ${booking.pickup.split(',')[0]} a ${booking.dropoff.split(',')[0]}`,
-              icon: '/favicon.ico'
+              icon: '/logo-blanco.png'
             });
           } catch (err) {
             console.error('Error showing notification', err);
