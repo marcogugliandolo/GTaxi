@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2, Menu, Moon, Sun, Bell, Volume2, VolumeX, BellOff } from 'lucide-react';
+import { X, Lock, Settings, Save, LogOut, List, Check, Ban, User, CarFront, Home, Shield, LayoutDashboard, FileText, Trash2, Menu, Moon, Sun, Bell, Volume2, VolumeX, BellOff, Search, Calendar, Filter } from 'lucide-react';
 import { BookingData } from '../types';
 import { getBookings, updateBookingStatus, getSettings, saveSettings, login, getUsers, createUser, deleteUser, changePassword, updateProfile } from '../api';
 import AdminDashboard from './AdminDashboard';
@@ -46,6 +46,9 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'reservations' | 'settings' | 'users' | 'vehicles' | 'profile'>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [reservations, setReservations] = useState<BookingData[]>([]);
+  const [filterText, setFilterText] = useState('');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterDate, setFilterDate] = useState<string>('');
   const [notifPerm, setNotifPerm] = useState<NotificationPermission>('Notification' in window ? Notification.permission : 'default');
   const [notifMessage, setNotifMessage] = useState<string | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(() => {
@@ -325,6 +328,25 @@ export default function AdminPanel() {
     }
   }, [feedbackMsg]);
 
+  const filteredReservations = useMemo(() => {
+    return reservations.filter(res => {
+      if (filterText) {
+        const lowerSearch = filterText.toLowerCase();
+        const matchesSearch = 
+          (res.id || '').toLowerCase().includes(lowerSearch) ||
+          (res.name || '').toLowerCase().includes(lowerSearch) ||
+          (res.phone || '').toLowerCase().includes(lowerSearch) ||
+          (res.pickup || '').toLowerCase().includes(lowerSearch) ||
+          (res.dropoff || '').toLowerCase().includes(lowerSearch);
+        if (!matchesSearch) return false;
+      }
+      if (filterStatus !== 'all' && res.status !== filterStatus) return false;
+      if (filterDate && res.date !== filterDate) return false;
+      
+      return true;
+    });
+  }, [reservations, filterText, filterStatus, filterDate]);
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-full w-full bg-slate-50 dark:bg-slate-950 flex flex-col p-4 md:p-8 items-center justify-center">
@@ -574,14 +596,53 @@ export default function AdminPanel() {
 
             {activeTab === 'reservations' && (
               <div className="space-y-4">
-                {reservations.length === 0 ? (
+                
+                {/* Filtros */}
+                <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6 flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input 
+                      type="text" 
+                      placeholder="Buscar por nombre, teléfono, origen..." 
+                      value={filterText}
+                      onChange={(e) => setFilterText(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white"
+                    />
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="relative w-full sm:w-auto">
+                      <select 
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        className="w-full sm:w-auto pl-4 pr-10 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white appearance-none"
+                      >
+                        <option value="all">Todos los estados</option>
+                        <option value="pending">Pendientes</option>
+                        <option value="approved">Aprobadas</option>
+                        <option value="cancelled">Canceladas</option>
+                      </select>
+                      <Filter className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                    </div>
+                    <div className="relative w-full sm:w-auto">
+                      <Calendar className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input 
+                        type="date"
+                        value={filterDate}
+                        onChange={(e) => setFilterDate(e.target.value)}
+                        className="w-full sm:w-auto pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {filteredReservations.length === 0 ? (
                   <div className="text-center text-slate-500 dark:text-slate-400 py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 border-dashed">
                     <List className="w-12 h-12 mx-auto mb-4 text-slate-300 dark:text-slate-700" />
-                    <p className="text-lg font-medium">No hay reservas registradas.</p>
+                    <p className="text-lg font-medium">No se encontraron reservas con esos filtros.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  {reservations.map((res) => (
+                  {filteredReservations.map((res) => (
                     <div 
                       key={res.id} 
                       className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all cursor-pointer group"
