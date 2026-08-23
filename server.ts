@@ -319,7 +319,13 @@ app.get('/api/settings', async (req, res) => {
 
 app.post('/api/settings', async (req, res) => {
   try {
-    await db.run('UPDATE settings SET data = ? WHERE id = 1', JSON.stringify(req.body));
+    const row = await db.get('SELECT data FROM settings WHERE id = 1');
+    let currentSettings = {};
+    if (row && row.data) {
+      currentSettings = JSON.parse(row.data);
+    }
+    const newSettings = { ...currentSettings, ...req.body };
+    await db.run('UPDATE settings SET data = ? WHERE id = 1', JSON.stringify(newSettings));
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to save settings' });
