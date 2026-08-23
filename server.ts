@@ -124,6 +124,48 @@ async function initDb() {
     vapidKeys.privateKey
   );
 
+  // Telegram Bot Setup
+  const TELEGRAM_BOT_TOKEN = '8800521844:AAF4oZsWxirbb3O3eo7I7Fi4OCM571iIKCg';
+  let telegramUpdateOffset = 0;
+
+  const pollTelegram = async () => {
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?offset=${telegramUpdateOffset}&timeout=10`);
+      const data = await response.json();
+      if (data.ok && data.result.length > 0) {
+        for (const update of data.result) {
+          telegramUpdateOffset = update.update_id + 1;
+          if (update.message && update.message.chat && update.message.chat.id) {
+            const chatId = update.message.chat.id;
+            
+            // Save this chat ID as the admin's chat ID
+            const settingsRow = await db.get('SELECT data FROM settings WHERE id = 1');
+            if (settingsRow) {
+              const currentSettings = JSON.parse(settingsRow.data);
+              if (currentSettings.telegramChatId !== chatId) {
+                currentSettings.telegramChatId = chatId;
+                await db.run('UPDATE settings SET data = ? WHERE id = 1', JSON.stringify(currentSettings));
+                // Reply to the user that they are now subscribed
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    chat_id: chatId,
+                    text: '✅ ¡Perfecto! He conectado tu cuenta con la aplicación.\n\nA partir de ahora recibirás aquí todas las notificaciones de nuevas reservas al instante y saltarán por encima de cualquier app.'
+                  })
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore network errors quietly
+    }
+    setTimeout(pollTelegram, 2000);
+  };
+  pollTelegram();
+
   // Try to migrate from JSON if exists (for backwards compatibility if they have existing data in JSON)
   const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
   const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
@@ -336,6 +378,30 @@ app.post('/api/bookings', async (req, res) => {
       [newBooking.id, newBooking.status, newBooking.createdAt, JSON.stringify(newBooking)]
     );
     notifyAdmins('new_booking', newBooking);
+
+    // Send Telegram Notification
+    try {
+      const settingsRow = await db.get('SELECT data FROM settings WHERE id = 1');
+      if (settingsRow) {
+        const currentSettings = JSON.parse(settingsRow.data);
+        if (currentSettings.telegramChatId) {
+          const tTitle = `🚨 *NUEVA RESERVA* 🚨\n\n`;
+          const tBody = `👤 *Cliente:* ${newBooking.name}\n📞 *Teléfono:* ${newBooking.phone}\n📍 *Recogida:* ${newBooking.pickup}\n🏁 *Destino:* ${newBooking.dropoff}\n🗓 *Fecha:* ${newBooking.date} - ${newBooking.time}\n💶 *Precio Aprox:* ${newBooking.estimatedPrice}€`;
+          
+          await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: currentSettings.telegramChatId,
+              text: tTitle + tBody,
+              parse_mode: 'Markdown'
+            })
+          });
+        }
+      }
+    } catch (telegramErr) {
+      console.error('Error sending telegram notification', telegramErr);
+    }
 
     // Send push notification to all subscribed clients
     try {

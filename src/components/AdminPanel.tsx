@@ -218,9 +218,13 @@ export default function AdminPanel() {
             icon: '/logo-blanco.png'
           };
           
-          // Si estamos en otra pestaña, forzamos la notificación visual desde el navegador web directamente
-          if (document.hidden) {
-            new Notification(title, options);
+          // Si estamos en otra pestaña o ventana, forzamos la notificación visual
+          if (!document.hasFocus()) {
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options)).catch(() => new Notification(title, options));
+            } else {
+              new Notification(title, options);
+            }
           }
         }
 
