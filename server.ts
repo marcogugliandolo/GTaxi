@@ -21,7 +21,11 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
+const TELEGRAM_BOT_TOKEN = '8800521844:AAF4oZsWxirbb3O3eo7I7Fi4OCM571iIKCg';
+let telegramUpdateOffset = 0;
+
 let db: any;
+
 
 async function initDb() {
   const dbPath = path.join(DATA_DIR, 'database.sqlite');
@@ -125,9 +129,6 @@ async function initDb() {
   );
 
   // Telegram Bot Setup
-  const TELEGRAM_BOT_TOKEN = '8800521844:AAF4oZsWxirbb3O3eo7I7Fi4OCM571iIKCg';
-  let telegramUpdateOffset = 0;
-
   const pollTelegram = async () => {
     try {
       const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?offset=${telegramUpdateOffset}&timeout=10`);
@@ -385,8 +386,8 @@ app.post('/api/bookings', async (req, res) => {
       if (settingsRow) {
         const currentSettings = JSON.parse(settingsRow.data);
         if (currentSettings.telegramChatId) {
-          const tTitle = `🚨 *NUEVA RESERVA* 🚨\n\n`;
-          const tBody = `👤 *Cliente:* ${newBooking.name}\n📞 *Teléfono:* ${newBooking.phone}\n📍 *Recogida:* ${newBooking.pickup}\n🏁 *Destino:* ${newBooking.dropoff}\n🗓 *Fecha:* ${newBooking.date} - ${newBooking.time}\n💶 *Precio Aprox:* ${newBooking.estimatedPrice}€`;
+          const tTitle = `🚨 <b>NUEVA RESERVA</b> 🚨\n\n`;
+          const tBody = `👤 <b>Cliente:</b> ${newBooking.name}\n📞 <b>Teléfono:</b> ${newBooking.phone}\n📍 <b>Recogida:</b> ${newBooking.pickup}\n🏁 <b>Destino:</b> ${newBooking.dropoff}\n🗓 <b>Fecha:</b> ${newBooking.date} - ${newBooking.time}\n💶 <b>Precio Aprox:</b> ${newBooking.estimatedPrice}€`;
           
           await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -394,7 +395,7 @@ app.post('/api/bookings', async (req, res) => {
             body: JSON.stringify({
               chat_id: currentSettings.telegramChatId,
               text: tTitle + tBody,
-              parse_mode: 'Markdown'
+              parse_mode: 'HTML'
             })
           });
         }
