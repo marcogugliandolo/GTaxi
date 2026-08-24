@@ -106,21 +106,21 @@ export default function BookingWizard() {
   }, []);
 
   const getRatePerKm = (dateStr: string, timeStr: string): number => {
-    if (!dateStr || !timeStr) return 1.15;
+    if (!dateStr || !timeStr) return 1.25;
 
     const [year, month, day] = dateStr.split('-').map(Number);
     const dateObj = new Date(year, month - 1, day);
     const dayOfWeek = dateObj.getDay(); 
 
     if (dayOfWeek === 0 || dayOfWeek === 6) {
-      return 1.30;
+      return 1.40;
     }
 
     const [hours] = timeStr.split(':').map(Number);
     if (hours >= 8 && hours < 20) {
-      return 1.15;
+      return 1.25;
     } else {
-      return 1.30;
+      return 1.40;
     }
   };
 
@@ -132,10 +132,9 @@ export default function BookingWizard() {
           const data = await res.json();
           if (data.routes && data.routes.length > 0) {
             const distanceKm = data.routes[0].distance / 1000;
-            const base = 15;
             const rate = getRatePerKm(formData.date, formData.time);
-            const price = Math.max(base, Math.floor(distanceKm * rate));
-            setEstimatedPrice(price);
+            const price = distanceKm * rate;
+            setEstimatedPrice(parseFloat(price.toFixed(2)));
             return;
           }
         } catch (e) {
@@ -205,7 +204,6 @@ export default function BookingWizard() {
   const calculatePrice = () => {
     if (estimatedPrice !== null) return estimatedPrice;
     
-    const base = 15; // Base minimum price
     const rate = getRatePerKm(formData.date, formData.time);
     
     // If we have actual coordinates, use them for real distance
@@ -219,12 +217,12 @@ export default function BookingWizard() {
       
       // Fallback pricing using haversine distance (multiplied by 1.4 to simulate routing detour)
       const price = distanceKm * 1.4 * rate;
-      return Math.max(base, Math.floor(price)); // Minimum price is base
+      return parseFloat(price.toFixed(2));
     }
 
     // Fallback if no coordinates (shouldn't happen often if they use autocomplete)
     const distanceFactor = (formData.pickup.length + formData.dropoff.length) * 0.5;
-    return Math.floor(base + distanceFactor);
+    return parseFloat((distanceFactor * rate).toFixed(2));
   };
 
   const submitReservation = async () => {
