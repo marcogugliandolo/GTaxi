@@ -105,6 +105,25 @@ export default function BookingWizard() {
     loadConfig();
   }, []);
 
+  const getRatePerKm = (dateStr: string, timeStr: string): number => {
+    if (!dateStr || !timeStr) return 1.15;
+
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    const dayOfWeek = dateObj.getDay(); 
+
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return 1.30;
+    }
+
+    const [hours] = timeStr.split(':').map(Number);
+    if (hours >= 8 && hours < 20) {
+      return 1.15;
+    } else {
+      return 1.30;
+    }
+  };
+
   useEffect(() => {
     const fetchRoutePrice = async () => {
       if (formData.pickupLoc?.lat && formData.pickupLoc?.lon && formData.dropoffLoc?.lat && formData.dropoffLoc?.lon) {
@@ -114,8 +133,8 @@ export default function BookingWizard() {
           if (data.routes && data.routes.length > 0) {
             const distanceKm = data.routes[0].distance / 1000;
             const base = 15;
-            // Assuming 1.5 euros per km
-            const price = Math.max(base, Math.floor(base + (distanceKm * 1.5)));
+            const rate = getRatePerKm(formData.date, formData.time);
+            const price = Math.max(base, Math.floor(distanceKm * rate));
             setEstimatedPrice(price);
             return;
           }
@@ -128,7 +147,7 @@ export default function BookingWizard() {
 
     const timer = setTimeout(fetchRoutePrice, 500);
     return () => clearTimeout(timer);
-  }, [formData.pickupLoc, formData.dropoffLoc]);
+  }, [formData.pickupLoc, formData.dropoffLoc, formData.date, formData.time]);
 
   const handleUpdateSettings = async (whatsapp: string, telegram: string) => {
     try {
@@ -187,6 +206,7 @@ export default function BookingWizard() {
     if (estimatedPrice !== null) return estimatedPrice;
     
     const base = 15; // Base minimum price
+    const rate = getRatePerKm(formData.date, formData.time);
     
     // If we have actual coordinates, use them for real distance
     if (formData.pickupLoc?.lat && formData.pickupLoc?.lon && formData.dropoffLoc?.lat && formData.dropoffLoc?.lon) {
@@ -197,8 +217,8 @@ export default function BookingWizard() {
         formData.dropoffLoc.lon
       );
       
-      // Fallback pricing: 15 base + 1.5 per km (multiplied by 1.4 to simulate routing detour)
-      const price = base + (distanceKm * 1.4 * 1.5);
+      // Fallback pricing using haversine distance (multiplied by 1.4 to simulate routing detour)
+      const price = distanceKm * 1.4 * rate;
       return Math.max(base, Math.floor(price)); // Minimum price is base
     }
 
