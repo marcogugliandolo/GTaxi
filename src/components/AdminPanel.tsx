@@ -498,7 +498,7 @@ export default function AdminPanel() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors mt-2"
+                className="w-full bg-slate-900 dark:bg-[#FFD700] text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-800 dark:hover:bg-[#F0C800] transition-colors mt-2"
               >
                 Acceder
               </button>
