@@ -102,9 +102,9 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
       body: [
         [
           `Servicio de Transporte (${booking.pickup} a ${booking.dropoff})\nFecha del viaje: ${booking.date} ${booking.time}`, 
-          `€${base.toFixed(2)}`, 
-          `€${iva.toFixed(2)}`, 
-          `€${numPrice.toFixed(2)}`
+          `${base.toFixed(2)}€`, 
+          `${iva.toFixed(2)}€`, 
+          `${numPrice.toFixed(2)}€`
         ]
       ],
       headStyles: { fillColor: [30, 41, 59], textColor: [255, 255, 255], fontStyle: 'bold' },
@@ -123,11 +123,11 @@ export default function InvoiceModal({ booking, onClose }: InvoiceModalProps) {
     // Totals
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text(`Base Imponible: €${base.toFixed(2)}`, 130, finalY);
-    doc.text(`Cuota IVA (${taxRate}%): €${iva.toFixed(2)}`, 130, finalY + 8);
+    doc.text(`Base Imponible: ${base.toFixed(2)}€`, 130, finalY);
+    doc.text(`Cuota IVA (${taxRate}%): ${iva.toFixed(2)}€`, 130, finalY + 8);
     
     doc.setFontSize(14);
-    doc.text(`TOTAL: €${numPrice.toFixed(2)}`, 130, finalY + 18);
+    doc.text(`TOTAL: ${numPrice.toFixed(2)}€`, 130, finalY + 18);
     
     if (action === 'download') {
       doc.save(`Factura_${invoiceNumber}.pdf`);
