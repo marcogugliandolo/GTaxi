@@ -725,8 +725,8 @@ export default function AdminPanel() {
               <div className="space-y-4">
                 
                 {/* Filtros */}
-                <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6 flex flex-col md:flex-row gap-4 min-w-0">
-                  <div className="flex-1 relative min-w-0">
+                <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6 flex flex-col md:flex-row gap-4 w-full overflow-hidden box-border">
+                  <div className="flex-1 relative min-w-0 w-full">
                     <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input 
                       type="text" 
@@ -736,29 +736,27 @@ export default function AdminPanel() {
                       className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white"
                     />
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-4 min-w-0">
-                    <div className="relative w-full sm:w-auto min-w-0">
-                      <select 
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                        className="w-full sm:w-auto pl-4 pr-10 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white appearance-none"
-                      >
-                        <option value="all">Todos los estados</option>
-                        <option value="pending">Pendientes</option>
-                        <option value="approved">Aprobadas</option>
-                        <option value="cancelled">Canceladas</option>
-                      </select>
-                      <Filter className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                    </div>
-                    <div className="relative w-full sm:w-auto min-w-0">
-                      <Calendar className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input 
-                        type="date"
-                        value={filterDate}
-                        onChange={(e) => setFilterDate(e.target.value)}
-                        className="w-full sm:w-48 pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white"
-                      />
-                    </div>
+                  <div className="relative w-full md:w-48 min-w-0 flex-shrink-0">
+                    <select 
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      className="w-full pl-4 pr-10 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white appearance-none"
+                    >
+                      <option value="all">Todos los estados</option>
+                      <option value="pending">Pendientes</option>
+                      <option value="approved">Aprobadas</option>
+                      <option value="cancelled">Canceladas</option>
+                    </select>
+                    <Filter className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  </div>
+                  <div className="relative w-full md:w-48 min-w-0 flex-shrink-0">
+                    <Calendar className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input 
+                      type="date"
+                      value={filterDate}
+                      onChange={(e) => setFilterDate(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#FFD700] outline-none text-slate-900 dark:text-white appearance-none min-w-0"
+                    />
                   </div>
                 </div>
 
