@@ -164,6 +164,20 @@ export default function BookingWizard() {
 
   const nextStep = () => {
     if (step < 6) {
+      if (step === 1 && (!formData.date || !formData.time)) {
+        const minDate = new Date();
+        minDate.setSeconds(0, 0);
+        minDate.setTime(minDate.getTime() + 60 * 60 * 1000);
+        const yyyy = minDate.getFullYear();
+        const mm = String(minDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(minDate.getDate()).padStart(2, '0');
+        const hh = String(minDate.getHours()).padStart(2, '0');
+        const min = String(minDate.getMinutes()).padStart(2, '0');
+        updateForm({
+          date: formData.date || `${yyyy}-${mm}-${dd}`,
+          time: formData.time || `${hh}:${min}`
+        });
+      }
       setDirection(1);
       setStep(s => s + 1);
     }
@@ -179,7 +193,17 @@ export default function BookingWizard() {
   const isStepValid = () => {
     switch (step) {
       case 1: return formData.pickup.length > 2 && formData.dropoff.length > 2;
-      case 2: return formData.date !== '' && formData.time !== '';
+      case 2: {
+        if (!formData.date || !formData.time) return false;
+        const [y, m, d] = formData.date.split('-').map(Number);
+        const [hh, mm] = formData.time.split(':').map(Number);
+        if (isNaN(y) || isNaN(m) || isNaN(d) || isNaN(hh) || isNaN(mm)) return false;
+        const selectedDateTime = new Date(y, m - 1, d, hh, mm, 0, 0);
+        const minAllowed = new Date();
+        minAllowed.setSeconds(0, 0);
+        minAllowed.setTime(minAllowed.getTime() + 60 * 60 * 1000);
+        return selectedDateTime.getTime() >= minAllowed.getTime();
+      }
       case 3: return formData.passengers >= 1;
       case 4: return formData.name.length > 2 && formData.phone.length > 5;
       case 5: return paymentMethod !== null;

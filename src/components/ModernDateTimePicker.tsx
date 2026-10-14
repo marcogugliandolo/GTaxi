@@ -32,6 +32,30 @@ export default function ModernDateTimePicker({
     return `${hours}:${minutes}`;
   };
 
+  // Helper to get minimum allowed booking Date (current time + 1 hour margin, seconds zeroed)
+  const getMinBookingDate = (): Date => {
+    const now = new Date();
+    now.setSeconds(0, 0);
+    return new Date(now.getTime() + 60 * 60 * 1000);
+  };
+
+  const minBookingDate = getMinBookingDate();
+  const minBookingDateISO = formatDateToISO(minBookingDate);
+  const minBookingTimeISO = formatTimeToISO(minBookingDate);
+
+  // Check if a given date (YYYY-MM-DD) + time (HH:MM) is earlier than now + 1 hour
+  const isTimeBeforeMargin = (targetDateStr: string, targetTimeStr: string): boolean => {
+    if (!targetTimeStr) return false;
+    const effectiveDateStr = targetDateStr || formatDateToISO(new Date());
+    const [y, m, d] = effectiveDateStr.split('-').map(Number);
+    const [hh, mm] = targetTimeStr.split(':').map(Number);
+    if (isNaN(y) || isNaN(m) || isNaN(d) || isNaN(hh) || isNaN(mm)) return false;
+    const candidate = new Date(y, m - 1, d, hh, mm, 0, 0);
+    return candidate.getTime() < getMinBookingDate().getTime();
+  };
+
+  const isCurrentSelectionInvalid = Boolean(date && time && isTimeBeforeMargin(date, time));
+
   // Parse current date or fallback to today
   const parsedDate = date ? new Date(date + 'T00:00:00') : new Date();
   const validParsedDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -53,17 +77,31 @@ export default function ModernDateTimePicker({
     setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
   };
 
+  const handleDateSelection = (selectedDateISO: string) => {
+    onDateChange(selectedDateISO);
+    // If selecting today (or the min booking date) and time is empty or earlier than 1h margin, auto-adjust to minBookingTimeISO
+    if (!time || isTimeBeforeMargin(selectedDateISO, time)) {
+      if (selectedDateISO === minBookingDateISO) {
+        onTimeChange(minBookingTimeISO);
+      } else if (!time) {
+        onTimeChange('12:00');
+      }
+    }
+  };
+
   // Quick Date Presets
   const setTodayDate = () => {
-    const now = new Date();
-    onDateChange(formatDateToISO(now));
-    setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
+    const minD = getMinBookingDate();
+    const targetISO = formatDateToISO(minD);
+    handleDateSelection(targetISO);
+    setViewDate(new Date(minD.getFullYear(), minD.getMonth(), 1));
   };
 
   const setTomorrowDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    onDateChange(formatDateToISO(tomorrow));
+    const tomorrowISO = formatDateToISO(tomorrow);
+    handleDateSelection(tomorrowISO);
     setViewDate(new Date(tomorrow.getFullYear(), tomorrow.getMonth(), 1));
   };
 
@@ -73,20 +111,23 @@ export default function ModernDateTimePicker({
     let daysUntilSat = 6 - dayOfWeek;
     if (daysUntilSat <= 0) daysUntilSat += 7;
     d.setDate(d.getDate() + daysUntilSat);
-    onDateChange(formatDateToISO(d));
+    const weekendISO = formatDateToISO(d);
+    handleDateSelection(weekendISO);
     setViewDate(new Date(d.getFullYear(), d.getMonth(), 1));
   };
 
-  // Quick Time Presets
-  const setTimeNow = () => {
-    const now = new Date();
-    onTimeChange(formatTimeToISO(now));
-  };
-
+  // Quick Time Presets (minimum +60 mins)
   const addMinutesToTime = (mins: number) => {
     const now = new Date();
-    now.setMinutes(now.getMinutes() + mins);
-    onTimeChange(formatTimeToISO(now));
+    now.setSeconds(0, 0);
+    const target = new Date(now.getTime() + mins * 60 * 1000);
+    const targetDateISO = formatDateToISO(target);
+    const targetTimeISO = formatTimeToISO(target);
+    if (!date || date === formatDateToISO(now) || isTimeBeforeMargin(date, targetTimeISO)) {
+      onDateChange(targetDateISO);
+      setViewDate(new Date(target.getFullYear(), target.getMonth(), 1));
+    }
+    onTimeChange(targetTimeISO);
   };
 
   // Days of week labels (Monday first)
@@ -333,7 +374,7 @@ export default function ModernDateTimePicker({
                   key={idx}
                   type="button"
                   disabled={cell.isPast}
-                  onClick={() => onDateChange(cell.dateISO)}
+                  onClick={() => handleDateSelection(cell.dateISO)}
                   className={`h-10 sm:h-11 rounded-2xl text-xs sm:text-sm font-bold transition-all relative flex flex-col items-center justify-center ${
                     cell.isSelected
                       ? 'bg-[#FFD700] text-slate-950 font-black shadow-lg shadow-[#FFD700]/30 scale-105 z-10'
@@ -356,49 +397,62 @@ export default function ModernDateTimePicker({
 
         {/* TIME PICKER CONTAINER */}
         <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none flex flex-col gap-5">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Clock className="w-5 h-5 text-[#FFD700]" />
-              {language === 'es' ? 'Hora de Recogida' : language === 'gl' ? 'Hora de Recollida' : 'Pickup Time'}
-            </h3>
-            <span className="text-xs font-black px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg font-mono">
-              {time || '12:00'}
-            </span>
+          <div className="flex flex-col gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Clock className="w-5 h-5 text-[#FFD700]" />
+                {language === 'es' ? 'Hora de Recogida' : language === 'gl' ? 'Hora de Recollida' : 'Pickup Time'}
+              </h3>
+              <span className={`text-xs font-black px-2.5 py-1 rounded-lg font-mono ${
+                isCurrentSelectionInvalid
+                  ? 'bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+              }`}>
+                {time || minBookingTimeISO}
+              </span>
+            </div>
+            <p className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+              {language === 'es'
+                ? `⏱ Margen mínimo de 1 hora (hoy disponible desde las ${minBookingTimeISO})`
+                : language === 'gl'
+                ? `⏱ Marxe mínima de 1 hora (hoxe dispoñible dende as ${minBookingTimeISO})`
+                : `⏱ Minimum 1-hour notice (available today from ${minBookingTimeISO})`}
+            </p>
           </div>
 
           {/* Quick Time Presets */}
           <div className="space-y-2">
             <label className="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-              {language === 'es' ? 'Atajos de hora:' : 'Quick time:'}
+              {language === 'es' ? 'Atajos de hora:' : language === 'gl' ? 'Atallos de hora:' : 'Quick time:'}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={setTimeNow}
+                onClick={() => addMinutesToTime(60)}
                 className="py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700 transition-all flex items-center justify-center gap-1.5"
               >
-                ⚡ {language === 'es' ? 'Ahora mismo' : 'Now'}
+                ⚡ +1 {language === 'es' ? 'hora' : language === 'gl' ? 'hora' : 'hour'}
               </button>
               <button
                 type="button"
-                onClick={() => addMinutesToTime(15)}
+                onClick={() => addMinutesToTime(90)}
                 className="py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700 transition-all"
               >
-                +15 {language === 'es' ? 'min' : 'mins'}
+                +1h 30m
               </button>
               <button
                 type="button"
-                onClick={() => addMinutesToTime(30)}
+                onClick={() => addMinutesToTime(120)}
                 className="py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700 transition-all"
               >
-                +30 {language === 'es' ? 'min' : 'mins'}
+                +2 {language === 'es' ? 'horas' : language === 'gl' ? 'horas' : 'hours'}
               </button>
               <button
                 type="button"
-                onClick={() => addMinutesToTime(60)}
+                onClick={() => addMinutesToTime(180)}
                 className="py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700 transition-all"
               >
-                +1 {language === 'es' ? 'hora' : 'hour'}
+                +3 {language === 'es' ? 'horas' : language === 'gl' ? 'horas' : 'hours'}
               </button>
             </div>
           </div>
@@ -406,39 +460,77 @@ export default function ModernDateTimePicker({
           {/* Time slot grid */}
           <div className="space-y-2">
             <label className="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-              {language === 'es' ? 'Horas habituales:' : 'Popular times:'}
+              {language === 'es' ? 'Horas habituales:' : language === 'gl' ? 'Horas habituais:' : 'Popular times:'}
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {popularTimes.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => onTimeChange(t)}
-                  className={`py-2 text-xs font-bold rounded-xl transition-all ${
-                    time === t
-                      ? 'bg-[#FFD700] text-slate-950 shadow-md shadow-[#FFD700]/30 font-black'
-                      : 'bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/60'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
+              {popularTimes.map((t) => {
+                const isDisabled = isTimeBeforeMargin(date || formatDateToISO(new Date()), t);
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    disabled={isDisabled}
+                    onClick={() => {
+                      if (!date) onDateChange(formatDateToISO(new Date()));
+                      onTimeChange(t);
+                    }}
+                    className={`py-2 text-xs font-bold rounded-xl transition-all ${
+                      isDisabled
+                        ? 'bg-slate-100 dark:bg-slate-800/40 text-slate-300 dark:text-slate-600 cursor-not-allowed line-through opacity-50'
+                        : time === t
+                        ? 'bg-[#FFD700] text-slate-950 shadow-md shadow-[#FFD700]/30 font-black'
+                        : 'bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-700/60'
+                    }`}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* Custom Time Selector Input */}
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
             <label className="text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">
-              {language === 'es' ? 'Hora personalizada:' : 'Custom time:'}
+              {language === 'es' ? 'Hora personalizada:' : language === 'gl' ? 'Hora personalizada:' : 'Custom time:'}
             </label>
             <div className="relative">
               <input
                 type="time"
+                min={!date || date === minBookingDateISO ? minBookingTimeISO : undefined}
                 value={time}
-                onChange={(e) => onTimeChange(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 focus:border-[#FFD700] rounded-xl outline-none text-slate-900 dark:text-white font-mono font-bold text-base transition-all"
+                onChange={(e) => {
+                  if (!date) onDateChange(formatDateToISO(new Date()));
+                  onTimeChange(e.target.value);
+                }}
+                className={`w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border-2 rounded-xl outline-none text-slate-900 dark:text-white font-mono font-bold text-base transition-all ${
+                  isCurrentSelectionInvalid
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-slate-100 dark:border-slate-700 focus:border-[#FFD700]'
+                }`}
               />
             </div>
+            {isCurrentSelectionInvalid && (
+              <div className="mt-2.5 p-2.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold text-red-600 dark:text-red-300 leading-snug">
+                  {language === 'es'
+                    ? `No se puede reservar sin margen de 1h. Hora mínima hoy: ${minBookingTimeISO}.`
+                    : language === 'gl'
+                    ? `Non se pode reservar sen marxe de 1h. Hora mínima hoxe: ${minBookingTimeISO}.`
+                    : `Cannot book within 1h margin. Earliest time today: ${minBookingTimeISO}.`}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onDateChange(minBookingDateISO);
+                    onTimeChange(minBookingTimeISO);
+                  }}
+                  className="shrink-0 px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors"
+                >
+                  {minBookingTimeISO}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
